@@ -1,0 +1,2021 @@
+{
+  "schema": 1,
+  "sinais": {
+    "SPEC_AUSENTE::ai-customer-service::—": {
+      "codigo": "SPEC_AUSENTE",
+      "feature": "ai-customer-service",
+      "ref": "—",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T01:14:14.368Z",
+      "ultimaVez": "2026-08-20T01:14:14.371Z",
+      "gitRev": null
+    },
+    "GLOB_SEM_ARQUIVOS::—::P-002": {
+      "codigo": "GLOB_SEM_ARQUIVOS",
+      "feature": "—",
+      "ref": "P-002",
+      "ocorrencias": 7,
+      "primeiraVez": "2026-08-20T01:14:14.372Z",
+      "ultimaVez": "2026-08-20T01:45:06.015Z",
+      "gitRev": null
+    },
+    "AC_SEM_TASK::ai-customer-service::AC-001": {
+      "codigo": "AC_SEM_TASK",
+      "feature": "ai-customer-service",
+      "ref": "AC-001",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T01:16:54.581Z",
+      "ultimaVez": "2026-08-20T01:16:54.584Z",
+      "gitRev": null
+    },
+    "AC_SEM_TASK::ai-customer-service::AC-005": {
+      "codigo": "AC_SEM_TASK",
+      "feature": "ai-customer-service",
+      "ref": "AC-005",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T01:16:54.584Z",
+      "ultimaVez": "2026-08-20T01:16:54.584Z",
+      "gitRev": null
+    },
+    "AC_SEM_TASK::ai-customer-service::AC-002": {
+      "codigo": "AC_SEM_TASK",
+      "feature": "ai-customer-service",
+      "ref": "AC-002",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T01:16:54.584Z",
+      "ultimaVez": "2026-08-20T01:16:54.584Z",
+      "gitRev": null
+    },
+    "AC_SEM_TASK::ai-customer-service::AC-003": {
+      "codigo": "AC_SEM_TASK",
+      "feature": "ai-customer-service",
+      "ref": "AC-003",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T01:16:54.584Z",
+      "ultimaVez": "2026-08-20T01:16:54.584Z",
+      "gitRev": null
+    },
+    "AC_SEM_TASK::ai-customer-service::AC-004": {
+      "codigo": "AC_SEM_TASK",
+      "feature": "ai-customer-service",
+      "ref": "AC-004",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T01:16:54.584Z",
+      "ultimaVez": "2026-08-20T01:16:54.584Z",
+      "gitRev": null
+    },
+    "AC_SEM_TASK::ai-customer-service::AC-006": {
+      "codigo": "AC_SEM_TASK",
+      "feature": "ai-customer-service",
+      "ref": "AC-006",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T01:16:54.584Z",
+      "ultimaVez": "2026-08-20T01:16:54.584Z",
+      "gitRev": null
+    },
+    "AC_SEM_TASK::ai-customer-service::AC-007": {
+      "codigo": "AC_SEM_TASK",
+      "feature": "ai-customer-service",
+      "ref": "AC-007",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T01:16:54.584Z",
+      "ultimaVez": "2026-08-20T01:16:54.584Z",
+      "gitRev": null
+    },
+    "AC_SEM_TESTE::ai-customer-service::AC-001": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-customer-service",
+      "ref": "AC-001",
+      "ocorrencias": 9,
+      "primeiraVez": "2026-08-20T01:16:54.584Z",
+      "ultimaVez": "2026-08-20T01:52:28.060Z",
+      "gitRev": null
+    },
+    "AC_SEM_TESTE::ai-customer-service::AC-005": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-customer-service",
+      "ref": "AC-005",
+      "ocorrencias": 9,
+      "primeiraVez": "2026-08-20T01:16:54.584Z",
+      "ultimaVez": "2026-08-20T01:52:28.061Z",
+      "gitRev": null
+    },
+    "AC_SEM_TESTE::ai-customer-service::AC-002": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-customer-service",
+      "ref": "AC-002",
+      "ocorrencias": 6,
+      "primeiraVez": "2026-08-20T01:16:54.584Z",
+      "ultimaVez": "2026-08-20T01:45:06.015Z",
+      "gitRev": null
+    },
+    "AC_SEM_TESTE::ai-customer-service::AC-003": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-customer-service",
+      "ref": "AC-003",
+      "ocorrencias": 6,
+      "primeiraVez": "2026-08-20T01:16:54.584Z",
+      "ultimaVez": "2026-08-20T01:45:06.015Z",
+      "gitRev": null
+    },
+    "AC_SEM_TESTE::ai-customer-service::AC-004": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-customer-service",
+      "ref": "AC-004",
+      "ocorrencias": 6,
+      "primeiraVez": "2026-08-20T01:16:54.584Z",
+      "ultimaVez": "2026-08-20T01:45:06.015Z",
+      "gitRev": null
+    },
+    "AC_SEM_TESTE::ai-customer-service::AC-006": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-customer-service",
+      "ref": "AC-006",
+      "ocorrencias": 9,
+      "primeiraVez": "2026-08-20T01:16:54.584Z",
+      "ultimaVez": "2026-08-20T01:52:28.061Z",
+      "gitRev": null
+    },
+    "AC_SEM_TESTE::ai-customer-service::AC-007": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-customer-service",
+      "ref": "AC-007",
+      "ocorrencias": 9,
+      "primeiraVez": "2026-08-20T01:16:54.584Z",
+      "ultimaVez": "2026-08-20T01:52:28.061Z",
+      "gitRev": null
+    },
+    "ARQUIVO_INEXISTENTE::ai-customer-service::T-001": {
+      "codigo": "ARQUIVO_INEXISTENTE",
+      "feature": "ai-customer-service",
+      "ref": "T-001",
+      "ocorrencias": 6,
+      "primeiraVez": "2026-08-20T01:17:19.845Z",
+      "ultimaVez": "2026-08-20T01:51:59.800Z",
+      "gitRev": null
+    },
+    "ARQUIVO_INEXISTENTE::ai-customer-service::T-002": {
+      "codigo": "ARQUIVO_INEXISTENTE",
+      "feature": "ai-customer-service",
+      "ref": "T-002",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-20T01:17:19.846Z",
+      "ultimaVez": "2026-08-20T01:17:53.280Z",
+      "gitRev": null
+    },
+    "ARQUIVO_INEXISTENTE::ai-customer-service::T-003": {
+      "codigo": "ARQUIVO_INEXISTENTE",
+      "feature": "ai-customer-service",
+      "ref": "T-003",
+      "ocorrencias": 3,
+      "primeiraVez": "2026-08-20T01:17:19.846Z",
+      "ultimaVez": "2026-08-20T01:26:45.359Z",
+      "gitRev": null
+    },
+    "ARQUIVO_INEXISTENTE::ai-customer-service::T-004": {
+      "codigo": "ARQUIVO_INEXISTENTE",
+      "feature": "ai-customer-service",
+      "ref": "T-004",
+      "ocorrencias": 4,
+      "primeiraVez": "2026-08-20T01:17:19.846Z",
+      "ultimaVez": "2026-08-20T01:32:41.233Z",
+      "gitRev": null
+    },
+    "ARQUIVO_INEXISTENTE::ai-customer-service::T-005": {
+      "codigo": "ARQUIVO_INEXISTENTE",
+      "feature": "ai-customer-service",
+      "ref": "T-005",
+      "ocorrencias": 3,
+      "primeiraVez": "2026-08-20T01:26:45.359Z",
+      "ultimaVez": "2026-08-20T01:45:06.015Z",
+      "gitRev": null
+    },
+    "ARQUIVO_INEXISTENTE::ai-customer-service::T-006": {
+      "codigo": "ARQUIVO_INEXISTENTE",
+      "feature": "ai-customer-service",
+      "ref": "T-006",
+      "ocorrencias": 4,
+      "primeiraVez": "2026-08-20T01:26:45.359Z",
+      "ultimaVez": "2026-08-20T01:51:59.801Z",
+      "gitRev": null
+    },
+    "ARQUIVO_INEXISTENTE::ai-customer-service::T-007": {
+      "codigo": "ARQUIVO_INEXISTENTE",
+      "feature": "ai-customer-service",
+      "ref": "T-007",
+      "ocorrencias": 4,
+      "primeiraVez": "2026-08-20T01:26:45.359Z",
+      "ultimaVez": "2026-08-20T01:51:59.801Z",
+      "gitRev": null
+    },
+    "ARQUIVO_INEXISTENTE::ai-customer-service::T-008": {
+      "codigo": "ARQUIVO_INEXISTENTE",
+      "feature": "ai-customer-service",
+      "ref": "T-008",
+      "ocorrencias": 4,
+      "primeiraVez": "2026-08-20T01:26:45.359Z",
+      "ultimaVez": "2026-08-20T01:51:59.801Z",
+      "gitRev": null
+    },
+    "AC_SEM_TESTE::ai-customer-service::AC-008": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-customer-service",
+      "ref": "AC-008",
+      "ocorrencias": 3,
+      "primeiraVez": "2026-08-20T01:26:45.359Z",
+      "ultimaVez": "2026-08-20T01:45:06.015Z",
+      "gitRev": null
+    },
+    "AC_SEM_TESTE::ai-customer-service::AC-009": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-customer-service",
+      "ref": "AC-009",
+      "ocorrencias": 3,
+      "primeiraVez": "2026-08-20T01:26:45.359Z",
+      "ultimaVez": "2026-08-20T01:45:06.015Z",
+      "gitRev": null
+    },
+    "AC_SEM_TESTE::ai-customer-service::AC-010": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-customer-service",
+      "ref": "AC-010",
+      "ocorrencias": 3,
+      "primeiraVez": "2026-08-20T01:26:45.359Z",
+      "ultimaVez": "2026-08-20T01:45:06.015Z",
+      "gitRev": null
+    },
+    "AC_SEM_TESTE::ai-customer-service::AC-011": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-customer-service",
+      "ref": "AC-011",
+      "ocorrencias": 3,
+      "primeiraVez": "2026-08-20T01:26:45.359Z",
+      "ultimaVez": "2026-08-20T01:45:06.015Z",
+      "gitRev": null
+    },
+    "AC_SEM_TESTE::ai-customer-service::AC-012": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-customer-service",
+      "ref": "AC-012",
+      "ocorrencias": 9,
+      "primeiraVez": "2026-08-20T01:26:45.359Z",
+      "ultimaVez": "2026-08-20T01:56:57.738Z",
+      "gitRev": null
+    },
+    "AC_SEM_TESTE::ai-customer-service::AC-013": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-customer-service",
+      "ref": "AC-013",
+      "ocorrencias": 3,
+      "primeiraVez": "2026-08-20T01:26:45.359Z",
+      "ultimaVez": "2026-08-20T01:45:06.015Z",
+      "gitRev": null
+    },
+    "AC_SEM_TESTE::ai-customer-service::AC-014": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-customer-service",
+      "ref": "AC-014",
+      "ocorrencias": 8,
+      "primeiraVez": "2026-08-20T01:26:45.359Z",
+      "ultimaVez": "2026-08-20T01:55:47.518Z",
+      "gitRev": null
+    },
+    "AC_SEM_TESTE::ai-customer-service::AC-015": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-customer-service",
+      "ref": "AC-015",
+      "ocorrencias": 10,
+      "primeiraVez": "2026-08-20T01:26:45.359Z",
+      "ultimaVez": "2026-08-20T01:58:11.921Z",
+      "gitRev": null
+    },
+    "ARQUIVO_INEXISTENTE::ai-customer-service::T-009": {
+      "codigo": "ARQUIVO_INEXISTENTE",
+      "feature": "ai-customer-service",
+      "ref": "T-009",
+      "ocorrencias": 3,
+      "primeiraVez": "2026-08-20T01:32:41.233Z",
+      "ultimaVez": "2026-08-20T01:51:59.801Z",
+      "gitRev": null
+    },
+    "ARQUIVO_INEXISTENTE::ai-customer-service::T-010": {
+      "codigo": "ARQUIVO_INEXISTENTE",
+      "feature": "ai-customer-service",
+      "ref": "T-010",
+      "ocorrencias": 3,
+      "primeiraVez": "2026-08-20T01:32:41.233Z",
+      "ultimaVez": "2026-08-20T01:51:59.801Z",
+      "gitRev": null
+    },
+    "ARQUIVO_INEXISTENTE::ai-customer-service::T-011": {
+      "codigo": "ARQUIVO_INEXISTENTE",
+      "feature": "ai-customer-service",
+      "ref": "T-011",
+      "ocorrencias": 3,
+      "primeiraVez": "2026-08-20T01:32:41.233Z",
+      "ultimaVez": "2026-08-20T01:51:59.801Z",
+      "gitRev": null
+    },
+    "ARQUIVO_INEXISTENTE::ai-customer-service::T-012": {
+      "codigo": "ARQUIVO_INEXISTENTE",
+      "feature": "ai-customer-service",
+      "ref": "T-012",
+      "ocorrencias": 3,
+      "primeiraVez": "2026-08-20T01:32:41.233Z",
+      "ultimaVez": "2026-08-20T01:51:59.801Z",
+      "gitRev": null
+    },
+    "ARQUIVO_INEXISTENTE::ai-customer-service::T-013": {
+      "codigo": "ARQUIVO_INEXISTENTE",
+      "feature": "ai-customer-service",
+      "ref": "T-013",
+      "ocorrencias": 3,
+      "primeiraVez": "2026-08-20T01:32:41.233Z",
+      "ultimaVez": "2026-08-20T01:51:59.801Z",
+      "gitRev": null
+    },
+    "AC_SEM_TESTE::ai-customer-service::AC-016": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-customer-service",
+      "ref": "AC-016",
+      "ocorrencias": 11,
+      "primeiraVez": "2026-08-20T01:32:41.233Z",
+      "ultimaVez": "2026-08-20T02:00:15.833Z",
+      "gitRev": null
+    },
+    "AC_SEM_TESTE::ai-customer-service::AC-017": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-customer-service",
+      "ref": "AC-017",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-20T01:32:41.233Z",
+      "ultimaVez": "2026-08-20T01:45:06.015Z",
+      "gitRev": null
+    },
+    "AC_SEM_TESTE::ai-customer-service::AC-018": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-customer-service",
+      "ref": "AC-018",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-20T01:32:41.233Z",
+      "ultimaVez": "2026-08-20T01:45:06.015Z",
+      "gitRev": null
+    },
+    "AC_SEM_TESTE::ai-customer-service::AC-019": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-customer-service",
+      "ref": "AC-019",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-20T01:32:41.233Z",
+      "ultimaVez": "2026-08-20T01:45:06.015Z",
+      "gitRev": null
+    },
+    "AC_SEM_TESTE::ai-customer-service::AC-020": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-customer-service",
+      "ref": "AC-020",
+      "ocorrencias": 11,
+      "primeiraVez": "2026-08-20T01:32:41.233Z",
+      "ultimaVez": "2026-08-20T02:00:15.833Z",
+      "gitRev": null
+    },
+    "AC_SEM_TESTE::ai-customer-service::AC-021": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-customer-service",
+      "ref": "AC-021",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-20T01:32:41.233Z",
+      "ultimaVez": "2026-08-20T01:45:06.015Z",
+      "gitRev": null
+    },
+    "AC_SEM_TESTE::ai-customer-service::AC-022": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-customer-service",
+      "ref": "AC-022",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-20T01:32:41.233Z",
+      "ultimaVez": "2026-08-20T01:45:06.015Z",
+      "gitRev": null
+    },
+    "AC_SEM_TESTE::ai-customer-service::AC-023": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-customer-service",
+      "ref": "AC-023",
+      "ocorrencias": 14,
+      "primeiraVez": "2026-08-20T01:32:41.233Z",
+      "ultimaVez": "2026-08-20T02:03:05.782Z",
+      "gitRev": null
+    },
+    "ARQUIVO_INEXISTENTE::ai-customer-service::T-014": {
+      "codigo": "ARQUIVO_INEXISTENTE",
+      "feature": "ai-customer-service",
+      "ref": "T-014",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-20T01:45:06.015Z",
+      "ultimaVez": "2026-08-20T01:51:59.801Z",
+      "gitRev": null
+    },
+    "ARQUIVO_INEXISTENTE::ai-customer-service::T-015": {
+      "codigo": "ARQUIVO_INEXISTENTE",
+      "feature": "ai-customer-service",
+      "ref": "T-015",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-20T01:45:06.015Z",
+      "ultimaVez": "2026-08-20T01:51:59.801Z",
+      "gitRev": null
+    },
+    "ARQUIVO_INEXISTENTE::ai-customer-service::T-016": {
+      "codigo": "ARQUIVO_INEXISTENTE",
+      "feature": "ai-customer-service",
+      "ref": "T-016",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-20T01:45:06.015Z",
+      "ultimaVez": "2026-08-20T01:51:59.801Z",
+      "gitRev": null
+    },
+    "ARQUIVO_INEXISTENTE::ai-customer-service::T-017": {
+      "codigo": "ARQUIVO_INEXISTENTE",
+      "feature": "ai-customer-service",
+      "ref": "T-017",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-20T01:45:06.015Z",
+      "ultimaVez": "2026-08-20T01:51:59.801Z",
+      "gitRev": null
+    },
+    "ARQUIVO_INEXISTENTE::ai-customer-service::T-018": {
+      "codigo": "ARQUIVO_INEXISTENTE",
+      "feature": "ai-customer-service",
+      "ref": "T-018",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-20T01:45:06.015Z",
+      "ultimaVez": "2026-08-20T01:51:59.801Z",
+      "gitRev": null
+    },
+    "AC_SEM_TESTE::ai-customer-service::AC-024": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-customer-service",
+      "ref": "AC-024",
+      "ocorrencias": 14,
+      "primeiraVez": "2026-08-20T01:45:06.015Z",
+      "ultimaVez": "2026-08-20T02:03:50.476Z",
+      "gitRev": null
+    },
+    "AC_SEM_TESTE::ai-customer-service::AC-025": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-customer-service",
+      "ref": "AC-025",
+      "ocorrencias": 14,
+      "primeiraVez": "2026-08-20T01:45:06.015Z",
+      "ultimaVez": "2026-08-20T02:03:50.476Z",
+      "gitRev": null
+    },
+    "AC_SEM_TESTE::ai-customer-service::AC-026": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-customer-service",
+      "ref": "AC-026",
+      "ocorrencias": 15,
+      "primeiraVez": "2026-08-20T01:45:06.015Z",
+      "ultimaVez": "2026-08-20T02:05:20.128Z",
+      "gitRev": null
+    },
+    "AC_SEM_TESTE::ai-customer-service::AC-027": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-customer-service",
+      "ref": "AC-027",
+      "ocorrencias": 15,
+      "primeiraVez": "2026-08-20T01:45:06.015Z",
+      "ultimaVez": "2026-08-20T02:05:20.129Z",
+      "gitRev": null
+    },
+    "AC_SEM_TESTE::ai-customer-service::AC-028": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-customer-service",
+      "ref": "AC-028",
+      "ocorrencias": 14,
+      "primeiraVez": "2026-08-20T01:45:06.015Z",
+      "ultimaVez": "2026-08-20T02:03:50.476Z",
+      "gitRev": null
+    },
+    "AC_SEM_TESTE::ai-customer-service::AC-029": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-customer-service",
+      "ref": "AC-029",
+      "ocorrencias": 15,
+      "primeiraVez": "2026-08-20T01:45:06.015Z",
+      "ultimaVez": "2026-08-20T02:05:20.129Z",
+      "gitRev": null
+    },
+    "AC_SEM_TESTE::ai-customer-service::AC-030": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-customer-service",
+      "ref": "AC-030",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T01:45:06.015Z",
+      "ultimaVez": "2026-08-20T01:45:06.015Z",
+      "gitRev": null
+    },
+    "AC_SEM_TESTE::ai-customer-service::AC-031": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-customer-service",
+      "ref": "AC-031",
+      "ocorrencias": 14,
+      "primeiraVez": "2026-08-20T01:45:06.015Z",
+      "ultimaVez": "2026-08-20T02:03:50.476Z",
+      "gitRev": null
+    },
+    "AC_SEM_TESTE::ai-customer-service::AC-032": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-customer-service",
+      "ref": "AC-032",
+      "ocorrencias": 17,
+      "primeiraVez": "2026-08-20T01:45:06.015Z",
+      "ultimaVez": "2026-08-20T02:07:21.161Z",
+      "gitRev": null
+    },
+    "TASK_CONCLUIDA_SEM_PROVA::ai-customer-service::T-001": {
+      "codigo": "TASK_CONCLUIDA_SEM_PROVA",
+      "feature": "ai-customer-service",
+      "ref": "T-001",
+      "ocorrencias": 8,
+      "primeiraVez": "2026-08-20T01:55:42.219Z",
+      "ultimaVez": "2026-08-20T02:40:07.700Z",
+      "gitRev": null
+    },
+    "AC_SEM_PROVA::ai-customer-service::AC-001": {
+      "codigo": "AC_SEM_PROVA",
+      "feature": "ai-customer-service",
+      "ref": "AC-001",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T01:55:42.223Z",
+      "ultimaVez": "2026-08-20T01:55:42.223Z",
+      "gitRev": null
+    },
+    "AC_SEM_PROVA::ai-customer-service::AC-005": {
+      "codigo": "AC_SEM_PROVA",
+      "feature": "ai-customer-service",
+      "ref": "AC-005",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T01:55:42.223Z",
+      "ultimaVez": "2026-08-20T01:55:42.223Z",
+      "gitRev": null
+    },
+    "AC_SEM_PROVA::ai-customer-service::AC-006": {
+      "codigo": "AC_SEM_PROVA",
+      "feature": "ai-customer-service",
+      "ref": "AC-006",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T01:55:42.223Z",
+      "ultimaVez": "2026-08-20T01:55:42.223Z",
+      "gitRev": null
+    },
+    "AC_SEM_PROVA::ai-customer-service::AC-007": {
+      "codigo": "AC_SEM_PROVA",
+      "feature": "ai-customer-service",
+      "ref": "AC-007",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T01:55:42.223Z",
+      "ultimaVez": "2026-08-20T01:55:42.223Z",
+      "gitRev": null
+    },
+    "VERIFY_OBSOLETO::ai-customer-service::—": {
+      "codigo": "VERIFY_OBSOLETO",
+      "feature": "ai-customer-service",
+      "ref": "—",
+      "ocorrencias": 9,
+      "primeiraVez": "2026-08-20T01:55:42.223Z",
+      "ultimaVez": "2026-08-21T01:19:42.607Z",
+      "gitRev": null
+    },
+    "ID_DUPLICADO::ai-customer-service::US-001": {
+      "codigo": "ID_DUPLICADO",
+      "feature": "ai-customer-service",
+      "ref": "US-001",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T02:40:07.696Z",
+      "ultimaVez": "2026-08-20T02:40:07.700Z",
+      "gitRev": null
+    },
+    "ID_DUPLICADO::ai-customer-service::AC-001": {
+      "codigo": "ID_DUPLICADO",
+      "feature": "ai-customer-service",
+      "ref": "AC-001",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T02:40:07.700Z",
+      "ultimaVez": "2026-08-20T02:40:07.700Z",
+      "gitRev": null
+    },
+    "ID_DUPLICADO::ai-customer-service::AC-005": {
+      "codigo": "ID_DUPLICADO",
+      "feature": "ai-customer-service",
+      "ref": "AC-005",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T02:40:07.700Z",
+      "ultimaVez": "2026-08-20T02:40:07.700Z",
+      "gitRev": null
+    },
+    "ID_DUPLICADO::ai-customer-service::US-002": {
+      "codigo": "ID_DUPLICADO",
+      "feature": "ai-customer-service",
+      "ref": "US-002",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T02:40:07.700Z",
+      "ultimaVez": "2026-08-20T02:40:07.700Z",
+      "gitRev": null
+    },
+    "ID_DUPLICADO::ai-customer-service::AC-002": {
+      "codigo": "ID_DUPLICADO",
+      "feature": "ai-customer-service",
+      "ref": "AC-002",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T02:40:07.700Z",
+      "ultimaVez": "2026-08-20T02:40:07.700Z",
+      "gitRev": null
+    },
+    "ID_DUPLICADO::ai-customer-service::AC-003": {
+      "codigo": "ID_DUPLICADO",
+      "feature": "ai-customer-service",
+      "ref": "AC-003",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T02:40:07.700Z",
+      "ultimaVez": "2026-08-20T02:40:07.700Z",
+      "gitRev": null
+    },
+    "ID_DUPLICADO::ai-customer-service::US-003": {
+      "codigo": "ID_DUPLICADO",
+      "feature": "ai-customer-service",
+      "ref": "US-003",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T02:40:07.700Z",
+      "ultimaVez": "2026-08-20T02:40:07.700Z",
+      "gitRev": null
+    },
+    "ID_DUPLICADO::ai-customer-service::AC-004": {
+      "codigo": "ID_DUPLICADO",
+      "feature": "ai-customer-service",
+      "ref": "AC-004",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T02:40:07.700Z",
+      "ultimaVez": "2026-08-20T02:40:07.700Z",
+      "gitRev": null
+    },
+    "ID_DUPLICADO::ai-customer-service::US-004": {
+      "codigo": "ID_DUPLICADO",
+      "feature": "ai-customer-service",
+      "ref": "US-004",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T02:40:07.700Z",
+      "ultimaVez": "2026-08-20T02:40:07.700Z",
+      "gitRev": null
+    },
+    "ID_DUPLICADO::ai-customer-service::AC-006": {
+      "codigo": "ID_DUPLICADO",
+      "feature": "ai-customer-service",
+      "ref": "AC-006",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T02:40:07.700Z",
+      "ultimaVez": "2026-08-20T02:40:07.700Z",
+      "gitRev": null
+    },
+    "ID_DUPLICADO::ai-customer-service::AC-007": {
+      "codigo": "ID_DUPLICADO",
+      "feature": "ai-customer-service",
+      "ref": "AC-007",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T02:40:07.700Z",
+      "ultimaVez": "2026-08-20T02:40:07.700Z",
+      "gitRev": null
+    },
+    "ID_DUPLICADO::ai-customer-service::US-005": {
+      "codigo": "ID_DUPLICADO",
+      "feature": "ai-customer-service",
+      "ref": "US-005",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T02:40:07.700Z",
+      "ultimaVez": "2026-08-20T02:40:07.700Z",
+      "gitRev": null
+    },
+    "ID_DUPLICADO::ai-customer-service::AC-008": {
+      "codigo": "ID_DUPLICADO",
+      "feature": "ai-customer-service",
+      "ref": "AC-008",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T02:40:07.700Z",
+      "ultimaVez": "2026-08-20T02:40:07.700Z",
+      "gitRev": null
+    },
+    "ID_DUPLICADO::ai-customer-service::AC-009": {
+      "codigo": "ID_DUPLICADO",
+      "feature": "ai-customer-service",
+      "ref": "AC-009",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T02:40:07.700Z",
+      "ultimaVez": "2026-08-20T02:40:07.700Z",
+      "gitRev": null
+    },
+    "ID_DUPLICADO::ai-customer-service::AC-010": {
+      "codigo": "ID_DUPLICADO",
+      "feature": "ai-customer-service",
+      "ref": "AC-010",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T02:40:07.700Z",
+      "ultimaVez": "2026-08-20T02:40:07.700Z",
+      "gitRev": null
+    },
+    "ID_DUPLICADO::ai-customer-service::AC-011": {
+      "codigo": "ID_DUPLICADO",
+      "feature": "ai-customer-service",
+      "ref": "AC-011",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T02:40:07.700Z",
+      "ultimaVez": "2026-08-20T02:40:07.700Z",
+      "gitRev": null
+    },
+    "ID_DUPLICADO::ai-customer-service::AC-012": {
+      "codigo": "ID_DUPLICADO",
+      "feature": "ai-customer-service",
+      "ref": "AC-012",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T02:40:07.700Z",
+      "ultimaVez": "2026-08-20T02:40:07.700Z",
+      "gitRev": null
+    },
+    "ID_DUPLICADO::ai-customer-service::AC-013": {
+      "codigo": "ID_DUPLICADO",
+      "feature": "ai-customer-service",
+      "ref": "AC-013",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T02:40:07.700Z",
+      "ultimaVez": "2026-08-20T02:40:07.700Z",
+      "gitRev": null
+    },
+    "ID_DUPLICADO::ai-customer-service::AC-014": {
+      "codigo": "ID_DUPLICADO",
+      "feature": "ai-customer-service",
+      "ref": "AC-014",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T02:40:07.700Z",
+      "ultimaVez": "2026-08-20T02:40:07.700Z",
+      "gitRev": null
+    },
+    "ID_DUPLICADO::ai-customer-service::AC-015": {
+      "codigo": "ID_DUPLICADO",
+      "feature": "ai-customer-service",
+      "ref": "AC-015",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T02:40:07.700Z",
+      "ultimaVez": "2026-08-20T02:40:07.700Z",
+      "gitRev": null
+    },
+    "ID_DUPLICADO::ai-customer-service::US-006": {
+      "codigo": "ID_DUPLICADO",
+      "feature": "ai-customer-service",
+      "ref": "US-006",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T02:40:07.700Z",
+      "ultimaVez": "2026-08-20T02:40:07.700Z",
+      "gitRev": null
+    },
+    "ID_DUPLICADO::ai-customer-service::AC-016": {
+      "codigo": "ID_DUPLICADO",
+      "feature": "ai-customer-service",
+      "ref": "AC-016",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T02:40:07.700Z",
+      "ultimaVez": "2026-08-20T02:40:07.700Z",
+      "gitRev": null
+    },
+    "ID_DUPLICADO::ai-customer-service::US-007": {
+      "codigo": "ID_DUPLICADO",
+      "feature": "ai-customer-service",
+      "ref": "US-007",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T02:40:07.700Z",
+      "ultimaVez": "2026-08-20T02:40:07.700Z",
+      "gitRev": null
+    },
+    "ID_DUPLICADO::ai-customer-service::ASM-001": {
+      "codigo": "ID_DUPLICADO",
+      "feature": "ai-customer-service",
+      "ref": "ASM-001",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T02:40:07.700Z",
+      "ultimaVez": "2026-08-20T02:40:07.700Z",
+      "gitRev": null
+    },
+    "ID_DUPLICADO::ai-customer-service::ASM-002": {
+      "codigo": "ID_DUPLICADO",
+      "feature": "ai-customer-service",
+      "ref": "ASM-002",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T02:40:07.700Z",
+      "ultimaVez": "2026-08-20T02:40:07.700Z",
+      "gitRev": null
+    },
+    "ID_DUPLICADO::ai-customer-service::Q-001": {
+      "codigo": "ID_DUPLICADO",
+      "feature": "ai-customer-service",
+      "ref": "Q-001",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T02:40:07.700Z",
+      "ultimaVez": "2026-08-20T02:40:07.700Z",
+      "gitRev": null
+    },
+    "ID_DUPLICADO::ai-customer-service::Q-002": {
+      "codigo": "ID_DUPLICADO",
+      "feature": "ai-customer-service",
+      "ref": "Q-002",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T02:40:07.700Z",
+      "ultimaVez": "2026-08-20T02:40:07.700Z",
+      "gitRev": null
+    },
+    "ID_DUPLICADO::ai-customer-service::Q-003": {
+      "codigo": "ID_DUPLICADO",
+      "feature": "ai-customer-service",
+      "ref": "Q-003",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T02:40:07.700Z",
+      "ultimaVez": "2026-08-20T02:40:07.700Z",
+      "gitRev": null
+    },
+    "ID_DUPLICADO::ai-customer-service::Q-004": {
+      "codigo": "ID_DUPLICADO",
+      "feature": "ai-customer-service",
+      "ref": "Q-004",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T02:40:07.700Z",
+      "ultimaVez": "2026-08-20T02:40:07.700Z",
+      "gitRev": null
+    },
+    "STATUS_INVALIDO::ai-agent-runtime::.spec/features/ai-agent-runtime/spec.md": {
+      "codigo": "STATUS_INVALIDO",
+      "feature": "ai-agent-runtime",
+      "ref": ".spec/features/ai-agent-runtime/spec.md",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T02:40:07.700Z",
+      "ultimaVez": "2026-08-20T02:40:07.700Z",
+      "gitRev": null
+    },
+    "ASM_STATUS_INVALIDO::ai-agent-runtime::ASM-001": {
+      "codigo": "ASM_STATUS_INVALIDO",
+      "feature": "ai-agent-runtime",
+      "ref": "ASM-001",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T02:40:07.700Z",
+      "ultimaVez": "2026-08-20T02:40:07.700Z",
+      "gitRev": null
+    },
+    "ASM_STATUS_INVALIDO::ai-agent-runtime::ASM-002": {
+      "codigo": "ASM_STATUS_INVALIDO",
+      "feature": "ai-agent-runtime",
+      "ref": "ASM-002",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T02:40:07.700Z",
+      "ultimaVez": "2026-08-20T02:40:07.700Z",
+      "gitRev": null
+    },
+    "ARQUIVO_INEXISTENTE::ai-agent-runtime::T-001": {
+      "codigo": "ARQUIVO_INEXISTENTE",
+      "feature": "ai-agent-runtime",
+      "ref": "T-001",
+      "ocorrencias": 8,
+      "primeiraVez": "2026-08-20T02:40:07.700Z",
+      "ultimaVez": "2026-08-20T02:40:42.979Z",
+      "gitRev": null
+    },
+    "ARQUIVO_INEXISTENTE::ai-agent-runtime::T-002": {
+      "codigo": "ARQUIVO_INEXISTENTE",
+      "feature": "ai-agent-runtime",
+      "ref": "T-002",
+      "ocorrencias": 6,
+      "primeiraVez": "2026-08-20T02:40:07.700Z",
+      "ultimaVez": "2026-08-20T02:40:42.979Z",
+      "gitRev": null
+    },
+    "ARQUIVO_INEXISTENTE::ai-agent-runtime::T-003": {
+      "codigo": "ARQUIVO_INEXISTENTE",
+      "feature": "ai-agent-runtime",
+      "ref": "T-003",
+      "ocorrencias": 6,
+      "primeiraVez": "2026-08-20T02:40:07.700Z",
+      "ultimaVez": "2026-08-20T02:40:42.979Z",
+      "gitRev": null
+    },
+    "ARQUIVO_INEXISTENTE::ai-agent-runtime::T-004": {
+      "codigo": "ARQUIVO_INEXISTENTE",
+      "feature": "ai-agent-runtime",
+      "ref": "T-004",
+      "ocorrencias": 6,
+      "primeiraVez": "2026-08-20T02:40:07.700Z",
+      "ultimaVez": "2026-08-20T02:40:42.979Z",
+      "gitRev": null
+    },
+    "ARQUIVO_INEXISTENTE::ai-agent-runtime::T-005": {
+      "codigo": "ARQUIVO_INEXISTENTE",
+      "feature": "ai-agent-runtime",
+      "ref": "T-005",
+      "ocorrencias": 4,
+      "primeiraVez": "2026-08-20T02:40:07.700Z",
+      "ultimaVez": "2026-08-20T02:40:42.979Z",
+      "gitRev": null
+    },
+    "AC_SEM_PROVA::ai-agent-runtime::AC-001": {
+      "codigo": "AC_SEM_PROVA",
+      "feature": "ai-agent-runtime",
+      "ref": "AC-001",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T02:40:07.700Z",
+      "ultimaVez": "2026-08-20T02:40:07.700Z",
+      "gitRev": null
+    },
+    "AC_SEM_PROVA::ai-agent-runtime::AC-002": {
+      "codigo": "AC_SEM_PROVA",
+      "feature": "ai-agent-runtime",
+      "ref": "AC-002",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T02:40:07.700Z",
+      "ultimaVez": "2026-08-20T02:40:07.700Z",
+      "gitRev": null
+    },
+    "AC_SEM_PROVA::ai-agent-runtime::AC-003": {
+      "codigo": "AC_SEM_PROVA",
+      "feature": "ai-agent-runtime",
+      "ref": "AC-003",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T02:40:07.700Z",
+      "ultimaVez": "2026-08-20T02:40:07.700Z",
+      "gitRev": null
+    },
+    "AC_SEM_PROVA::ai-agent-runtime::AC-004": {
+      "codigo": "AC_SEM_PROVA",
+      "feature": "ai-agent-runtime",
+      "ref": "AC-004",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T02:40:07.700Z",
+      "ultimaVez": "2026-08-20T02:40:07.700Z",
+      "gitRev": null
+    },
+    "AC_SEM_PROVA::ai-agent-runtime::AC-005": {
+      "codigo": "AC_SEM_PROVA",
+      "feature": "ai-agent-runtime",
+      "ref": "AC-005",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T02:40:07.700Z",
+      "ultimaVez": "2026-08-20T02:40:07.700Z",
+      "gitRev": null
+    },
+    "AC_SEM_PROVA::ai-agent-runtime::AC-006": {
+      "codigo": "AC_SEM_PROVA",
+      "feature": "ai-agent-runtime",
+      "ref": "AC-006",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T02:40:07.700Z",
+      "ultimaVez": "2026-08-20T02:40:07.700Z",
+      "gitRev": null
+    },
+    "AC_SEM_PROVA::ai-agent-runtime::AC-007": {
+      "codigo": "AC_SEM_PROVA",
+      "feature": "ai-agent-runtime",
+      "ref": "AC-007",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T02:40:07.700Z",
+      "ultimaVez": "2026-08-20T02:40:07.700Z",
+      "gitRev": null
+    },
+    "AC_SEM_PROVA::ai-agent-runtime::AC-008": {
+      "codigo": "AC_SEM_PROVA",
+      "feature": "ai-agent-runtime",
+      "ref": "AC-008",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T02:40:07.700Z",
+      "ultimaVez": "2026-08-20T02:40:07.700Z",
+      "gitRev": null
+    },
+    "AC_SEM_PROVA::ai-agent-runtime::AC-009": {
+      "codigo": "AC_SEM_PROVA",
+      "feature": "ai-agent-runtime",
+      "ref": "AC-009",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T02:40:07.700Z",
+      "ultimaVez": "2026-08-20T02:40:07.700Z",
+      "gitRev": null
+    },
+    "AC_SEM_PROVA::ai-agent-runtime::AC-010": {
+      "codigo": "AC_SEM_PROVA",
+      "feature": "ai-agent-runtime",
+      "ref": "AC-010",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T02:40:07.700Z",
+      "ultimaVez": "2026-08-20T02:40:07.700Z",
+      "gitRev": null
+    },
+    "AC_SEM_PROVA::ai-agent-runtime::AC-011": {
+      "codigo": "AC_SEM_PROVA",
+      "feature": "ai-agent-runtime",
+      "ref": "AC-011",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T02:40:07.700Z",
+      "ultimaVez": "2026-08-20T02:40:07.700Z",
+      "gitRev": null
+    },
+    "AC_SEM_PROVA::ai-agent-runtime::AC-012": {
+      "codigo": "AC_SEM_PROVA",
+      "feature": "ai-agent-runtime",
+      "ref": "AC-012",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T02:40:07.700Z",
+      "ultimaVez": "2026-08-20T02:40:07.700Z",
+      "gitRev": null
+    },
+    "AC_SEM_PROVA::ai-agent-runtime::AC-013": {
+      "codigo": "AC_SEM_PROVA",
+      "feature": "ai-agent-runtime",
+      "ref": "AC-013",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T02:40:07.700Z",
+      "ultimaVez": "2026-08-20T02:40:07.700Z",
+      "gitRev": null
+    },
+    "AC_SEM_PROVA::ai-agent-runtime::AC-014": {
+      "codigo": "AC_SEM_PROVA",
+      "feature": "ai-agent-runtime",
+      "ref": "AC-014",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T02:40:07.700Z",
+      "ultimaVez": "2026-08-20T02:40:07.700Z",
+      "gitRev": null
+    },
+    "AC_SEM_PROVA::ai-agent-runtime::AC-015": {
+      "codigo": "AC_SEM_PROVA",
+      "feature": "ai-agent-runtime",
+      "ref": "AC-015",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T02:40:07.700Z",
+      "ultimaVez": "2026-08-20T02:40:07.700Z",
+      "gitRev": null
+    },
+    "AC_SEM_PROVA::ai-agent-runtime::AC-016": {
+      "codigo": "AC_SEM_PROVA",
+      "feature": "ai-agent-runtime",
+      "ref": "AC-016",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T02:40:07.700Z",
+      "ultimaVez": "2026-08-20T02:40:07.700Z",
+      "gitRev": null
+    },
+    "TASK_CONCLUIDA_SEM_PROVA::ai-customer-service::T-005": {
+      "codigo": "TASK_CONCLUIDA_SEM_PROVA",
+      "feature": "ai-customer-service",
+      "ref": "T-005",
+      "ocorrencias": 8,
+      "primeiraVez": "2026-08-20T02:40:07.700Z",
+      "ultimaVez": "2026-08-20T02:40:07.700Z",
+      "gitRev": null
+    },
+    "TASK_CONCLUIDA_SEM_PROVA::ai-customer-service::T-006": {
+      "codigo": "TASK_CONCLUIDA_SEM_PROVA",
+      "feature": "ai-customer-service",
+      "ref": "T-006",
+      "ocorrencias": 4,
+      "primeiraVez": "2026-08-20T02:40:07.700Z",
+      "ultimaVez": "2026-08-20T02:40:07.700Z",
+      "gitRev": null
+    },
+    "TASK_CONCLUIDA_SEM_PROVA::ai-customer-service::T-007": {
+      "codigo": "TASK_CONCLUIDA_SEM_PROVA",
+      "feature": "ai-customer-service",
+      "ref": "T-007",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-20T02:40:07.700Z",
+      "ultimaVez": "2026-08-20T02:40:07.700Z",
+      "gitRev": null
+    },
+    "TASK_CONCLUIDA_SEM_PROVA::ai-customer-service::T-008": {
+      "codigo": "TASK_CONCLUIDA_SEM_PROVA",
+      "feature": "ai-customer-service",
+      "ref": "T-008",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T02:40:07.700Z",
+      "ultimaVez": "2026-08-20T02:40:07.700Z",
+      "gitRev": null
+    },
+    "TASK_CONCLUIDA_SEM_PROVA::ai-customer-service::T-009": {
+      "codigo": "TASK_CONCLUIDA_SEM_PROVA",
+      "feature": "ai-customer-service",
+      "ref": "T-009",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-20T02:40:07.700Z",
+      "ultimaVez": "2026-08-20T02:40:07.700Z",
+      "gitRev": null
+    },
+    "TASK_CONCLUIDA_SEM_PROVA::ai-customer-service::T-010": {
+      "codigo": "TASK_CONCLUIDA_SEM_PROVA",
+      "feature": "ai-customer-service",
+      "ref": "T-010",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T02:40:07.700Z",
+      "ultimaVez": "2026-08-20T02:40:07.700Z",
+      "gitRev": null
+    },
+    "TASK_CONCLUIDA_SEM_PROVA::ai-customer-service::T-012": {
+      "codigo": "TASK_CONCLUIDA_SEM_PROVA",
+      "feature": "ai-customer-service",
+      "ref": "T-012",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T02:40:07.700Z",
+      "ultimaVez": "2026-08-20T02:40:07.700Z",
+      "gitRev": null
+    },
+    "TASK_CONCLUIDA_SEM_PROVA::ai-customer-service::T-014": {
+      "codigo": "TASK_CONCLUIDA_SEM_PROVA",
+      "feature": "ai-customer-service",
+      "ref": "T-014",
+      "ocorrencias": 4,
+      "primeiraVez": "2026-08-20T02:40:07.700Z",
+      "ultimaVez": "2026-08-20T02:40:07.700Z",
+      "gitRev": null
+    },
+    "ID_DUPLICADO::ai-customer-service::ASM-003": {
+      "codigo": "ID_DUPLICADO",
+      "feature": "ai-customer-service",
+      "ref": "ASM-003",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T02:40:42.976Z",
+      "ultimaVez": "2026-08-20T02:40:42.979Z",
+      "gitRev": null
+    },
+    "ID_DUPLICADO::ai-customer-service::ASM-004": {
+      "codigo": "ID_DUPLICADO",
+      "feature": "ai-customer-service",
+      "ref": "ASM-004",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T02:40:42.979Z",
+      "ultimaVez": "2026-08-20T02:40:42.979Z",
+      "gitRev": null
+    },
+    "Q_ABERTA::ai-agent-runtime::Q-006": {
+      "codigo": "Q_ABERTA",
+      "feature": "ai-agent-runtime",
+      "ref": "Q-006",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T02:40:42.979Z",
+      "ultimaVez": "2026-08-20T02:40:42.979Z",
+      "gitRev": null
+    },
+    "Q_ABERTA::ai-agent-runtime::Q-007": {
+      "codigo": "Q_ABERTA",
+      "feature": "ai-agent-runtime",
+      "ref": "Q-007",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T02:40:42.979Z",
+      "ultimaVez": "2026-08-20T02:40:42.979Z",
+      "gitRev": null
+    },
+    "Q_ABERTA::ai-agent-runtime::Q-008": {
+      "codigo": "Q_ABERTA",
+      "feature": "ai-agent-runtime",
+      "ref": "Q-008",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T02:40:42.979Z",
+      "ultimaVez": "2026-08-20T02:40:42.979Z",
+      "gitRev": null
+    },
+    "Q_ABERTA::ai-agent-runtime::Q-009": {
+      "codigo": "Q_ABERTA",
+      "feature": "ai-agent-runtime",
+      "ref": "Q-009",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T02:40:42.979Z",
+      "ultimaVez": "2026-08-20T02:40:42.979Z",
+      "gitRev": null
+    },
+    "AC_SEM_TESTE::ai-agent-runtime::AC-033": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-agent-runtime",
+      "ref": "AC-033",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T02:40:42.979Z",
+      "ultimaVez": "2026-08-20T02:40:42.979Z",
+      "gitRev": null
+    },
+    "AC_SEM_TESTE::ai-agent-runtime::AC-034": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-agent-runtime",
+      "ref": "AC-034",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T02:40:42.979Z",
+      "ultimaVez": "2026-08-20T02:40:42.979Z",
+      "gitRev": null
+    },
+    "AC_SEM_TESTE::ai-agent-runtime::AC-035": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-agent-runtime",
+      "ref": "AC-035",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T02:40:42.979Z",
+      "ultimaVez": "2026-08-20T02:40:42.979Z",
+      "gitRev": null
+    },
+    "AC_SEM_TESTE::ai-agent-runtime::AC-036": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-agent-runtime",
+      "ref": "AC-036",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T02:40:42.979Z",
+      "ultimaVez": "2026-08-20T02:40:42.979Z",
+      "gitRev": null
+    },
+    "AC_SEM_TESTE::ai-agent-runtime::AC-037": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-agent-runtime",
+      "ref": "AC-037",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T02:40:42.979Z",
+      "ultimaVez": "2026-08-20T02:40:42.979Z",
+      "gitRev": null
+    },
+    "AC_SEM_TESTE::ai-agent-runtime::AC-038": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-agent-runtime",
+      "ref": "AC-038",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T02:40:42.979Z",
+      "ultimaVez": "2026-08-20T02:40:42.979Z",
+      "gitRev": null
+    },
+    "AC_SEM_TESTE::ai-agent-runtime::AC-039": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-agent-runtime",
+      "ref": "AC-039",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T02:40:42.979Z",
+      "ultimaVez": "2026-08-20T02:40:42.979Z",
+      "gitRev": null
+    },
+    "AC_SEM_TESTE::ai-agent-runtime::AC-040": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-agent-runtime",
+      "ref": "AC-040",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T02:40:42.979Z",
+      "ultimaVez": "2026-08-20T02:40:42.979Z",
+      "gitRev": null
+    },
+    "AC_SEM_TESTE::ai-agent-runtime::AC-041": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-agent-runtime",
+      "ref": "AC-041",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T02:40:42.979Z",
+      "ultimaVez": "2026-08-20T02:40:42.979Z",
+      "gitRev": null
+    },
+    "AC_SEM_TESTE::ai-agent-runtime::AC-042": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-agent-runtime",
+      "ref": "AC-042",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T02:40:42.979Z",
+      "ultimaVez": "2026-08-20T02:40:42.979Z",
+      "gitRev": null
+    },
+    "AC_SEM_TESTE::ai-agent-runtime::AC-043": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-agent-runtime",
+      "ref": "AC-043",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T02:40:42.979Z",
+      "ultimaVez": "2026-08-20T02:40:42.979Z",
+      "gitRev": null
+    },
+    "AC_SEM_TESTE::ai-agent-runtime::AC-044": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-agent-runtime",
+      "ref": "AC-044",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T02:40:42.979Z",
+      "ultimaVez": "2026-08-20T02:40:42.979Z",
+      "gitRev": null
+    },
+    "AC_SEM_TESTE::ai-agent-runtime::AC-045": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-agent-runtime",
+      "ref": "AC-045",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T02:40:42.979Z",
+      "ultimaVez": "2026-08-20T02:40:42.979Z",
+      "gitRev": null
+    },
+    "AC_SEM_TESTE::ai-agent-runtime::AC-046": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-agent-runtime",
+      "ref": "AC-046",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T02:40:42.979Z",
+      "ultimaVez": "2026-08-20T02:40:42.979Z",
+      "gitRev": null
+    },
+    "AC_SEM_TESTE::ai-agent-runtime::AC-047": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-agent-runtime",
+      "ref": "AC-047",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T02:40:42.979Z",
+      "ultimaVez": "2026-08-20T02:40:42.979Z",
+      "gitRev": null
+    },
+    "AC_SEM_TESTE::ai-agent-runtime::AC-048": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-agent-runtime",
+      "ref": "AC-048",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T02:40:42.979Z",
+      "ultimaVez": "2026-08-20T02:40:42.979Z",
+      "gitRev": null
+    },
+    "ARQUIVO_ORFAO::—::src/ai_agent_runtime/__pycache__/__init__.cpython-314.pyc": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "src/ai_agent_runtime/__pycache__/__init__.cpython-314.pyc",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T02:43:28.040Z",
+      "ultimaVez": "2026-08-20T02:43:28.040Z",
+      "gitRev": null
+    },
+    "ARQUIVO_ORFAO::—::src/ai_agent_runtime/__pycache__/crm.cpython-314.pyc": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "src/ai_agent_runtime/__pycache__/crm.cpython-314.pyc",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T02:43:28.041Z",
+      "ultimaVez": "2026-08-20T02:43:28.041Z",
+      "gitRev": null
+    },
+    "ARQUIVO_ORFAO::—::src/ai_agent_runtime/__pycache__/graph.cpython-314.pyc": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "src/ai_agent_runtime/__pycache__/graph.cpython-314.pyc",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T02:43:28.041Z",
+      "ultimaVez": "2026-08-20T02:43:28.041Z",
+      "gitRev": null
+    },
+    "ARQUIVO_ORFAO::—::src/ai_agent_runtime/__pycache__/grounding.cpython-314.pyc": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "src/ai_agent_runtime/__pycache__/grounding.cpython-314.pyc",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T02:43:28.041Z",
+      "ultimaVez": "2026-08-20T02:43:28.041Z",
+      "gitRev": null
+    },
+    "ARQUIVO_ORFAO::—::src/ai_agent_runtime/__pycache__/observability.cpython-314.pyc": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "src/ai_agent_runtime/__pycache__/observability.cpython-314.pyc",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T02:43:28.041Z",
+      "ultimaVez": "2026-08-20T02:43:28.041Z",
+      "gitRev": null
+    },
+    "ARQUIVO_ORFAO::—::src/ai_agent_runtime/__pycache__/providers.cpython-314.pyc": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "src/ai_agent_runtime/__pycache__/providers.cpython-314.pyc",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T02:43:28.041Z",
+      "ultimaVez": "2026-08-20T02:43:28.041Z",
+      "gitRev": null
+    },
+    "ARQUIVO_ORFAO::—::src/ai_agent_runtime/__pycache__/retrieval.cpython-314.pyc": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "src/ai_agent_runtime/__pycache__/retrieval.cpython-314.pyc",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T02:43:28.041Z",
+      "ultimaVez": "2026-08-20T02:43:28.041Z",
+      "gitRev": null
+    },
+    "ARQUIVO_ORFAO::—::src/ai_agent_runtime/__pycache__/scheduling.cpython-314.pyc": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "src/ai_agent_runtime/__pycache__/scheduling.cpython-314.pyc",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T02:43:28.041Z",
+      "ultimaVez": "2026-08-20T02:43:28.041Z",
+      "gitRev": null
+    },
+    "ARQUIVO_ORFAO::—::src/ai_agent_runtime/__pycache__/state.cpython-314.pyc": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "src/ai_agent_runtime/__pycache__/state.cpython-314.pyc",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T02:43:28.041Z",
+      "ultimaVez": "2026-08-20T02:43:28.041Z",
+      "gitRev": null
+    },
+    "ARQUIVO_INEXISTENTE::ai-runtime-integrations::T-001": {
+      "codigo": "ARQUIVO_INEXISTENTE",
+      "feature": "ai-runtime-integrations",
+      "ref": "T-001",
+      "ocorrencias": 4,
+      "primeiraVez": "2026-08-20T18:50:21.915Z",
+      "ultimaVez": "2026-08-20T18:50:21.920Z",
+      "gitRev": null
+    },
+    "ARQUIVO_INEXISTENTE::ai-runtime-integrations::T-002": {
+      "codigo": "ARQUIVO_INEXISTENTE",
+      "feature": "ai-runtime-integrations",
+      "ref": "T-002",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-20T18:50:21.920Z",
+      "ultimaVez": "2026-08-20T18:50:21.920Z",
+      "gitRev": null
+    },
+    "ARQUIVO_INEXISTENTE::ai-runtime-integrations::T-003": {
+      "codigo": "ARQUIVO_INEXISTENTE",
+      "feature": "ai-runtime-integrations",
+      "ref": "T-003",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-20T18:50:21.920Z",
+      "ultimaVez": "2026-08-20T18:50:21.920Z",
+      "gitRev": null
+    },
+    "ARQUIVO_INEXISTENTE::ai-runtime-integrations::T-004": {
+      "codigo": "ARQUIVO_INEXISTENTE",
+      "feature": "ai-runtime-integrations",
+      "ref": "T-004",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-20T18:50:21.920Z",
+      "ultimaVez": "2026-08-20T18:50:21.920Z",
+      "gitRev": null
+    },
+    "ARQUIVO_INEXISTENTE::ai-runtime-integrations::T-005": {
+      "codigo": "ARQUIVO_INEXISTENTE",
+      "feature": "ai-runtime-integrations",
+      "ref": "T-005",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-20T18:50:21.920Z",
+      "ultimaVez": "2026-08-20T18:50:21.920Z",
+      "gitRev": null
+    },
+    "AC_SEM_TESTE::ai-runtime-integrations::AC-049": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-runtime-integrations",
+      "ref": "AC-049",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T18:50:21.920Z",
+      "ultimaVez": "2026-08-20T18:50:21.920Z",
+      "gitRev": null
+    },
+    "AC_SEM_TESTE::ai-runtime-integrations::AC-050": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-runtime-integrations",
+      "ref": "AC-050",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T18:50:21.920Z",
+      "ultimaVez": "2026-08-20T18:50:21.920Z",
+      "gitRev": null
+    },
+    "AC_SEM_TESTE::ai-runtime-integrations::AC-051": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-runtime-integrations",
+      "ref": "AC-051",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T18:50:21.920Z",
+      "ultimaVez": "2026-08-20T18:50:21.920Z",
+      "gitRev": null
+    },
+    "AC_SEM_TESTE::ai-runtime-integrations::AC-052": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-runtime-integrations",
+      "ref": "AC-052",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T18:50:21.920Z",
+      "ultimaVez": "2026-08-20T18:50:21.920Z",
+      "gitRev": null
+    },
+    "AC_SEM_TESTE::ai-runtime-integrations::AC-053": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-runtime-integrations",
+      "ref": "AC-053",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T18:50:21.920Z",
+      "ultimaVez": "2026-08-20T18:50:21.920Z",
+      "gitRev": null
+    },
+    "AC_SEM_TESTE::ai-runtime-integrations::AC-054": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-runtime-integrations",
+      "ref": "AC-054",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T18:50:21.920Z",
+      "ultimaVez": "2026-08-20T18:50:21.920Z",
+      "gitRev": null
+    },
+    "AC_SEM_TESTE::ai-runtime-integrations::AC-055": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-runtime-integrations",
+      "ref": "AC-055",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T18:50:21.920Z",
+      "ultimaVez": "2026-08-20T18:50:21.920Z",
+      "gitRev": null
+    },
+    "AC_SEM_TESTE::ai-runtime-integrations::AC-056": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-runtime-integrations",
+      "ref": "AC-056",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T18:50:21.920Z",
+      "ultimaVez": "2026-08-20T18:50:21.920Z",
+      "gitRev": null
+    },
+    "AC_SEM_TESTE::ai-runtime-integrations::AC-057": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-runtime-integrations",
+      "ref": "AC-057",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T18:50:21.920Z",
+      "ultimaVez": "2026-08-20T18:50:21.920Z",
+      "gitRev": null
+    },
+    "AC_SEM_TESTE::ai-runtime-integrations::AC-058": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-runtime-integrations",
+      "ref": "AC-058",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T18:50:21.920Z",
+      "ultimaVez": "2026-08-20T18:50:21.920Z",
+      "gitRev": null
+    },
+    "AC_SEM_TESTE::ai-runtime-integrations::AC-059": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-runtime-integrations",
+      "ref": "AC-059",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T18:50:21.920Z",
+      "ultimaVez": "2026-08-20T18:50:21.920Z",
+      "gitRev": null
+    },
+    "AC_SEM_TESTE::ai-runtime-integrations::AC-060": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-runtime-integrations",
+      "ref": "AC-060",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T18:50:21.920Z",
+      "ultimaVez": "2026-08-20T18:50:21.920Z",
+      "gitRev": null
+    },
+    "AC_SEM_TESTE::ai-runtime-integrations::AC-061": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-runtime-integrations",
+      "ref": "AC-061",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T18:50:21.920Z",
+      "ultimaVez": "2026-08-20T18:50:21.920Z",
+      "gitRev": null
+    },
+    "AC_SEM_TESTE::ai-runtime-integrations::AC-062": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-runtime-integrations",
+      "ref": "AC-062",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T18:50:21.920Z",
+      "ultimaVez": "2026-08-20T18:50:21.920Z",
+      "gitRev": null
+    },
+    "AC_SEM_TESTE::ai-runtime-integrations::AC-063": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-runtime-integrations",
+      "ref": "AC-063",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T18:50:21.920Z",
+      "ultimaVez": "2026-08-20T18:50:21.920Z",
+      "gitRev": null
+    },
+    "AC_SEM_TESTE::ai-runtime-integrations::AC-064": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-runtime-integrations",
+      "ref": "AC-064",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T18:50:21.920Z",
+      "ultimaVez": "2026-08-20T18:50:21.920Z",
+      "gitRev": null
+    },
+    "AC_SEM_TESTE::ai-runtime-integrations::AC-065": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-runtime-integrations",
+      "ref": "AC-065",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T18:50:21.920Z",
+      "ultimaVez": "2026-08-20T18:50:21.920Z",
+      "gitRev": null
+    },
+    "AC_SEM_TESTE::ai-runtime-integrations::AC-066": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-runtime-integrations",
+      "ref": "AC-066",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T18:50:21.920Z",
+      "ultimaVez": "2026-08-20T18:50:21.920Z",
+      "gitRev": null
+    },
+    "VERIFY_OBSOLETO::ai-agent-runtime::—": {
+      "codigo": "VERIFY_OBSOLETO",
+      "feature": "ai-agent-runtime",
+      "ref": "—",
+      "ocorrencias": 7,
+      "primeiraVez": "2026-08-20T18:53:21.874Z",
+      "ultimaVez": "2026-08-21T01:19:42.607Z",
+      "gitRev": null
+    },
+    "ARQUIVO_ORFAO::—::src/ai_agent_runtime/integrations/__init__.py": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "src/ai_agent_runtime/integrations/__init__.py",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T18:53:21.875Z",
+      "ultimaVez": "2026-08-20T18:53:21.875Z",
+      "gitRev": null
+    },
+    "ARQUIVO_INEXISTENTE::ai-agent-evaluation::T-001": {
+      "codigo": "ARQUIVO_INEXISTENTE",
+      "feature": "ai-agent-evaluation",
+      "ref": "T-001",
+      "ocorrencias": 4,
+      "primeiraVez": "2026-08-20T19:37:03.707Z",
+      "ultimaVez": "2026-08-20T19:37:03.707Z",
+      "gitRev": null
+    },
+    "ARQUIVO_INEXISTENTE::ai-agent-evaluation::T-002": {
+      "codigo": "ARQUIVO_INEXISTENTE",
+      "feature": "ai-agent-evaluation",
+      "ref": "T-002",
+      "ocorrencias": 3,
+      "primeiraVez": "2026-08-20T19:37:03.707Z",
+      "ultimaVez": "2026-08-20T19:37:03.707Z",
+      "gitRev": null
+    },
+    "ARQUIVO_INEXISTENTE::ai-agent-evaluation::T-003": {
+      "codigo": "ARQUIVO_INEXISTENTE",
+      "feature": "ai-agent-evaluation",
+      "ref": "T-003",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-20T19:37:03.707Z",
+      "ultimaVez": "2026-08-20T19:37:03.707Z",
+      "gitRev": null
+    },
+    "ARQUIVO_INEXISTENTE::ai-agent-evaluation::T-004": {
+      "codigo": "ARQUIVO_INEXISTENTE",
+      "feature": "ai-agent-evaluation",
+      "ref": "T-004",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-20T19:37:03.707Z",
+      "ultimaVez": "2026-08-20T19:37:03.707Z",
+      "gitRev": null
+    },
+    "ARQUIVO_INEXISTENTE::ai-agent-evaluation::T-005": {
+      "codigo": "ARQUIVO_INEXISTENTE",
+      "feature": "ai-agent-evaluation",
+      "ref": "T-005",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-08-20T19:37:03.707Z",
+      "ultimaVez": "2026-08-20T19:37:03.707Z",
+      "gitRev": null
+    },
+    "ARQUIVO_INEXISTENTE::ai-agent-evaluation::T-006": {
+      "codigo": "ARQUIVO_INEXISTENTE",
+      "feature": "ai-agent-evaluation",
+      "ref": "T-006",
+      "ocorrencias": 3,
+      "primeiraVez": "2026-08-20T19:37:03.707Z",
+      "ultimaVez": "2026-08-20T19:37:03.707Z",
+      "gitRev": null
+    },
+    "AC_SEM_TESTE::ai-agent-evaluation::AC-067": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-agent-evaluation",
+      "ref": "AC-067",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T19:37:03.707Z",
+      "ultimaVez": "2026-08-20T19:37:03.707Z",
+      "gitRev": null
+    },
+    "AC_SEM_TESTE::ai-agent-evaluation::AC-068": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-agent-evaluation",
+      "ref": "AC-068",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T19:37:03.707Z",
+      "ultimaVez": "2026-08-20T19:37:03.707Z",
+      "gitRev": null
+    },
+    "AC_SEM_TESTE::ai-agent-evaluation::AC-069": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-agent-evaluation",
+      "ref": "AC-069",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T19:37:03.707Z",
+      "ultimaVez": "2026-08-20T19:37:03.707Z",
+      "gitRev": null
+    },
+    "AC_SEM_TESTE::ai-agent-evaluation::AC-070": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-agent-evaluation",
+      "ref": "AC-070",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T19:37:03.707Z",
+      "ultimaVez": "2026-08-20T19:37:03.707Z",
+      "gitRev": null
+    },
+    "AC_SEM_TESTE::ai-agent-evaluation::AC-071": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-agent-evaluation",
+      "ref": "AC-071",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T19:37:03.707Z",
+      "ultimaVez": "2026-08-20T19:37:03.707Z",
+      "gitRev": null
+    },
+    "AC_SEM_TESTE::ai-agent-evaluation::AC-072": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-agent-evaluation",
+      "ref": "AC-072",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T19:37:03.707Z",
+      "ultimaVez": "2026-08-20T19:37:03.707Z",
+      "gitRev": null
+    },
+    "AC_SEM_TESTE::ai-agent-evaluation::AC-073": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-agent-evaluation",
+      "ref": "AC-073",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T19:37:03.707Z",
+      "ultimaVez": "2026-08-20T19:37:03.707Z",
+      "gitRev": null
+    },
+    "AC_SEM_TESTE::ai-agent-evaluation::AC-074": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-agent-evaluation",
+      "ref": "AC-074",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T19:37:03.707Z",
+      "ultimaVez": "2026-08-20T19:37:03.707Z",
+      "gitRev": null
+    },
+    "AC_SEM_TESTE::ai-agent-evaluation::AC-075": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-agent-evaluation",
+      "ref": "AC-075",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T19:37:03.707Z",
+      "ultimaVez": "2026-08-20T19:37:03.707Z",
+      "gitRev": null
+    },
+    "AC_SEM_TESTE::ai-agent-evaluation::AC-076": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-agent-evaluation",
+      "ref": "AC-076",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T19:37:03.707Z",
+      "ultimaVez": "2026-08-20T19:37:03.707Z",
+      "gitRev": null
+    },
+    "AC_SEM_TESTE::ai-agent-evaluation::AC-077": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-agent-evaluation",
+      "ref": "AC-077",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T19:37:03.707Z",
+      "ultimaVez": "2026-08-20T19:37:03.707Z",
+      "gitRev": null
+    },
+    "AC_SEM_TESTE::ai-agent-evaluation::AC-078": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-agent-evaluation",
+      "ref": "AC-078",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T19:37:03.707Z",
+      "ultimaVez": "2026-08-20T19:37:03.707Z",
+      "gitRev": null
+    },
+    "AC_SEM_TESTE::ai-agent-evaluation::AC-079": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-agent-evaluation",
+      "ref": "AC-079",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T19:37:03.707Z",
+      "ultimaVez": "2026-08-20T19:37:03.707Z",
+      "gitRev": null
+    },
+    "AC_SEM_TESTE::ai-agent-evaluation::AC-080": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-agent-evaluation",
+      "ref": "AC-080",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T19:37:03.707Z",
+      "ultimaVez": "2026-08-20T19:37:03.707Z",
+      "gitRev": null
+    },
+    "AC_SEM_TESTE::ai-agent-evaluation::AC-081": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-agent-evaluation",
+      "ref": "AC-081",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T19:37:03.707Z",
+      "ultimaVez": "2026-08-20T19:37:03.707Z",
+      "gitRev": null
+    },
+    "AC_SEM_TESTE::ai-agent-evaluation::AC-082": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-agent-evaluation",
+      "ref": "AC-082",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T19:37:03.707Z",
+      "ultimaVez": "2026-08-20T19:37:03.707Z",
+      "gitRev": null
+    },
+    "AC_SEM_TESTE::ai-agent-evaluation::AC-083": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-agent-evaluation",
+      "ref": "AC-083",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T19:37:03.707Z",
+      "ultimaVez": "2026-08-20T19:37:03.707Z",
+      "gitRev": null
+    },
+    "AC_SEM_TESTE::ai-agent-evaluation::AC-084": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-agent-evaluation",
+      "ref": "AC-084",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T19:37:03.707Z",
+      "ultimaVez": "2026-08-20T19:37:03.707Z",
+      "gitRev": null
+    },
+    "AC_SEM_TESTE::ai-agent-evaluation::AC-085": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-agent-evaluation",
+      "ref": "AC-085",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T19:37:03.707Z",
+      "ultimaVez": "2026-08-20T19:37:03.707Z",
+      "gitRev": null
+    },
+    "AC_SEM_TESTE::ai-agent-evaluation::AC-086": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-agent-evaluation",
+      "ref": "AC-086",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T19:37:03.707Z",
+      "ultimaVez": "2026-08-20T19:37:03.707Z",
+      "gitRev": null
+    },
+    "AC_SEM_TESTE::ai-agent-evaluation::AC-087": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-agent-evaluation",
+      "ref": "AC-087",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T19:37:03.707Z",
+      "ultimaVez": "2026-08-20T19:37:03.707Z",
+      "gitRev": null
+    },
+    "AC_SEM_TESTE::ai-agent-evaluation::AC-088": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-agent-evaluation",
+      "ref": "AC-088",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T19:37:03.707Z",
+      "ultimaVez": "2026-08-20T19:37:03.707Z",
+      "gitRev": null
+    },
+    "AC_SEM_TESTE::ai-agent-evaluation::AC-089": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-agent-evaluation",
+      "ref": "AC-089",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T19:37:03.707Z",
+      "ultimaVez": "2026-08-20T19:37:03.707Z",
+      "gitRev": null
+    },
+    "AC_SEM_TESTE::ai-agent-evaluation::AC-090": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-agent-evaluation",
+      "ref": "AC-090",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T19:37:03.707Z",
+      "ultimaVez": "2026-08-20T19:37:03.707Z",
+      "gitRev": null
+    },
+    "AC_SEM_TESTE::ai-agent-evaluation::AC-091": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-agent-evaluation",
+      "ref": "AC-091",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T19:37:03.707Z",
+      "ultimaVez": "2026-08-20T19:37:03.707Z",
+      "gitRev": null
+    },
+    "AC_SEM_TESTE::ai-agent-evaluation::AC-092": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-agent-evaluation",
+      "ref": "AC-092",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T19:37:03.707Z",
+      "ultimaVez": "2026-08-20T19:37:03.707Z",
+      "gitRev": null
+    },
+    "AC_SEM_TESTE::ai-agent-evaluation::AC-093": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-agent-evaluation",
+      "ref": "AC-093",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T19:37:03.707Z",
+      "ultimaVez": "2026-08-20T19:37:03.707Z",
+      "gitRev": null
+    },
+    "AC_SEM_TESTE::ai-agent-evaluation::AC-094": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-agent-evaluation",
+      "ref": "AC-094",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T19:37:03.707Z",
+      "ultimaVez": "2026-08-20T19:37:03.707Z",
+      "gitRev": null
+    },
+    "AC_SEM_TESTE::ai-agent-evaluation::AC-095": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-agent-evaluation",
+      "ref": "AC-095",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T19:37:03.707Z",
+      "ultimaVez": "2026-08-20T19:37:03.707Z",
+      "gitRev": null
+    },
+    "AC_SEM_TESTE::ai-agent-evaluation::AC-096": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-agent-evaluation",
+      "ref": "AC-096",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T19:37:03.707Z",
+      "ultimaVez": "2026-08-20T19:37:03.707Z",
+      "gitRev": null
+    },
+    "AC_SEM_TESTE::ai-agent-evaluation::AC-097": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-agent-evaluation",
+      "ref": "AC-097",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T19:37:03.707Z",
+      "ultimaVez": "2026-08-20T19:37:03.707Z",
+      "gitRev": null
+    },
+    "AC_SEM_TESTE::ai-agent-evaluation::AC-098": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-agent-evaluation",
+      "ref": "AC-098",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T19:37:03.707Z",
+      "ultimaVez": "2026-08-20T19:37:03.707Z",
+      "gitRev": null
+    },
+    "AC_SEM_TESTE::ai-agent-evaluation::AC-099": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-agent-evaluation",
+      "ref": "AC-099",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-20T19:37:03.707Z",
+      "ultimaVez": "2026-08-20T19:37:03.707Z",
+      "gitRev": null
+    },
+    "VERIFY_OBSOLETO::ai-runtime-integrations::—": {
+      "codigo": "VERIFY_OBSOLETO",
+      "feature": "ai-runtime-integrations",
+      "ref": "—",
+      "ocorrencias": 6,
+      "primeiraVez": "2026-08-20T19:42:35.889Z",
+      "ultimaVez": "2026-08-21T01:19:42.607Z",
+      "gitRev": null
+    },
+    "VERIFY_OBSOLETO::ai-agent-evaluation::—": {
+      "codigo": "VERIFY_OBSOLETO",
+      "feature": "ai-agent-evaluation",
+      "ref": "—",
+      "ocorrencias": 5,
+      "primeiraVez": "2026-08-20T20:13:47.439Z",
+      "ultimaVez": "2026-08-21T01:19:42.600Z",
+      "gitRev": null
+    },
+    "VERIFY_OBSOLETO::ai-agent-live-sandbox::—": {
+      "codigo": "VERIFY_OBSOLETO",
+      "feature": "ai-agent-live-sandbox",
+      "ref": "—",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-08-21T01:19:42.607Z",
+      "ultimaVez": "2026-08-21T01:19:42.607Z",
+      "gitRev": null
+    }
+  }
+}

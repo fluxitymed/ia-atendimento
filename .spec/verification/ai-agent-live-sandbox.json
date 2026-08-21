@@ -1,0 +1,132 @@
+{
+  "feature": "ai-agent-live-sandbox",
+  "timestamp": "2026-08-21T01:19:55.335Z",
+  "gitRev": null,
+  "command": "node --test --test-reporter=tap",
+  "reporter": "tap",
+  "exitCode": 0,
+  "testsParsed": 59,
+  "results": {
+    "AC-100": {
+      "status": "pass",
+      "testName": "@spec:AC-100 @spec:AC-101 @spec:AC-102 @spec:AC-103 sandbox config is opt-in, env-only, and reports missing credentials safely",
+      "method": "tap"
+    },
+    "AC-101": {
+      "status": "pass",
+      "testName": "@spec:AC-100 @spec:AC-101 @spec:AC-102 @spec:AC-103 sandbox config is opt-in, env-only, and reports missing credentials safely",
+      "method": "tap"
+    },
+    "AC-102": {
+      "status": "pass",
+      "testName": "@spec:AC-100 @spec:AC-101 @spec:AC-102 @spec:AC-103 sandbox config is opt-in, env-only, and reports missing credentials safely",
+      "method": "tap"
+    },
+    "AC-103": {
+      "status": "pass",
+      "testName": "@spec:AC-100 @spec:AC-101 @spec:AC-102 @spec:AC-103 sandbox config is opt-in, env-only, and reports missing credentials safely",
+      "method": "tap"
+    },
+    "AC-104": {
+      "status": "pass",
+      "testName": "@spec:AC-104 @spec:AC-105 @spec:AC-106 runner command reports implemented/blocked states and usage fields without live calls",
+      "method": "tap"
+    },
+    "AC-105": {
+      "status": "pass",
+      "testName": "@spec:AC-104 @spec:AC-105 @spec:AC-106 runner command reports implemented/blocked states and usage fields without live calls",
+      "method": "tap"
+    },
+    "AC-106": {
+      "status": "pass",
+      "testName": "@spec:AC-104 @spec:AC-105 @spec:AC-106 runner command reports implemented/blocked states and usage fields without live calls",
+      "method": "tap"
+    },
+    "AC-107": {
+      "status": "pass",
+      "testName": "@spec:AC-107 @spec:AC-108 OpenAI smoke uses approved Responses payload and redacts auth failures",
+      "method": "tap"
+    },
+    "AC-108": {
+      "status": "pass",
+      "testName": "@spec:AC-107 @spec:AC-108 OpenAI smoke uses approved Responses payload and redacts auth failures",
+      "method": "tap"
+    },
+    "AC-109": {
+      "status": "pass",
+      "testName": "@spec:AC-109 @spec:AC-110 @spec:AC-111 @spec:AC-112 Supabase plan uses sandbox dataset, migration, scenarios, and gap report",
+      "method": "tap"
+    },
+    "AC-110": {
+      "status": "pass",
+      "testName": "@spec:AC-109 @spec:AC-110 @spec:AC-111 @spec:AC-112 Supabase plan uses sandbox dataset, migration, scenarios, and gap report",
+      "method": "tap"
+    },
+    "AC-111": {
+      "status": "pass",
+      "testName": "@spec:AC-109 @spec:AC-110 @spec:AC-111 @spec:AC-112 Supabase plan uses sandbox dataset, migration, scenarios, and gap report",
+      "method": "tap"
+    },
+    "AC-112": {
+      "status": "pass",
+      "testName": "@spec:AC-109 @spec:AC-110 @spec:AC-111 @spec:AC-112 Supabase plan uses sandbox dataset, migration, scenarios, and gap report",
+      "method": "tap"
+    },
+    "AC-113": {
+      "status": "pass",
+      "testName": "@spec:AC-113 @spec:AC-114 grounding and prompt-injection live scenarios are prepared for deterministic protection",
+      "method": "tap"
+    },
+    "AC-114": {
+      "status": "pass",
+      "testName": "@spec:AC-113 @spec:AC-114 grounding and prompt-injection live scenarios are prepared for deterministic protection",
+      "method": "tap"
+    },
+    "AC-115": {
+      "status": "pass",
+      "testName": "@spec:AC-115 @spec:AC-116 @spec:AC-117 Google Calendar sandbox plan keeps timezone, scheduling guard, and cleanup",
+      "method": "tap"
+    },
+    "AC-116": {
+      "status": "pass",
+      "testName": "@spec:AC-115 @spec:AC-116 @spec:AC-117 Google Calendar sandbox plan keeps timezone, scheduling guard, and cleanup",
+      "method": "tap"
+    },
+    "AC-117": {
+      "status": "pass",
+      "testName": "@spec:AC-115 @spec:AC-116 @spec:AC-117 Google Calendar sandbox plan keeps timezone, scheduling guard, and cleanup",
+      "method": "tap"
+    },
+    "AC-118": {
+      "status": "pass",
+      "testName": "@spec:AC-118 @spec:AC-119 LangSmith sandbox uses redaction and local audit survives without external observer",
+      "method": "tap"
+    },
+    "AC-119": {
+      "status": "pass",
+      "testName": "@spec:AC-118 @spec:AC-119 LangSmith sandbox uses redaction and local audit survives without external observer",
+      "method": "tap"
+    },
+    "AC-120": {
+      "status": "pass",
+      "testName": "@spec:AC-120 @spec:AC-121 Google OAuth utility is sandbox-only and requests only minimal calendar scopes",
+      "method": "tap"
+    },
+    "AC-121": {
+      "status": "pass",
+      "testName": "@spec:AC-120 @spec:AC-121 Google OAuth utility is sandbox-only and requests only minimal calendar scopes",
+      "method": "tap"
+    },
+    "AC-122": {
+      "status": "pass",
+      "testName": "@spec:AC-122 @spec:AC-123 Google OAuth preserves refresh token locally and prints only safe env guidance",
+      "method": "tap"
+    },
+    "AC-123": {
+      "status": "pass",
+      "testName": "@spec:AC-122 @spec:AC-123 Google OAuth preserves refresh token locally and prints only safe env guidance",
+      "method": "tap"
+    }
+  },
+  "principles": {}
+}

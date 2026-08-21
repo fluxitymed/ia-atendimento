@@ -1,0 +1,172 @@
+{
+  "feature": "ai-customer-service",
+  "timestamp": "2026-08-21T01:19:59.068Z",
+  "gitRev": null,
+  "command": "node --test --test-reporter=tap",
+  "reporter": "tap",
+  "exitCode": 0,
+  "testsParsed": 59,
+  "results": {
+    "AC-001": {
+      "status": "pass",
+      "testName": "@spec:AC-001 unsupported relevant factual information requires internal human handoff",
+      "method": "tap"
+    },
+    "AC-005": {
+      "status": "pass",
+      "testName": "@spec:AC-005 grounding rejects final messages with internal retrieval language",
+      "method": "tap"
+    },
+    "AC-002": {
+      "status": "pass",
+      "testName": "@spec:AC-002 @spec:AC-003 @spec:AC-030 procedure existence uses deterministic closed world catalog only",
+      "method": "tap"
+    },
+    "AC-003": {
+      "status": "pass",
+      "testName": "@spec:AC-002 @spec:AC-003 @spec:AC-030 procedure existence uses deterministic closed world catalog only",
+      "method": "tap"
+    },
+    "AC-004": {
+      "status": "pass",
+      "testName": "@spec:AC-004 procedure attributes without authorized evidence require handoff",
+      "method": "tap"
+    },
+    "AC-006": {
+      "status": "pass",
+      "testName": "@spec:AC-006 human handoff preserves conversation context for human continuity",
+      "method": "tap"
+    },
+    "AC-007": {
+      "status": "pass",
+      "testName": "@spec:AC-007 handoff transition message is clinic-configured and patient-safe",
+      "method": "tap"
+    },
+    "AC-008": {
+      "status": "pass",
+      "testName": "@spec:AC-008 @spec:AC-009 @spec:AC-011 retrieval eligibility is status, org, validity, and time bounded",
+      "method": "tap"
+    },
+    "AC-009": {
+      "status": "pass",
+      "testName": "@spec:AC-008 @spec:AC-009 @spec:AC-011 retrieval eligibility is status, org, validity, and time bounded",
+      "method": "tap"
+    },
+    "AC-010": {
+      "status": "pass",
+      "testName": "@spec:AC-010 @spec:AC-022 supersession keeps one substitutive version current",
+      "method": "tap"
+    },
+    "AC-011": {
+      "status": "pass",
+      "testName": "@spec:AC-008 @spec:AC-009 @spec:AC-011 retrieval eligibility is status, org, validity, and time bounded",
+      "method": "tap"
+    },
+    "AC-012": {
+      "status": "pass",
+      "testName": "@spec:AC-012 retrievable chunks expose complete document publication provenance",
+      "method": "tap"
+    },
+    "AC-013": {
+      "status": "pass",
+      "testName": "@spec:AC-013 @spec:AC-021 closed world authority requires mode, completeness, and eligible version",
+      "method": "tap"
+    },
+    "AC-014": {
+      "status": "pass",
+      "testName": "@spec:AC-014 processing failures block publication and remain reprocessable",
+      "method": "tap"
+    },
+    "AC-015": {
+      "status": "pass",
+      "testName": "@spec:AC-015 document prompt injection remains data and cannot override agent controls",
+      "method": "tap"
+    },
+    "AC-016": {
+      "status": "pass",
+      "testName": "@spec:AC-016 document identity and document versions are distinct entities",
+      "method": "tap"
+    },
+    "AC-017": {
+      "status": "pass",
+      "testName": "@spec:AC-017 @spec:AC-018 organization guards reject cross-org or mismatched provenance",
+      "method": "tap"
+    },
+    "AC-018": {
+      "status": "pass",
+      "testName": "@spec:AC-017 @spec:AC-018 organization guards reject cross-org or mismatched provenance",
+      "method": "tap"
+    },
+    "AC-019": {
+      "status": "pass",
+      "testName": "@spec:AC-019 chunk authority is inherited from its document version",
+      "method": "tap"
+    },
+    "AC-020": {
+      "status": "pass",
+      "testName": "@spec:AC-020 technical reindexing keeps the same document version identity",
+      "method": "tap"
+    },
+    "AC-021": {
+      "status": "pass",
+      "testName": "@spec:AC-013 @spec:AC-021 closed world authority requires mode, completeness, and eligible version",
+      "method": "tap"
+    },
+    "AC-022": {
+      "status": "pass",
+      "testName": "@spec:AC-010 @spec:AC-022 supersession keeps one substitutive version current",
+      "method": "tap"
+    },
+    "AC-023": {
+      "status": "pass",
+      "testName": "@spec:AC-023 document knowledge payload rejects individual patient memory",
+      "method": "tap"
+    },
+    "AC-024": {
+      "status": "pass",
+      "testName": "@spec:AC-024 semantic chunks keep entity and attributes together",
+      "method": "tap"
+    },
+    "AC-025": {
+      "status": "pass",
+      "testName": "@spec:AC-025 @spec:AC-028 chunking preserves linked rules, exceptions, negations, and qualifiers",
+      "method": "tap"
+    },
+    "AC-026": {
+      "status": "pass",
+      "testName": "@spec:AC-026 FAQ chunks preserve question and answer together",
+      "method": "tap"
+    },
+    "AC-027": {
+      "status": "pass",
+      "testName": "@spec:AC-027 table row chunks inherit headers required to interpret values",
+      "method": "tap"
+    },
+    "AC-028": {
+      "status": "pass",
+      "testName": "@spec:AC-025 @spec:AC-028 chunking preserves linked rules, exceptions, negations, and qualifiers",
+      "method": "tap"
+    },
+    "AC-029": {
+      "status": "pass",
+      "testName": "@spec:AC-029 inherited context comes only from explicit document structure",
+      "method": "tap"
+    },
+    "AC-030": {
+      "status": "pass",
+      "testName": "@spec:AC-002 @spec:AC-003 @spec:AC-030 procedure existence uses deterministic closed world catalog only",
+      "method": "tap"
+    },
+    "AC-031": {
+      "status": "pass",
+      "testName": "@spec:AC-031 @spec:AC-032 chunking metadata changes do not create a new document version",
+      "method": "tap"
+    },
+    "AC-032": {
+      "status": "pass",
+      "testName": "@spec:AC-031 @spec:AC-032 chunking metadata changes do not create a new document version",
+      "method": "tap"
+    }
+  },
+  "principles": {}
+}

@@ -1,0 +1,102 @@
+{
+  "feature": "ai-runtime-integrations",
+  "timestamp": "2026-08-21T01:20:00.922Z",
+  "gitRev": null,
+  "command": "node --test --test-reporter=tap",
+  "reporter": "tap",
+  "exitCode": 0,
+  "testsParsed": 59,
+  "results": {
+    "AC-049": {
+      "status": "pass",
+      "testName": "@spec:AC-049 @spec:AC-050 config reads environment and env example has no real secrets",
+      "method": "tap"
+    },
+    "AC-050": {
+      "status": "pass",
+      "testName": "@spec:AC-049 @spec:AC-050 config reads environment and env example has no real secrets",
+      "method": "tap"
+    },
+    "AC-051": {
+      "status": "pass",
+      "testName": "@spec:AC-051 @spec:AC-052 @spec:AC-053 migration enables pgvector, org constraints, and no patient memory in knowledge tables",
+      "method": "tap"
+    },
+    "AC-052": {
+      "status": "pass",
+      "testName": "@spec:AC-051 @spec:AC-052 @spec:AC-053 migration enables pgvector, org constraints, and no patient memory in knowledge tables",
+      "method": "tap"
+    },
+    "AC-053": {
+      "status": "pass",
+      "testName": "@spec:AC-051 @spec:AC-052 @spec:AC-053 migration enables pgvector, org constraints, and no patient memory in knowledge tables",
+      "method": "tap"
+    },
+    "AC-054": {
+      "status": "pass",
+      "testName": "@spec:AC-054 @spec:AC-055 @spec:AC-056 Supabase hybrid retrieval filters org and eligibility and keeps grounding required",
+      "method": "tap"
+    },
+    "AC-055": {
+      "status": "pass",
+      "testName": "@spec:AC-054 @spec:AC-055 @spec:AC-056 Supabase hybrid retrieval filters org and eligibility and keeps grounding required",
+      "method": "tap"
+    },
+    "AC-056": {
+      "status": "pass",
+      "testName": "@spec:AC-054 @spec:AC-055 @spec:AC-056 Supabase hybrid retrieval filters org and eligibility and keeps grounding required",
+      "method": "tap"
+    },
+    "AC-057": {
+      "status": "pass",
+      "testName": "@spec:AC-057 @spec:AC-058 @spec:AC-059 @spec:AC-060 @spec:AC-061 OpenAI provider builds Responses requests, handles failures, and traces embeddings",
+      "method": "tap"
+    },
+    "AC-058": {
+      "status": "pass",
+      "testName": "@spec:AC-057 @spec:AC-058 @spec:AC-059 @spec:AC-060 @spec:AC-061 OpenAI provider builds Responses requests, handles failures, and traces embeddings",
+      "method": "tap"
+    },
+    "AC-059": {
+      "status": "pass",
+      "testName": "@spec:AC-057 @spec:AC-058 @spec:AC-059 @spec:AC-060 @spec:AC-061 OpenAI provider builds Responses requests, handles failures, and traces embeddings",
+      "method": "tap"
+    },
+    "AC-060": {
+      "status": "pass",
+      "testName": "@spec:AC-057 @spec:AC-058 @spec:AC-059 @spec:AC-060 @spec:AC-061 OpenAI provider builds Responses requests, handles failures, and traces embeddings",
+      "method": "tap"
+    },
+    "AC-061": {
+      "status": "pass",
+      "testName": "@spec:AC-057 @spec:AC-058 @spec:AC-059 @spec:AC-060 @spec:AC-061 OpenAI provider builds Responses requests, handles failures, and traces embeddings",
+      "method": "tap"
+    },
+    "AC-062": {
+      "status": "pass",
+      "testName": "@spec:AC-062 @spec:AC-063 LangSmith observer redacts and local audit survives failures",
+      "method": "tap"
+    },
+    "AC-063": {
+      "status": "pass",
+      "testName": "@spec:AC-062 @spec:AC-063 LangSmith observer redacts and local audit survives failures",
+      "method": "tap"
+    },
+    "AC-064": {
+      "status": "pass",
+      "testName": "@spec:AC-064 @spec:AC-065 @spec:AC-066 Google Calendar provider is guarded and never invents slots",
+      "method": "tap"
+    },
+    "AC-065": {
+      "status": "pass",
+      "testName": "@spec:AC-064 @spec:AC-065 @spec:AC-066 Google Calendar provider is guarded and never invents slots",
+      "method": "tap"
+    },
+    "AC-066": {
+      "status": "pass",
+      "testName": "@spec:AC-064 @spec:AC-065 @spec:AC-066 Google Calendar provider is guarded and never invents slots",
+      "method": "tap"
+    }
+  },
+  "principles": {}
+}

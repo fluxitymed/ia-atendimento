@@ -1,0 +1,92 @@
+{
+  "feature": "ai-agent-runtime",
+  "timestamp": "2026-08-21T01:19:57.209Z",
+  "gitRev": null,
+  "command": "node --test --test-reporter=tap",
+  "reporter": "tap",
+  "exitCode": 0,
+  "testsParsed": 59,
+  "results": {
+    "AC-033": {
+      "status": "pass",
+      "testName": "@spec:AC-033 @spec:AC-034 @spec:AC-047 @spec:AC-048 runtime state and graph handle handoff without WhatsApp",
+      "method": "tap"
+    },
+    "AC-034": {
+      "status": "pass",
+      "testName": "@spec:AC-033 @spec:AC-034 @spec:AC-047 @spec:AC-048 runtime state and graph handle handoff without WhatsApp",
+      "method": "tap"
+    },
+    "AC-035": {
+      "status": "pass",
+      "testName": "@spec:AC-035 @spec:AC-036 @spec:AC-037 @spec:AC-038 @spec:AC-039 scheduling guard blocks general interest and uses CalendarProvider only when active",
+      "method": "tap"
+    },
+    "AC-036": {
+      "status": "pass",
+      "testName": "@spec:AC-035 @spec:AC-036 @spec:AC-037 @spec:AC-038 @spec:AC-039 scheduling guard blocks general interest and uses CalendarProvider only when active",
+      "method": "tap"
+    },
+    "AC-037": {
+      "status": "pass",
+      "testName": "@spec:AC-035 @spec:AC-036 @spec:AC-037 @spec:AC-038 @spec:AC-039 scheduling guard blocks general interest and uses CalendarProvider only when active",
+      "method": "tap"
+    },
+    "AC-038": {
+      "status": "pass",
+      "testName": "@spec:AC-035 @spec:AC-036 @spec:AC-037 @spec:AC-038 @spec:AC-039 scheduling guard blocks general interest and uses CalendarProvider only when active",
+      "method": "tap"
+    },
+    "AC-039": {
+      "status": "pass",
+      "testName": "@spec:AC-035 @spec:AC-036 @spec:AC-037 @spec:AC-038 @spec:AC-039 scheduling guard blocks general interest and uses CalendarProvider only when active",
+      "method": "tap"
+    },
+    "AC-040": {
+      "status": "pass",
+      "testName": "@spec:AC-040 @spec:AC-041 CRM provider updates only trusted progressive fields",
+      "method": "tap"
+    },
+    "AC-041": {
+      "status": "pass",
+      "testName": "@spec:AC-040 @spec:AC-041 CRM provider updates only trusted progressive fields",
+      "method": "tap"
+    },
+    "AC-042": {
+      "status": "pass",
+      "testName": "@spec:AC-042 @spec:AC-043 @spec:AC-044 hybrid retrieval isolates organization and grounding gates high scores",
+      "method": "tap"
+    },
+    "AC-043": {
+      "status": "pass",
+      "testName": "@spec:AC-042 @spec:AC-043 @spec:AC-044 hybrid retrieval isolates organization and grounding gates high scores",
+      "method": "tap"
+    },
+    "AC-044": {
+      "status": "pass",
+      "testName": "@spec:AC-042 @spec:AC-043 @spec:AC-044 hybrid retrieval isolates organization and grounding gates high scores",
+      "method": "tap"
+    },
+    "AC-045": {
+      "status": "pass",
+      "testName": "@spec:AC-045 @spec:AC-046 operational audit survives optional observer failures",
+      "method": "tap"
+    },
+    "AC-046": {
+      "status": "pass",
+      "testName": "@spec:AC-045 @spec:AC-046 operational audit survives optional observer failures",
+      "method": "tap"
+    },
+    "AC-047": {
+      "status": "pass",
+      "testName": "@spec:AC-033 @spec:AC-034 @spec:AC-047 @spec:AC-048 runtime state and graph handle handoff without WhatsApp",
+      "method": "tap"
+    },
+    "AC-048": {
+      "status": "pass",
+      "testName": "@spec:AC-033 @spec:AC-034 @spec:AC-047 @spec:AC-048 runtime state and graph handle handoff without WhatsApp",
+      "method": "tap"
+    }
+  },
+  "principles": {}
+}

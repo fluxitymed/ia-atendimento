@@ -1,0 +1,177 @@
+{
+  "feature": "ai-agent-evaluation",
+  "timestamp": "2026-08-21T01:19:53.489Z",
+  "gitRev": null,
+  "command": "node --test --test-reporter=tap",
+  "reporter": "tap",
+  "exitCode": 0,
+  "testsParsed": 59,
+  "results": {
+    "AC-067": {
+      "status": "pass",
+      "testName": "@spec:AC-067 @spec:AC-068 @spec:AC-069 evaluation cases, runner, and fictitious dataset are reusable offline",
+      "method": "tap"
+    },
+    "AC-068": {
+      "status": "pass",
+      "testName": "@spec:AC-067 @spec:AC-068 @spec:AC-069 evaluation cases, runner, and fictitious dataset are reusable offline",
+      "method": "tap"
+    },
+    "AC-069": {
+      "status": "pass",
+      "testName": "@spec:AC-067 @spec:AC-068 @spec:AC-069 evaluation cases, runner, and fictitious dataset are reusable offline",
+      "method": "tap"
+    },
+    "AC-070": {
+      "status": "pass",
+      "testName": "@spec:AC-070 @spec:AC-071 metrics report mandatory rates and fail zero-tolerance violations",
+      "method": "tap"
+    },
+    "AC-071": {
+      "status": "pass",
+      "testName": "@spec:AC-070 @spec:AC-071 metrics report mandatory rates and fail zero-tolerance violations",
+      "method": "tap"
+    },
+    "AC-072": {
+      "status": "pass",
+      "testName": "@spec:AC-072 @spec:AC-073 @spec:AC-074 @spec:AC-075 RAG absence and medical knowledge require grounding or handoff",
+      "method": "tap"
+    },
+    "AC-073": {
+      "status": "pass",
+      "testName": "@spec:AC-072 @spec:AC-073 @spec:AC-074 @spec:AC-075 RAG absence and medical knowledge require grounding or handoff",
+      "method": "tap"
+    },
+    "AC-074": {
+      "status": "pass",
+      "testName": "@spec:AC-072 @spec:AC-073 @spec:AC-074 @spec:AC-075 RAG absence and medical knowledge require grounding or handoff",
+      "method": "tap"
+    },
+    "AC-075": {
+      "status": "pass",
+      "testName": "@spec:AC-072 @spec:AC-073 @spec:AC-074 @spec:AC-075 RAG absence and medical knowledge require grounding or handoff",
+      "method": "tap"
+    },
+    "AC-076": {
+      "status": "pass",
+      "testName": "@spec:AC-076 @spec:AC-077 @spec:AC-078 @spec:AC-079 procedure catalog keeps closed-world, fuzzy, and attribute rules distinct",
+      "method": "tap"
+    },
+    "AC-077": {
+      "status": "pass",
+      "testName": "@spec:AC-076 @spec:AC-077 @spec:AC-078 @spec:AC-079 procedure catalog keeps closed-world, fuzzy, and attribute rules distinct",
+      "method": "tap"
+    },
+    "AC-078": {
+      "status": "pass",
+      "testName": "@spec:AC-076 @spec:AC-077 @spec:AC-078 @spec:AC-079 procedure catalog keeps closed-world, fuzzy, and attribute rules distinct",
+      "method": "tap"
+    },
+    "AC-079": {
+      "status": "pass",
+      "testName": "@spec:AC-076 @spec:AC-077 @spec:AC-078 @spec:AC-079 procedure catalog keeps closed-world, fuzzy, and attribute rules distinct",
+      "method": "tap"
+    },
+    "AC-080": {
+      "status": "pass",
+      "testName": "@spec:AC-080 @spec:AC-081 @spec:AC-082 @spec:AC-083 @spec:AC-084 semantic modifiers, conflicts, eligibility, and cross-org isolation are evaluated",
+      "method": "tap"
+    },
+    "AC-081": {
+      "status": "pass",
+      "testName": "@spec:AC-080 @spec:AC-081 @spec:AC-082 @spec:AC-083 @spec:AC-084 semantic modifiers, conflicts, eligibility, and cross-org isolation are evaluated",
+      "method": "tap"
+    },
+    "AC-082": {
+      "status": "pass",
+      "testName": "@spec:AC-080 @spec:AC-081 @spec:AC-082 @spec:AC-083 @spec:AC-084 semantic modifiers, conflicts, eligibility, and cross-org isolation are evaluated",
+      "method": "tap"
+    },
+    "AC-083": {
+      "status": "pass",
+      "testName": "@spec:AC-080 @spec:AC-081 @spec:AC-082 @spec:AC-083 @spec:AC-084 semantic modifiers, conflicts, eligibility, and cross-org isolation are evaluated",
+      "method": "tap"
+    },
+    "AC-084": {
+      "status": "pass",
+      "testName": "@spec:AC-080 @spec:AC-081 @spec:AC-082 @spec:AC-083 @spec:AC-084 semantic modifiers, conflicts, eligibility, and cross-org isolation are evaluated",
+      "method": "tap"
+    },
+    "AC-085": {
+      "status": "pass",
+      "testName": "@spec:AC-085 @spec:AC-086 @spec:AC-087 @spec:AC-088 prompt injection and adversarial grounding cannot override guards",
+      "method": "tap"
+    },
+    "AC-086": {
+      "status": "pass",
+      "testName": "@spec:AC-085 @spec:AC-086 @spec:AC-087 @spec:AC-088 prompt injection and adversarial grounding cannot override guards",
+      "method": "tap"
+    },
+    "AC-087": {
+      "status": "pass",
+      "testName": "@spec:AC-085 @spec:AC-086 @spec:AC-087 @spec:AC-088 prompt injection and adversarial grounding cannot override guards",
+      "method": "tap"
+    },
+    "AC-088": {
+      "status": "pass",
+      "testName": "@spec:AC-085 @spec:AC-086 @spec:AC-087 @spec:AC-088 prompt injection and adversarial grounding cannot override guards",
+      "method": "tap"
+    },
+    "AC-089": {
+      "status": "pass",
+      "testName": "@spec:AC-089 @spec:AC-090 @spec:AC-091 @spec:AC-092 @spec:AC-093 calendar evaluation blocks unauthorized calls and invented availability",
+      "method": "tap"
+    },
+    "AC-090": {
+      "status": "pass",
+      "testName": "@spec:AC-089 @spec:AC-090 @spec:AC-091 @spec:AC-092 @spec:AC-093 calendar evaluation blocks unauthorized calls and invented availability",
+      "method": "tap"
+    },
+    "AC-091": {
+      "status": "pass",
+      "testName": "@spec:AC-089 @spec:AC-090 @spec:AC-091 @spec:AC-092 @spec:AC-093 calendar evaluation blocks unauthorized calls and invented availability",
+      "method": "tap"
+    },
+    "AC-092": {
+      "status": "pass",
+      "testName": "@spec:AC-089 @spec:AC-090 @spec:AC-091 @spec:AC-092 @spec:AC-093 calendar evaluation blocks unauthorized calls and invented availability",
+      "method": "tap"
+    },
+    "AC-093": {
+      "status": "pass",
+      "testName": "@spec:AC-089 @spec:AC-090 @spec:AC-091 @spec:AC-092 @spec:AC-093 calendar evaluation blocks unauthorized calls and invented availability",
+      "method": "tap"
+    },
+    "AC-094": {
+      "status": "pass",
+      "testName": "@spec:AC-094 @spec:AC-095 @spec:AC-096 @spec:AC-097 @spec:AC-098 @spec:AC-099 CRM, handoff, and long conversation state stay progressive and current",
+      "method": "tap"
+    },
+    "AC-095": {
+      "status": "pass",
+      "testName": "@spec:AC-094 @spec:AC-095 @spec:AC-096 @spec:AC-097 @spec:AC-098 @spec:AC-099 CRM, handoff, and long conversation state stay progressive and current",
+      "method": "tap"
+    },
+    "AC-096": {
+      "status": "pass",
+      "testName": "@spec:AC-094 @spec:AC-095 @spec:AC-096 @spec:AC-097 @spec:AC-098 @spec:AC-099 CRM, handoff, and long conversation state stay progressive and current",
+      "method": "tap"
+    },
+    "AC-097": {
+      "status": "pass",
+      "testName": "@spec:AC-094 @spec:AC-095 @spec:AC-096 @spec:AC-097 @spec:AC-098 @spec:AC-099 CRM, handoff, and long conversation state stay progressive and current",
+      "method": "tap"
+    },
+    "AC-098": {
+      "status": "pass",
+      "testName": "@spec:AC-094 @spec:AC-095 @spec:AC-096 @spec:AC-097 @spec:AC-098 @spec:AC-099 CRM, handoff, and long conversation state stay progressive and current",
+      "method": "tap"
+    },
+    "AC-099": {
+      "status": "pass",
+      "testName": "@spec:AC-094 @spec:AC-095 @spec:AC-096 @spec:AC-097 @spec:AC-098 @spec:AC-099 CRM, handoff, and long conversation state stay progressive and current",
+      "method": "tap"
+    }
+  },
+  "principles": {}
+}
