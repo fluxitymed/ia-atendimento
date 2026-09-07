@@ -38,7 +38,7 @@ UUID persistido: dfdcdff0-6d5f-58cc-9a83-2829820b7f8e
 A fonte primaria autorizada para este primeiro cliente de teste e o briefing:
 
 ```text
-/Users/FernandoAndrade/Desktop/IA - TESTES/BRIEFING_IARA_PREENCHIDO_CARVALHO_E_TAVARES.pdf
+/Users/FernandoAndrade/Desktop/IA - TESTES/Briefing_Assistente_Comercial_Dr_Leonardo_Carvalho.pdf
 ```
 
 Nesta etapa, o projeto registra fatos confirmados do briefing no dataset sandbox, mas nao inventa informacao alem dele. O catalogo de procedimentos do Dr. Leonardo permanece `OPEN_WORLD` porque a completude fechada ainda nao foi comprovada. A ausencia de um procedimento no briefing nao autoriza responder `NOT_OFFERED`.
@@ -384,7 +384,7 @@ Como operador do sandbox WhatsApp, quero que o caminho live recupere conheciment
 
 #### AC-216 — Retrieval Dr. Leonardo encontra briefing publicado quando a base suporta
 
-- **Dado** chunks publicados e processados da Clinica Carvalho e Tavares contendo termos do briefing como `implante`, `Scanner Virtuo`, `Hospital da Bahia`, `Matatu` ou `pagamento`
+- **Dado** chunks publicados e processados da Clinica Carvalho e Tavares contendo termos do briefing como `implante`, `Scanner Virtuo`, `Pituba`, `Matatu` ou `pagamento`
 - **Quando** o runtime live recebe mensagens comerciais sobre esses termos
 - **Entao** o retrieval lexical usa termos relevantes da consulta e retorna evidencia autorizada da organizacao do Dr. Leonardo
 
@@ -457,7 +457,7 @@ Como operador do sandbox comercial, quero substituir a organizacao ficticia prin
 
 #### AC-284 — Urgencia clinica exige handoff antes do modelo
 
-- **Dado** mensagem com dor intensa, sangramento, trauma, pos-procedimento, medicacao ou tema clinico sensivel
+- **Dado** mensagem com sangramento apos procedimento, atendimento recente ou implante
 - **Quando** o turno e classificado
 - **Entao** a decisao e `HUMAN_HANDOFF_REQUIRED` antes de chamada ao modelo.
 
@@ -740,15 +740,15 @@ Como operador do sandbox comercial, quero substituir a versao anterior do briefi
 
 - **Dado** o dataset sandbox do Dr. Leonardo
 - **Quando** a fonte documental e inspecionada
-- **Entao** todos os documentos da organizacao usam `BRIEFING_IARA_PREENCHIDO_CARVALHO_E_TAVARES.pdf`
-- **E** a versao do dataset indica `v2`.
+- **Entao** todos os documentos da organizacao usam a fonte authoritative mais recente
+- **E** a versao do dataset indica uma versao current maior que as versoes antigas superseded.
 
 #### AC-345 — Publicacao supersede a versao anterior
 
 - **Dado** a persistencia live no Supabase
 - **Quando** o pipeline publica a nova versao do briefing
-- **Entao** a versao `v1` do mesmo documento fica `SUPERSEDED` e nao processavel
-- **E** apenas a versao `v2` fica `PUBLISHED` e `processing_valid=true` para retrieval current.
+- **Entao** as versoes anteriores do mesmo documento ficam `SUPERSEDED` e nao processaveis
+- **E** apenas a versao mais recente fica `PUBLISHED` e `processing_valid=true` para retrieval current.
 
 #### AC-346 — Avaliacao gratuita responde com grounding
 
@@ -781,6 +781,70 @@ Como operador do sandbox comercial, quero substituir a versao anterior do briefi
 - **Dado** a nova versao do briefing do Dr. Leonardo e documentos de outra organizacao
 - **Quando** o retrieval consulta qualquer termo de avaliacao, implante, lentes ou pagamento
 - **Entao** nenhum chunk de outra organizacao entra como evidencia.
+
+### US-106 — Briefing Dr. Leonardo v3 authoritative para producao
+
+Como operador da Clinica Carvalho e Tavares, quero publicar o briefing `Briefing_Assistente_Comercial_Dr_Leonardo_Carvalho.pdf` como fonte authoritative, para corrigir endereco, sala, agenda, handoff e limites comerciais antes do deploy em producao.
+
+#### AC-436 — Fonte v3 substitui a fonte anterior
+
+- **Dado** a nova fonte `Briefing_Assistente_Comercial_Dr_Leonardo_Carvalho.pdf`
+- **Quando** o dataset e o pipeline de publicacao sao inspecionados
+- **Entao** os documentos Carvalho usam essa fonte e `DATASET_VERSION` indica `v3`.
+
+#### AC-437 — Sala Pituba current e 4022
+
+- **Dado** evidencia current da Clinica Tavares
+- **Quando** o paciente pergunta onde fica a unidade da Pituba ou qual a sala
+- **Entao** o retrieval retorna `Av. Prof. Magalhaes Neto, 1541`, `4 andar`, `Bloco A`, `Pituba` e `sala 4022`, sem recuperar `sala 4020` como current.
+
+#### AC-438 — Agenda especifica exige handoff de confirmacao
+
+- **Dado** que Bruna nao consulta, reserva ou confirma horario especifico
+- **Quando** o paciente pede `Quero marcar para amanha as 10h`
+- **Entao** o runtime produz `HUMAN_HANDOFF_REQUIRED` com motivo de confirmacao de agenda, sem inventar disponibilidade.
+
+#### AC-439 — Pedido generico para falar com Dr. Leonardo nao e handoff automatico
+
+- **Dado** mensagem generica `Quero falar com Dr. Leonardo`
+- **Quando** nao ha pedido de confirmacao de horario nem sangramento pos-procedimento
+- **Entao** o runtime nao cria handoff automatico apenas por esse pedido.
+
+#### AC-440 — Sangramento pos-procedimento continua handoff
+
+- **Dado** mensagem com sangramento apos procedimento, atendimento recente ou implante
+- **Quando** o runtime classifica o turno
+- **Entao** gera `HUMAN_HANDOFF_REQUIRED` antes do modelo, preservando contexto.
+
+#### AC-441 — Convenio nao inventa aceite nem recusa
+
+- **Dado** pergunta `Voces aceitam convenio?`
+- **Quando** a evidencia current apenas registra convenio como objecao frequente
+- **Entao** a resposta nao afirma aceite ou recusa de convenio sem evidencia autorizada.
+
+#### AC-442 — Preco e pagamento nao geram handoff automatico
+
+- **Dado** perguntas sobre preco, formas de pagamento, parcela minima ou deposito antecipado
+- **Quando** ha evidencia current autorizada para a regra comercial
+- **Entao** o runtime pode responder com fatos autorizados sem handoff automatico.
+
+#### AC-443 — Handoff antigo amplo nao permanece authoritative
+
+- **Dado** chunks antigos com gatilhos amplos como dor intensa, inchaco, trauma ou pedido direto do dentista
+- **Quando** a nova versao e publicada
+- **Entao** esses chunks antigos ficam fora do retrieval current e nao guiam a decisao live.
+
+#### AC-444 — Organizacao Carvalho permanece a mesma
+
+- **Dado** `organization_id=dfdcdff0-6d5f-58cc-9a83-2829820b7f8e`
+- **Quando** a nova versao e persistida
+- **Entao** documents, document_versions, chunks e retrieval_index_entries usam esse mesmo `organization_id` e nao criam outra organizacao Carvalho.
+
+#### AC-445 — Consultas de validacao do briefing v3 ficam cobertas
+
+- **Dado** as perguntas de smoke sobre avaliacao, Pituba/sala, implante, pagamento, agenda especifica, falar com Dr. Leonardo, sangramento pos-procedimento e convenio
+- **Quando** os testes de retrieval/runtime rodam
+- **Entao** cada caso retorna o comportamento esperado sem enfraquecer grounding.
 
 ### US-093 — Segundo turno operacional nao morre por falha transitoria de retrieval
 
@@ -1030,7 +1094,7 @@ Como paciente no sandbox Z-API, quero enviar audio pelo WhatsApp e receber respo
 
 #### AC-388 — Urgencia clinica transcrita segue a mesma politica do texto
 
-- **Dado** um audio transcrito com sinal clinico de risco como inchaço relevante em implante
+- **Dado** um audio transcrito com sinal clinico de risco como sangramento apos procedimento ou implante recente
 - **Quando** o logical turn e processado
 - **Entao** a politica atual gera `HUMAN_HANDOFF_REQUIRED` antes de chamada ao modelo quando aplicavel, preservando grounding e sem conduzir clinicamente.
 

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import math
+import re
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
@@ -176,9 +177,12 @@ def _persist_dataset(client: SupabaseRestClient, openai: OpenAIResponsesProvider
     for document in dataset.documents:
         document_id = _uuid(document.id)
         previous_version_id = _uuid(f"{document.id}:v1")
-        version_id = _uuid(f"{document.id}:v2")
-        chunk_id = _uuid(f"{document.id}:chunk:0:v2")
-        index_id = _uuid(f"{document.id}:index:0:v2")
+        intermediate_version_id = _uuid(f"{document.id}:v2")
+        current_version_number = _dataset_version_number(dataset.version)
+        current_version_label = f"v{current_version_number}"
+        current_version_id = _uuid(f"{document.id}:{current_version_label}")
+        chunk_id = _uuid(f"{document.id}:chunk:0:{current_version_label}")
+        index_id = _uuid(f"{document.id}:index:0:{current_version_label}")
         organization_id = org_ids[document.organization_id]
         document_rows.append({
             "id": document_id,
@@ -199,11 +203,25 @@ def _persist_dataset(client: SupabaseRestClient, openai: OpenAIResponsesProvider
             "approved_by": "sandbox",
             "published_by": "sandbox",
         })
+        if current_version_number > 2:
+            superseded_version_rows.append({
+                "id": intermediate_version_id,
+                "organization_id": organization_id,
+                "document_id": document_id,
+                "version_number": 2,
+                "status": "SUPERSEDED",
+                "effective_until": now,
+                "processing_valid": False,
+                "knowledge_mode": document.knowledge_mode,
+                "closed_world_completeness_approved": document.closed_world_completeness_approved,
+                "approved_by": "sandbox",
+                "published_by": "sandbox",
+            })
         version_rows.append({
-            "id": version_id,
+            "id": current_version_id,
             "organization_id": organization_id,
             "document_id": document_id,
-            "version_number": 2,
+            "version_number": current_version_number,
             "status": document.status,
             "processing_valid": True,
             "knowledge_mode": document.knowledge_mode,
@@ -211,13 +229,13 @@ def _persist_dataset(client: SupabaseRestClient, openai: OpenAIResponsesProvider
             "approved_by": "sandbox",
             "published_by": "sandbox",
             "published_at": now,
-            "supersedes_version_id": previous_version_id,
+            "supersedes_version_id": intermediate_version_id if current_version_number > 2 else previous_version_id,
         })
         chunk_rows.append({
             "id": chunk_id,
             "organization_id": organization_id,
             "document_id": document_id,
-            "document_version_id": version_id,
+            "document_version_id": current_version_id,
             "chunk_index": 0,
             "content": document.content,
             "section_path": ["sandbox", document.title],
@@ -232,7 +250,7 @@ def _persist_dataset(client: SupabaseRestClient, openai: OpenAIResponsesProvider
             "organization_id": organization_id,
             "chunk_id": chunk_id,
             "document_id": document_id,
-            "document_version_id": version_id,
+            "document_version_id": current_version_id,
             "embedding": _pgvector(embedding.vector),
             "embedding_model": embedding.model,
             "embedding_version": embedding.embedding_version,
@@ -251,6 +269,11 @@ def _persist_dataset(client: SupabaseRestClient, openai: OpenAIResponsesProvider
         "index_ids": [row["id"] for row in index_rows],
         "version_ids": [row["id"] for row in version_rows],
     }
+
+
+def _dataset_version_number(dataset_version: str) -> int:
+    match = re.search(r"\.v([0-9]+)(?:$|[^0-9])", dataset_version)
+    return int(match.group(1)) if match else 2
 
 
 def _pgvector(vector: list[float]) -> str:

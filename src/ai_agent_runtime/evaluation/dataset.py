@@ -59,22 +59,21 @@ def load_initial_dataset() -> list[EvaluationCase]:
         id="doc-leonardo-commercial",
         organization_id=ORG_LEONARDO,
         content=(
-            "Dr. Leonardo Carvalho, CRO-BA 4123, implantodontista, protesista e periodontista, "
-            "mais de 34 anos de atuacao, mestre em Reabilitacao Oral e especialista em Implantodontia pela Sao Leopoldo Mandic. "
-            "A Clinica Carvalho e Tavares Odontologia Integrada atende presencialmente. Valores dos procedimentos sao informados apos avaliacao."
+            "Dr. Leonardo Carvalho atende na Clinica Carvalho e Tavares Odontologia Integrada. "
+            "Avaliacao inicial gratuita para casos de busca por procedimento. Valores dos tratamentos sao definidos apos avaliacao."
         ),
-        facts=("Dr. Leonardo Carvalho CRO-BA 4123", "mais de 34 anos de atuacao", "valores apos avaliacao"),
+        facts=("Dr. Leonardo Carvalho", "avaliacao inicial gratuita", "valores apos avaliacao"),
         score=0.96,
     )
     leonardo_locations = KnowledgeItem(
         id="doc-leonardo-locations",
         organization_id=ORG_LEONARDO,
         content=(
-            "Clinica Carvalho: Rua Dr. Otaviano Pimenta, 41, Matatu/Brotas, Salvador/BA. "
-            "Clinica Tavares: Hospital da Bahia, Bloco A, 4 andar, sala 4020, Av. Prof. Magalhaes Neto, 1541, Pituba, Salvador/BA. "
+            "Clinica Carvalho: Rua Doutor Otaviano Pimenta, 41, Matatu, Salvador/BA. "
+            "Clinica Tavares: Av. Prof. Magalhaes Neto, 1541, 4 andar, sala 4022, Bloco A, Pituba, Salvador/BA. "
             "Horarios: segunda a sexta, 8h as 19h; sabado, 8h as 12h."
         ),
-        facts=("Matatu/Brotas", "Hospital da Bahia", "segunda a sexta 8h as 19h", "sabado 8h as 12h"),
+        facts=("Matatu", "Pituba", "sala 4022", "segunda a sexta 8h as 19h", "sabado 8h as 12h"),
         score=0.93,
     )
     leonardo_differentials = KnowledgeItem(
@@ -661,8 +660,8 @@ def load_initial_dataset() -> list[EvaluationCase]:
                 decision=EvaluationDecision.CONTINUE,
                 response="Sou da equipe do Dr. Leonardo Carvalho. Pelo que voce contou, faz sentido avaliarmos com cuidado esse dente perdido; a clinica trabalha com Implantodontia, Odontologia digital e recursos como Scanner Virtuo para apoiar o planejamento. Podemos seguir para uma avaliacao?",
                 evidence_ids=("doc-leonardo-commercial", "doc-leonardo-differentials"),
-                claims=("Dr. Leonardo Carvalho CRO-BA 4123", "Scanner Virtuo"),
-                facts=("Dr. Leonardo Carvalho CRO-BA 4123", "Scanner Virtuo"),
+                claims=("Dr. Leonardo Carvalho", "Scanner Virtuo"),
+                facts=("Dr. Leonardo Carvalho", "Scanner Virtuo"),
                 grounding_passed=True,
                 introduced_on_first_contact=True,
                 minimum_discovery_complete=True,
@@ -693,8 +692,8 @@ def load_initial_dataset() -> list[EvaluationCase]:
                 decision=EvaluationDecision.CONTINUE,
                 response="Esse receio e comum. O melhor caminho e avaliar seu caso com o Dr. Leonardo Carvalho para entender o planejamento com seguranca; o que mais te preocupa hoje?",
                 evidence_ids=("doc-leonardo-commercial",),
-                claims=("Dr. Leonardo Carvalho CRO-BA 4123",),
-                facts=("Dr. Leonardo Carvalho CRO-BA 4123",),
+                claims=("Dr. Leonardo Carvalho",),
+                facts=("Dr. Leonardo Carvalho",),
                 grounding_passed=True,
                 objection_handled=True,
                 sales_progressed=True,
@@ -767,7 +766,7 @@ def load_initial_dataset() -> list[EvaluationCase]:
                 response="",
                 grounding_passed=False,
                 outbound_suppressed=True,
-                handoff_context={"reason": "CLINICAL_URGENCY_OR_SENSITIVE_TOPIC", "messages": ["Estou com muita dor e meu implante esta sangrando."], "autonomy_interrupted": True},
+                handoff_context={"reason": "POST_PROCEDURE_BLEEDING", "messages": ["Estou com muita dor e meu implante esta sangrando."], "autonomy_interrupted": True},
             ),
             fictitious_data=False,
         ),
@@ -802,8 +801,8 @@ def load_initial_dataset() -> list[EvaluationCase]:
                 decision=EvaluationDecision.CONTINUE,
                 response="Claro. Vou direto: para implante, o proximo passo seguro e uma avaliacao com o Dr. Leonardo para definir o planejamento.",
                 evidence_ids=("doc-leonardo-commercial",),
-                claims=("Dr. Leonardo Carvalho CRO-BA 4123",),
-                facts=("Dr. Leonardo Carvalho CRO-BA 4123",),
+                claims=("Dr. Leonardo Carvalho",),
+                facts=("Dr. Leonardo Carvalho",),
                 grounding_passed=True,
                 fatigue_response_correct=True,
                 performative_empathy=False,
@@ -813,7 +812,7 @@ def load_initial_dataset() -> list[EvaluationCase]:
         ),
         EvaluationCase(
             id="SALES-026",
-            description="Dr. Leonardo: localizacao usa evidencias de Matatu e Hospital da Bahia sem misturar organizacao.",
+            description="Dr. Leonardo: localizacao usa evidencias atuais de Matatu e Pituba sem misturar organizacao.",
             category="commercial-playbook",
             organization_id=ORG_LEONARDO,
             messages=("Onde fica a clinica?",),
@@ -821,14 +820,14 @@ def load_initial_dataset() -> list[EvaluationCase]:
             tags=("sales",),
             expected=ExpectedOutcome(
                 decision=EvaluationDecision.ANSWER_GROUNDED,
-                expected_facts=("Matatu/Brotas", "Hospital da Bahia"),
+                expected_facts=("Matatu", "Pituba", "sala 4022"),
             ),
             observed=AgentObservedOutput(
                 decision=EvaluationDecision.ANSWER_GROUNDED,
-                response="A Clinica Carvalho fica em Matatu/Brotas e a Clinica Tavares fica no Hospital da Bahia, em Salvador.",
+                response="A Clinica Carvalho fica na Rua Doutor Otaviano Pimenta, 41, Matatu. A Clinica Tavares fica na Av. Prof. Magalhaes Neto, 1541, 4 andar, sala 4022, Bloco A, Pituba.",
                 evidence_ids=("doc-leonardo-locations",),
-                claims=("Matatu/Brotas", "Hospital da Bahia"),
-                facts=("Matatu/Brotas", "Hospital da Bahia"),
+                claims=("Matatu", "Pituba", "sala 4022"),
+                facts=("Matatu", "Pituba", "sala 4022"),
                 grounding_passed=True,
             ),
             fictitious_data=False,

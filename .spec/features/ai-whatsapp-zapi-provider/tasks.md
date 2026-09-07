@@ -88,7 +88,7 @@
 ## T-056 — Migrar sandbox Z-API para Dr. Leonardo Carvalho [concluida]
 - Refs: US-083, AC-204, AC-216, AC-217, AC-280, AC-281, AC-282, AC-283, AC-284, AC-285
 - Arquivos: .spec/features/ai-whatsapp-zapi-provider/spec.md, .spec/features/ai-whatsapp-zapi-provider/tasks.md, .spec/features/ai-whatsapp-zapi-provider/zapi-sandbox.md, src/ai_agent_runtime/sandbox_ids.py, src/ai_agent_runtime/sandbox/dataset.py, src/ai_agent_runtime/sandbox/supabase_smoke.py, src/ai_agent_runtime/sandbox/google_calendar_smoke.py, src/ai_agent_runtime/sandbox/langsmith_smoke.py, src/ai_agent_runtime/sandbox/scenarios.py, src/ai_agent_runtime/whatsapp/zapi.py, src/ai_agent_runtime/whatsapp/zapi_server.py, src/ai_agent_runtime/commercial/playbook.py, src/ai_agent_runtime/evaluation/cases.py, src/ai_agent_runtime/evaluation/dataset.py, src/ai_agent_runtime/evaluation/metrics.py, src/ai_agent_runtime/evaluation/runner.py, .env.example, test/ai-whatsapp-zapi-provider/zapi-runtime.test.js, test/ai-whatsapp-zapi-provider/zapi-provider.test.js, test/ai-agent-live-sandbox/live-sandbox.test.js, test/ai-agent-evaluation/evaluation.test.js
-- Notas: Organizacao ativa do sandbox Z-API passa a ser `sandbox-org-dr-leonardo-carvalho` com UUID deterministico preservado, fonte inicial substituida posteriormente por `BRIEFING_IARA_PREENCHIDO_CARVALHO_E_TAVARES.pdf`, catalogo `OPEN_WORLD`, handoff clinico silencioso e avaliacoes comerciais reais sem dados reais de paciente.
+- Notas: Organizacao ativa do sandbox Z-API passa a ser `sandbox-org-dr-leonardo-carvalho` com UUID deterministico preservado, catalogo `OPEN_WORLD`, handoff clinico silencioso e avaliacoes comerciais reais sem dados reais de paciente.
 
 ## T-057 — Corrigir paridade Supabase live e grounding de configuracao [concluida]
 - Refs: US-085, AC-291, AC-292, AC-293
@@ -113,7 +113,7 @@
 ## T-061 — Publicar briefing v2 do Dr. Leonardo com avaliacao gratuita [concluida]
 - Refs: US-092, AC-344, AC-345, AC-346, AC-347, AC-348, AC-349, AC-350
 - Arquivos: .spec/features/ai-whatsapp-zapi-provider/spec.md, .spec/features/ai-whatsapp-zapi-provider/tasks.md, src/ai_agent_runtime/sandbox_ids.py, src/ai_agent_runtime/sandbox/dataset.py, src/ai_agent_runtime/sandbox/supabase_smoke.py, src/ai_agent_runtime/whatsapp/zapi_server.py, src/ai_agent_runtime/evaluation/dataset.py, test/ai-agent-live-sandbox/live-sandbox.test.js, test/ai-whatsapp-zapi-provider/zapi-runtime.test.js, test/ai-agent-evaluation/evaluation.test.js
-- Notas: Nova fonte `BRIEFING_IARA_PREENCHIDO_CARVALHO_E_TAVARES.pdf` substitui a versao anterior; v1 fica `SUPERSEDED`, v2 fica `PUBLISHED`, avaliacao gratuita para busca por procedimento passa a ser fato autorizado e a ambiguidade antiga e rejeitada.
+- Notas: Fonte intermediaria substituiu a versao anterior; v1 fica `SUPERSEDED`, v2 fica `PUBLISHED`, avaliacao gratuita para busca por procedimento passa a ser fato autorizado e a ambiguidade antiga e rejeitada.
 
 ## T-062 — Corrigir resiliencia de retrieval e segundo turno operacional live [concluida]
 - Refs: US-093, AC-351, AC-352, AC-353, AC-354, AC-355, AC-356, AC-357, AC-358, AC-359
@@ -149,3 +149,9 @@
 - Refs: US-100, AC-411, AC-412, AC-413, AC-414, AC-415, AC-416, AC-417, AC-418, AC-419, AC-420
 - Arquivos: .spec/features/ai-whatsapp-zapi-provider/spec.md, .spec/features/ai-whatsapp-zapi-provider/tasks.md, .spec/features/ai-whatsapp-zapi-provider/render-web-service.md, .env.example, src/ai_agent_runtime/whatsapp/channel.py, src/ai_agent_runtime/whatsapp/adapter.py, src/ai_agent_runtime/whatsapp/zapi_server.py, test/ai-whatsapp-zapi-provider/zapi-runtime.test.js, test/ai-whatsapp-zapi-provider/zapi-webhook.test.js
 - Notas: Binda em `0.0.0.0`, usa `PORT`, expoe `/health`, configura store persistente em `/var/data`, adiciona `AI_INBOUND_ENABLED` e preserva idempotencia/seguranca sem alterar playbook, RAG, grounding, Calendar, CRM, Meta ou Evolution.
+
+## T-073 — Publicar briefing v3 authoritative do Dr. Leonardo [concluida]
+
+- Refs: US-092, US-106, AC-344, AC-345, AC-346, AC-347, AC-348, AC-349, AC-350, AC-436, AC-437, AC-438, AC-439, AC-440, AC-441, AC-442, AC-443, AC-444, AC-445
+- Arquivos: .spec/features/ai-whatsapp-zapi-provider/spec.md, .spec/features/ai-whatsapp-zapi-provider/tasks.md, src/ai_agent_runtime/sandbox_ids.py, src/ai_agent_runtime/sandbox/dataset.py, src/ai_agent_runtime/sandbox/supabase_smoke.py, src/ai_agent_runtime/whatsapp/zapi_server.py, test/ai-agent-live-sandbox/live-sandbox.test.js, test/ai-whatsapp-zapi-provider/zapi-runtime.test.js
+- Notas: Nova fonte `Briefing_Assistente_Comercial_Dr_Leonardo_Carvalho.pdf` substitui a fonte anterior; v3 fica current/PUBLISHED, v1/v2 ficam SUPERSEDED, sala Pituba passa a 4022 e regras Carvalho de agenda/handoff ficam escopadas. Publicacao live via pipeline Supabase/OpenAI embeddings retornou `LIVE_VERIFIED`, com 5 document_versions v3 current/PUBLISHED, 10 versoes antigas superseded/non-current, 5 chunks current da Carvalho e isolamento cross-org validado.

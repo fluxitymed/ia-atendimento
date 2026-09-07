@@ -1,11 +1,11 @@
 {
   "feature": "ai-whatsapp-evolution-provider",
-  "timestamp": "2026-09-07T16:58:35.283Z",
-  "gitRev": "e1d2a48",
+  "timestamp": "2026-09-07T20:55:44.270Z",
+  "gitRev": "b3d127a",
   "command": "node --test --test-reporter=tap",
   "reporter": "tap",
   "exitCode": 0,
-  "testsParsed": 211,
+  "testsParsed": 212,
   "results": {
     "AC-156": {
       "status": "pass",

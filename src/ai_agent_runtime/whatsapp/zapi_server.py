@@ -299,7 +299,7 @@ class OpenAIWhatsAppResponseGenerator:
         if turn_context["unsupported_attribute_reason"]:
             emit("unsupported_attribute_reason", {"reason": turn_context["unsupported_attribute_reason"]})
         if turn_context["handoff_decision"] == "HUMAN_HANDOFF_REQUIRED":
-            handoff_reason = "CLINICAL_URGENCY_OR_SENSITIVE_TOPIC" if turn_context["interpreted_intent"] == "CLINICAL_URGENCY" else "UNSUPPORTED_ATTRIBUTE"
+            handoff_reason = _handoff_reason_for_turn(state.current_message, turn_context["interpreted_intent"])
             emit("unsupported_factual_question", {"decision": "HUMAN_HANDOFF_REQUIRED", "reason": handoff_reason})
             emit("grounding_result", {"passed": False, "mode": "HUMAN_HANDOFF_REQUIRED", "reason": handoff_reason, "requiresEvidence": True})
             state.decision = AgentDecision.HUMAN_HANDOFF_REQUIRED
@@ -1541,6 +1541,9 @@ def _classify_turn_context(
     clinical_handoff = _requires_clinical_handoff(query)
     if clinical_handoff:
         intent = "CLINICAL_URGENCY"
+    scheduling_handoff = _requires_scheduling_handoff(query)
+    if scheduling_handoff:
+        intent = "SCHEDULING_CONFIRMATION"
     requires_evidence = intent in {"ATTRIBUTE_QUERY", "FACTUAL_QUERY"}
     unsupported_attribute = _unsupported_attribute_question(
         query,
@@ -1553,9 +1556,9 @@ def _classify_turn_context(
         "turn_relation": relation,
         "interpreted_intent": intent,
         "conversation_stage": stage,
-        "requires_evidence": requires_evidence or clinical_handoff,
-        "unsupported_attribute_reason": "CLINICAL_URGENCY_OR_SENSITIVE_TOPIC" if clinical_handoff else ("ATTRIBUTE_WITHOUT_AUTHORIZED_EVIDENCE" if unsupported_attribute else None),
-        "handoff_decision": "HUMAN_HANDOFF_REQUIRED" if clinical_handoff or unsupported_attribute else "NONE",
+        "requires_evidence": requires_evidence or clinical_handoff or scheduling_handoff,
+        "unsupported_attribute_reason": _handoff_reason_for_turn(query, intent) if clinical_handoff or scheduling_handoff else ("ATTRIBUTE_WITHOUT_AUTHORIZED_EVIDENCE" if unsupported_attribute else None),
+        "handoff_decision": "HUMAN_HANDOFF_REQUIRED" if clinical_handoff or scheduling_handoff or unsupported_attribute else "NONE",
     }
 
 
@@ -1689,32 +1692,116 @@ def _safe_commercial_gap_bridge_available(query: str, evidence: list[dict[str, A
 
 def _requires_clinical_handoff(query: str) -> bool:
     text = _normalize_text(query)
-    urgent_terms = (
-        "dor intensa",
-        "muita dor",
+    bleeding_terms = (
         "sangramento",
         "sangrando",
-        "inchaco",
-        "inchaço",
-        "inchado",
-        "inchada",
-        "trauma",
-        "dente quebrado",
-        "quebrou o dente",
-        "medicacao",
-        "medicação",
-        "remedio",
-        "remédio",
-        "pos procedimento",
-        "pós procedimento",
-        "pos-procedimento",
-        "pós-procedimento",
-        "rejeicao",
-        "rejeição",
-        "carga imediata",
-        "cirurgia sem corte",
+        "sangra",
+        "sangrou",
     )
-    return any(_contains_term(text, term) and not _is_negated_near(text, term) for term in urgent_terms)
+    recent_procedure_terms = (
+        "procedimento",
+        "atendimento",
+        "consulta",
+        "cirurgia",
+        "implante",
+        "extracao",
+        "extração",
+        "canal",
+        "tratamento",
+        "coloquei",
+        "fiz",
+        "apos",
+        "após",
+        "depois",
+        "ontem",
+        "hoje",
+        "recente",
+    )
+    if not any(_contains_term(text, term) and not _is_negated_near(text, term) for term in bleeding_terms):
+        return False
+    return any(_contains_term(text, term) for term in recent_procedure_terms)
+
+
+def _is_specific_appointment_time_request(query: str) -> bool:
+    text = _normalize_text(query)
+    appointment_terms = (
+        "marcar",
+        "agendar",
+        "agenda",
+        "horario",
+        "horário",
+        "consulta",
+        "avaliacao",
+        "avaliação",
+    )
+    time_terms = (
+        "amanha",
+        "amanhã",
+        "hoje",
+        "segunda",
+        "terca",
+        "terça",
+        "quarta",
+        "quinta",
+        "sexta",
+        "sabado",
+        "sábado",
+        "domingo",
+        "manha",
+        "manhã",
+        "tarde",
+        "noite",
+        "10h",
+        "11h",
+        "12h",
+        "13h",
+        "14h",
+        "15h",
+        "16h",
+        "17h",
+        "18h",
+        "19h",
+    )
+    return any(_contains_term(text, term) for term in appointment_terms) and (
+        any(_contains_term(text, term) for term in time_terms) or re.search(r"\b[0-2]?\d[:h][0-5]?\d?\b", text) is not None
+    )
+
+
+def _is_generic_doctor_talk_request(query: str) -> bool:
+    text = _normalize_text(query)
+    request_terms = (
+        "falar",
+        "conversar",
+        "chamar",
+        "passar",
+        "atendimento",
+        "atendente",
+    )
+    doctor_terms = (
+        "dr leonardo",
+        "doutor leonardo",
+        "leonardo",
+        "dentista",
+        "medico",
+        "médico",
+    )
+    return any(_contains_term(text, term) for term in request_terms) and any(_contains_term(text, term) for term in doctor_terms)
+
+
+def _requires_scheduling_handoff(query: str) -> bool:
+    return _is_specific_appointment_time_request(query)
+
+
+def _handoff_reason_for_turn(query: str, interpreted_intent: str) -> str:
+    if interpreted_intent == "CLINICAL_URGENCY":
+        return "POST_PROCEDURE_BLEEDING"
+    if _requires_scheduling_handoff(query):
+        return "SCHEDULING_TIME_CONFIRMATION_REQUIRED"
+    return "UNSUPPORTED_ATTRIBUTE"
+
+
+def _non_handoff_operational_request(query: str) -> bool:
+    return _is_generic_doctor_talk_request(query)
 
 
 def _is_negated_near(text: str, term: str) -> bool:

@@ -130,7 +130,7 @@ print(json.dumps({
   assert.equal(parsed.catalog.knowledge_mode, 'OPEN_WORLD');
   assert.equal(parsed.catalog.closed_world_completeness_approved, false);
   assert.equal(parsed.catalog.status, 'PUBLISHED');
-  assert.match(parsed.catalog.source_uri, /BRIEFING_IARA_PREENCHIDO_CARVALHO_E_TAVARES\.pdf$/);
+  assert.match(parsed.catalog.source_uri, /Briefing_Assistente_Comercial_Dr_Leonardo_Carvalho\.pdf$/);
   assert.ok(parsed.limitations.some((item) => item.includes('catalogo CLOSED_WORLD')));
   assert.ok(parsed.limitations.some((item) => item.includes('Avaliacao gratuita e fato autorizado')));
   assert.match(parsed.plan.migrationPath, /202608200001_ai_runtime_integrations\.sql$/);
@@ -146,7 +146,7 @@ print(json.dumps({
   assert.equal(parsed.gaps.live_retrieval, 'READY_FOR_LIVE_EXECUTION');
 });
 
-test('@spec:AC-344 @spec:AC-345 @spec:AC-348 @spec:AC-349 @spec:AC-350 Supabase live seed publishes Dr. Leonardo briefing v2 and supersedes v1', () => {
+test('@spec:AC-344 @spec:AC-345 @spec:AC-348 @spec:AC-349 @spec:AC-350 @spec:AC-436 @spec:AC-443 @spec:AC-444 Supabase live seed publishes Dr. Leonardo briefing v3 and supersedes older versions', () => {
   const output = runPython(`
 import json
 from ai_agent_runtime.sandbox.dataset import build_sandbox_dataset
@@ -158,7 +158,7 @@ class FakeOpenAI:
         class Embedding:
             vector = [0.1, 0.2, 0.3]
             model = "text-embedding-3-small"
-            indexed_at = "2026-09-02T00:00:00+00:00"
+            indexed_at = "2026-09-07T00:00:00+00:00"
         Embedding.embedding_version = embedding_version
         return Embedding()
 
@@ -205,8 +205,17 @@ client.tables["chunks"].append({
     "chunk_index": 99,
     "content": "Avaliacao gratuita nao e regra universal e precisa ser confirmada pela equipe.",
 })
+client.tables["chunks"].append({
+    "id": "stale-v2-room",
+    "organization_id": primary_org,
+    "document_id": superseded[-1]["document_id"],
+    "document_version_id": superseded[-1]["id"],
+    "chunk_index": 100,
+    "content": "Clinica Tavares: sala 4020. Handoff para dor intensa, inchaco, trauma e pedido direto do dentista.",
+})
 evaluation_hits = _lexical_query(client, primary_org, "Avaliacao gratuita")
 stale_hits = _lexical_query(client, primary_org, "nao e regra universal")
+old_room_hits = _lexical_query(client, primary_org, "4020")
 cross_hits = _lexical_query(client, primary_org, "Consulta com Dra. Helena")
 boreal_hits = _lexical_query(client, boreal_org, "Consulta com Dra. Helena")
 print(json.dumps({
@@ -220,27 +229,31 @@ print(json.dumps({
   "procedurePriceDecision": _missing_attribute_decision(client, primary_org, "Quanto custa o implante?"),
   "evaluationContent": evaluation_hits[0]["content"],
   "staleHitCount": len(stale_hits),
+  "oldRoomHitCount": len(old_room_hits),
   "crossHitCount": len(cross_hits),
   "borealOwnHitCount": len(boreal_hits),
-  "oldCurrent": any(row["version_number"] == 1 and row["status"] == "PUBLISHED" for row in versions),
+  "oldCurrent": any(row["version_number"] in {1, 2} and row["status"] == "PUBLISHED" for row in versions),
+  "allCurrentOrg": all(row["organization_id"] == primary_org for row in published),
 }))
 `);
   const parsed = JSON.parse(output);
-  assert.equal(parsed.datasetVersion, '2026-09-02.dr-leonardo-sandbox.v2');
-  assert.deepEqual(parsed.sourceLabels, ['BRIEFING_IARA_PREENCHIDO_CARVALHO_E_TAVARES.pdf']);
-  assert.deepEqual(parsed.publishedNumbers, [2]);
-  assert.deepEqual(parsed.supersededNumbers, [1]);
+  assert.equal(parsed.datasetVersion, '2026-09-07.dr-leonardo-production.v3');
+  assert.deepEqual(parsed.sourceLabels, ['Briefing_Assistente_Comercial_Dr_Leonardo_Carvalho.pdf']);
+  assert.deepEqual(parsed.publishedNumbers, [3]);
+  assert.deepEqual(parsed.supersededNumbers, [1, 2]);
   assert.equal(parsed.publishedCount, 5);
-  assert.equal(parsed.supersededCount, 5);
+  assert.equal(parsed.supersededCount, 10);
   assert.equal(parsed.evaluationDecision, 'ANSWER_GROUNDED');
   assert.equal(parsed.procedurePriceDecision, 'ANSWER_GROUNDED');
   assert.match(parsed.evaluationContent, /Avaliacao gratuita/);
   assert.match(parsed.evaluationContent, /busca por procedimento/);
   assert.doesNotMatch(parsed.evaluationContent, /precisa ser confirmada|nao e regra universal|pode nao ser cobrada/i);
   assert.equal(parsed.staleHitCount, 0);
+  assert.equal(parsed.oldRoomHitCount, 0);
   assert.equal(parsed.crossHitCount, 0);
   assert.equal(parsed.borealOwnHitCount, 1);
   assert.equal(parsed.oldCurrent, false);
+  assert.equal(parsed.allCurrentOrg, true);
 });
 
 test('@spec:AC-113 @spec:AC-114 grounding and prompt-injection live scenarios are prepared for deterministic protection', () => {

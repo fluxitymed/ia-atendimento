@@ -760,10 +760,11 @@ def fake_urlopen(req, timeout=20):
         "protese": "Servicos informados: implantes, proteses, periodontia e odontologia digital.",
         "scanner": "Diferenciais: Scanner Virtuo, visualizacao 3D e tomografia Cone Beam.",
         "virtuo": "Diferenciais: Scanner Virtuo, visualizacao 3D e tomografia Cone Beam.",
-        "hospital": "Clinica Tavares: Hospital da Bahia, Bloco A, 4 andar, sala 4020.",
-        "bahia": "Clinica Tavares: Hospital da Bahia, Bloco A, 4 andar, sala 4020.",
-        "clinica": "Clinica Carvalho: Rua Dr. Otaviano Pimenta, 41, Matatu/Brotas, Salvador/BA. Clinica Tavares: Hospital da Bahia, Bloco A, 4 andar, sala 4020.",
-        "matatu": "Clinica Carvalho: Rua Dr. Otaviano Pimenta, 41, Matatu/Brotas, Salvador/BA.",
+        "hospital": "Clinica Tavares: Av. Prof. Magalhaes Neto, 1541, 4 andar, sala 4022, Bloco A, Pituba.",
+        "bahia": "Clinica Tavares: Av. Prof. Magalhaes Neto, 1541, 4 andar, sala 4022, Bloco A, Pituba.",
+        "pituba": "Clinica Tavares: Av. Prof. Magalhaes Neto, 1541, 4 andar, sala 4022, Bloco A, Pituba.",
+        "clinica": "Clinica Carvalho: Rua Doutor Otaviano Pimenta, 41, Matatu, Salvador/BA. Clinica Tavares: Av. Prof. Magalhaes Neto, 1541, 4 andar, sala 4022, Bloco A, Pituba.",
+        "matatu": "Clinica Carvalho: Rua Doutor Otaviano Pimenta, 41, Matatu, Salvador/BA.",
         "pagamento": "Pagamento: PIX, cartao de credito, cartao de debito e boleto. Parcela minima de R$ 500. Nao ha deposito antecipado.",
         "procedimento": "Valores dos procedimentos sao informados apos avaliacao. A avaliacao e gratuita para casos de busca por procedimento.",
         "avaliacao": "Avaliacao gratuita: para casos de busca por procedimento, incluindo implante e lentes, a avaliacao e gratuita. Consulta de avaliacao nesse contexto tambem e gratuita.",
@@ -784,7 +785,7 @@ def fake_urlopen(req, timeout=20):
 
 request.urlopen = fake_urlopen
 retrieval = ZApiRuntimeRetrieval(supabase_url="https://example.supabase.co", service_role_key="secret-key")
-queries = ["implante", "prótese", "Scanner Virtuo", "onde fica a clínica", "Hospital da Bahia", "Matatu", "formas de pagamento", "quanto custa o procedimento", "avaliação gratuita", "quanto custa lente", "carga imediata"]
+queries = ["implante", "prótese", "Scanner Virtuo", "onde fica a clínica", "Pituba", "Matatu", "formas de pagamento", "quanto custa o procedimento", "avaliação gratuita", "quanto custa lente", "carga imediata"]
 results = {query: retrieval.search(ORG_A, query) for query in queries}
 print(json.dumps({
   "terms": {query: _retrieval_terms(query) for query in queries},
@@ -804,6 +805,7 @@ print(json.dumps({
   assert.match(parsed.implantContent, /implantes/);
   assert.match(parsed.priceContent, /apos avaliacao/);
   assert.match(parsed.evaluationContent, /busca por procedimento/);
+  assert.doesNotMatch(JSON.stringify(parsed), /sala 4020/);
   assert.doesNotMatch(parsed.evaluationContent, /nao e regra universal|precisa confirmar|pode nao ser cobrada/i);
   assert.equal(parsed.leaked, false);
   assert.ok(parsed.calls.some((call) => call.path.endsWith('/document_versions')));
@@ -840,6 +842,110 @@ print(json.dumps({
   assert.equal(parsed.lensGrounding.passed, true);
   assert.equal(parsed.ambiguousGrounding.passed, false);
   assert.equal(parsed.ambiguousGrounding.reason, 'STALE_FREE_EVALUATION_AMBIGUITY');
+});
+
+test('@spec:AC-437 @spec:AC-438 @spec:AC-439 @spec:AC-440 @spec:AC-441 @spec:AC-442 @spec:AC-443 @spec:AC-445 Dr. Leonardo briefing v3 retrieval and runtime decisions match production source', () => {
+  const output = runPython(`
+import json
+from ai_agent_runtime.graph import AgentRuntimeGraph
+from ai_agent_runtime.integrations.config import IntegrationConfig
+from ai_agent_runtime.integrations.openai_provider import OpenAIResponsesProvider
+from ai_agent_runtime.state import AgentState
+from ai_agent_runtime.whatsapp.zapi_server import (
+    OpenAIWhatsAppResponseGenerator,
+    ZApiRuntimeRetrieval,
+    _classify_turn_context,
+    validate_live_grounding,
+)
+
+ORG = "dfdcdff0-6d5f-58cc-9a83-2829820b7f8e"
+
+class StaticRetrieval(ZApiRuntimeRetrieval):
+    def __init__(self):
+        pass
+    def search(self, organization_id, query):
+        assert organization_id == ORG
+        text = query.lower()
+        chunks = {
+            "avaliacao": "Avaliacao gratuita: para casos de busca por procedimento, incluindo implante, lentes e outros procedimentos, a avaliacao e gratuita.",
+            "pituba": "Clinica Tavares: Av. Prof. Magalhaes Neto, 1541, 4 andar, sala 4022, Bloco A, Pituba, Salvador/BA.",
+            "sala": "Clinica Tavares: Av. Prof. Magalhaes Neto, 1541, 4 andar, sala 4022, Bloco A, Pituba, Salvador/BA.",
+            "implante": "Servicos/procedimentos informados: implantes; proteses; endodontia; ortodontia; periodontia; odontologia digital.",
+            "pagamento": "Pagamento: PIX, cartao de credito, cartao de debito e boleto. Parcela minima de R$ 500. Nao ha deposito antecipado.",
+            "convenio": "Objecoes frequentes registradas: medo, preco, localizacao, estacionamento, convenio, falta de tempo e comparacao com concorrentes. O briefing nao autoriza afirmar aceite ou recusa de convenio.",
+        }
+        hits = []
+        for term, content in chunks.items():
+            if term in text or (term == "pituba" and "unidade" in text) or (term == "pagamento" and "formas" in text):
+                hits.append({"id": f"chunk-v3-{term}", "organization_id": organization_id, "document_version_id": "ver-v3", "content": content})
+        return hits
+    def closed_world_procedure_decision(self, organization_id, query):
+        return None
+
+class Transport:
+    def __init__(self): self.calls = []
+    def post_json(self, url, *, headers, payload):
+        self.calls.append(payload)
+        return {"status": "completed", "output_text": "Posso te ajudar por aqui e, se precisar confirmar algo especifico, encaminho para o atendimento."}
+
+retrieval = StaticRetrieval()
+queries = {
+    "avaliacao": "Quanto custa a avaliacao?",
+    "pituba": "Onde fica a unidade da Pituba?",
+    "sala": "Qual a sala?",
+    "implante": "Voces fazem implante?",
+    "pagamento": "Quais formas de pagamento?",
+    "convenio": "Voces aceitam convenio?",
+}
+hits = {name: retrieval.search(ORG, query) for name, query in queries.items()}
+pituba_text = "\\n".join(item["content"] for item in hits["pituba"] + hits["sala"])
+convenio_text = "\\n".join(item["content"] for item in hits["convenio"])
+evaluation_grounding = validate_live_grounding("A avaliacao e gratuita para casos de busca por procedimento.", evidence_count=len(hits["avaliacao"]), evidence=hits["avaliacao"])
+payment_grounding = validate_live_grounding("As formas de pagamento sao PIX, cartao de credito, cartao de debito e boleto. A parcela minima registrada e R$ 500 e nao ha deposito antecipado.", evidence_count=len(hits["pagamento"]), evidence=hits["pagamento"])
+specific_schedule = _classify_turn_context("Quero marcar para amanha as 10h", [])
+doctor_talk = _classify_turn_context("Quero falar com Dr. Leonardo", [])
+bleeding = _classify_turn_context("Fiz um implante ontem e estou com sangramento", [])
+old_policy = "Clinica Tavares: sala 4020. Handoff para dor intensa, inchaco, trauma e pedido direto do dentista."
+
+transport = Transport()
+graph = AgentRuntimeGraph(
+    response_generator=OpenAIWhatsAppResponseGenerator(OpenAIResponsesProvider(IntegrationConfig(openai_api_key="test-key"), transport), retrieval=retrieval),
+)
+doctor_state = graph.run(AgentState(conversation_id="conv-doctor", organization_id=ORG, current_message="Quero falar com Dr. Leonardo"))
+
+print(json.dumps({
+  "hitCounts": {key: len(value) for key, value in hits.items()},
+  "pitubaText": pituba_text,
+  "convenioText": convenio_text,
+  "evaluationGrounding": evaluation_grounding,
+  "paymentGrounding": payment_grounding,
+  "specificSchedule": specific_schedule,
+  "doctorTalk": doctor_talk,
+  "doctorDecision": doctor_state.decision.value,
+  "doctorHandoff": doctor_state.handoff_context is not None,
+  "bleeding": bleeding,
+  "oldPolicyCurrent": old_policy in pituba_text or any(old_policy in item["content"] for rows in hits.values() for item in rows),
+}))
+`);
+  const parsed = JSON.parse(output);
+  for (const count of Object.values(parsed.hitCounts)) assert.ok(count >= 1);
+  assert.match(parsed.pitubaText, /Av\. Prof\. Magalhaes Neto, 1541/);
+  assert.match(parsed.pitubaText, /4 andar/);
+  assert.match(parsed.pitubaText, /Bloco A/);
+  assert.match(parsed.pitubaText, /Pituba/);
+  assert.match(parsed.pitubaText, /sala 4022/);
+  assert.doesNotMatch(parsed.pitubaText, /sala 4020/);
+  assert.equal(parsed.evaluationGrounding.passed, true);
+  assert.equal(parsed.paymentGrounding.passed, true);
+  assert.equal(parsed.specificSchedule.handoff_decision, 'HUMAN_HANDOFF_REQUIRED');
+  assert.equal(parsed.specificSchedule.unsupported_attribute_reason, 'SCHEDULING_TIME_CONFIRMATION_REQUIRED');
+  assert.equal(parsed.doctorTalk.handoff_decision, 'NONE');
+  assert.equal(parsed.doctorDecision, 'CONTINUE');
+  assert.equal(parsed.doctorHandoff, false);
+  assert.equal(parsed.bleeding.handoff_decision, 'HUMAN_HANDOFF_REQUIRED');
+  assert.equal(parsed.bleeding.unsupported_attribute_reason, 'POST_PROCEDURE_BLEEDING');
+  assert.doesNotMatch(parsed.convenioText, /aceitamos convenio|nao aceitamos convenio/i);
+  assert.equal(parsed.oldPolicyCurrent, false);
 });
 
 test('@spec:AC-218 @spec:AC-219 @spec:AC-220 @spec:AC-221 live sandbox store persists history across restart-like reloads', () => {
@@ -1242,7 +1348,7 @@ for key in ["AI_ASSISTANT_NAME", "AI_ASSISTANT_ROLE"]:
 os.environ["AI_CLINIC_NAME"] = "Clinica Carvalho e Tavares Odontologia Integrada"
 os.environ["AI_DOCTOR_NAME"] = "Dr. Leonardo Carvalho"
 os.environ["AI_BUSINESS_HOURS"] = "segunda a sexta, 8h as 19h; sabado, 8h as 12h"
-os.environ["AI_LOCATIONS"] = "Matatu/Brotas|Hospital da Bahia"
+os.environ["AI_LOCATIONS"] = "Matatu|Pituba"
 
 dataset = build_sandbox_dataset()
 catalog = [doc for doc in dataset.documents if doc.document_type == "PROCEDURE_CATALOG"][0]
@@ -1271,7 +1377,7 @@ print(json.dumps({
   assert.equal(parsed.absenceDecision, null);
   assert.equal(parsed.clinicName, 'Clinica Carvalho e Tavares Odontologia Integrada');
   assert.equal(parsed.doctorName, 'Dr. Leonardo Carvalho');
-  assert.deepEqual(parsed.locations, ['Matatu/Brotas', 'Hospital da Bahia']);
+  assert.deepEqual(parsed.locations, ['Matatu', 'Pituba']);
   assert.equal(parsed.businessHours, 'segunda a sexta, 8h as 19h; sabado, 8h as 12h');
 });
 
@@ -1307,7 +1413,7 @@ print(json.dumps({
   assert.equal(parsed.decision, 'HUMAN_HANDOFF_REQUIRED');
   assert.equal(parsed.stage, 'HANDOFF');
   assert.equal(parsed.response, null);
-  assert.equal(parsed.handoffReason, 'CLINICAL_URGENCY_OR_SENSITIVE_TOPIC');
+  assert.equal(parsed.handoffReason, 'POST_PROCEDURE_BLEEDING');
   assert.equal(parsed.modelCalled, false);
   assert.equal(parsed.turn.interpreted_intent, 'CLINICAL_URGENCY');
   assert.equal(parsed.turn.handoff_decision, 'HUMAN_HANDOFF_REQUIRED');
@@ -1334,8 +1440,8 @@ graph = AgentRuntimeGraph(
 state = graph.run(AgentState(
     conversation_id="conv-audio-urgency",
     organization_id="sandbox-org-dr-leonardo-carvalho",
-    current_message="coloquei um implante e esta muito inchado",
-    context={"currentMessageMetadata": {"sourceMessageType": "AUDIO", "transcript": "coloquei um implante e esta muito inchado"}},
+    current_message="coloquei um implante e esta sangrando",
+    context={"currentMessageMetadata": {"sourceMessageType": "AUDIO", "transcript": "coloquei um implante e esta sangrando"}},
 ))
 print(json.dumps({
   "decision": state.decision.value,
@@ -1350,7 +1456,7 @@ print(json.dumps({
   assert.equal(parsed.decision, 'HUMAN_HANDOFF_REQUIRED');
   assert.equal(parsed.stage, 'HANDOFF');
   assert.equal(parsed.response, null);
-  assert.equal(parsed.handoffReason, 'CLINICAL_URGENCY_OR_SENSITIVE_TOPIC');
+  assert.equal(parsed.handoffReason, 'POST_PROCEDURE_BLEEDING');
   assert.equal(parsed.modelCalled, false);
   assert.equal(parsed.turn.interpreted_intent, 'CLINICAL_URGENCY');
 });
@@ -1413,7 +1519,7 @@ class SeededLeonardoRetrieval:
             "id": "chunk-dr-leonardo-implant",
             "organization_id": organization_id,
             "document_version_id": "version-published",
-            "content": "Fonte: BRIEFING_IARA_PREENCHIDO_CARVALHO_E_TAVARES.pdf. Dr. Leonardo Carvalho atua com implantes, odontologia digital e Scanner Virtuo."
+            "content": "Fonte: Briefing_Assistente_Comercial_Dr_Leonardo_Carvalho.pdf. Dr. Leonardo Carvalho atua com implantes, odontologia digital e Scanner Virtuo."
         }]
     def closed_world_procedure_decision(self, organization_id, query):
         return None
@@ -1478,11 +1584,11 @@ config = OrganizationCommercialConfig(
     assistant_role="do atendimento",
     clinic_name="Clinica Carvalho e Tavares Odontologia Integrada",
     doctor_name="Dr. Leonardo Carvalho",
-    locations=("Clinica Carvalho - Matatu/Brotas", "Clinica Tavares - Hospital da Bahia"),
+    locations=("Clinica Carvalho - Matatu", "Clinica Tavares - Pituba, sala 4022"),
     business_hours="segunda a sexta, 8h as 19h; sabado, 8h as 12h",
 )
 opening = validate_live_grounding("Oi! Aqui e a Bruna, do atendimento do Dr. Leonardo Carvalho.", evidence_count=0, organization_config=config)
-location = validate_live_grounding("A Clinica Carvalho fica em Matatu/Brotas.", evidence_count=0, organization_config=config)
+location = validate_live_grounding("A Clinica Tavares fica na Pituba, sala 4022.", evidence_count=0, organization_config=config)
 procedure = validate_live_grounding("O Dr. Leonardo Carvalho realiza implantes com odontologia digital.", evidence_count=0, organization_config=config)
 print(json.dumps({"opening": opening, "location": location, "procedure": procedure}))
 `);
@@ -2243,7 +2349,7 @@ adapter = WhatsAppChannelAdapter(
         response_generator=OpenAIWhatsAppResponseGenerator(
             OpenAIResponsesProvider(IntegrationConfig(openai_api_key="test-key"), transport),
             retrieval=retrieval,
-            organization_config=OrganizationCommercialConfig(locations=("Matatu/Brotas", "Hospital da Bahia")),
+            organization_config=OrganizationCommercialConfig(locations=("Matatu", "Pituba")),
         ),
         stage_logger=lambda stage, details=None: logs.append({"stage": stage, "details": details or {}}),
     ),
@@ -2435,7 +2541,7 @@ adapter = WhatsAppChannelAdapter(
         response_generator=OpenAIWhatsAppResponseGenerator(
             OpenAIResponsesProvider(IntegrationConfig(openai_api_key="test-key"), transport),
             retrieval=retrieval,
-            organization_config=OrganizationCommercialConfig(assistant_name="Bruna", assistant_role="atendimento", doctor_name="Dr. Leonardo", locations=("Brotas", "Hospital da Bahia")),
+            organization_config=OrganizationCommercialConfig(assistant_name="Bruna", assistant_role="atendimento", doctor_name="Dr. Leonardo", locations=("Matatu", "Pituba")),
         ),
         stage_logger=lambda stage, details=None: logs.append({"stage": stage, "details": details or {}}),
     ),
@@ -2550,7 +2656,7 @@ adapter = WhatsAppChannelAdapter(
         response_generator=OpenAIWhatsAppResponseGenerator(
             OpenAIResponsesProvider(IntegrationConfig(openai_api_key="test-key"), Transport()),
             retrieval=Retrieval(),
-            organization_config=OrganizationCommercialConfig(locations=("Brotas", "Hospital da Bahia")),
+            organization_config=OrganizationCommercialConfig(locations=("Matatu", "Pituba")),
         ),
         stage_logger=lambda stage, details=None: logs.append({"stage": stage, "details": details or {}}),
     ),

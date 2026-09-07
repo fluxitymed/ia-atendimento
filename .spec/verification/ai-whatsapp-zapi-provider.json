@@ -1,11 +1,11 @@
 {
   "feature": "ai-whatsapp-zapi-provider",
-  "timestamp": "2026-09-07T16:58:40.739Z",
-  "gitRev": "e1d2a48",
+  "timestamp": "2026-09-07T20:55:00.846Z",
+  "gitRev": "b3d127a",
   "command": "node --test --test-reporter=tap",
   "reporter": "tap",
   "exitCode": 0,
-  "testsParsed": 211,
+  "testsParsed": 212,
   "results": {
     "AC-177": {
       "status": "pass",
@@ -449,12 +449,12 @@
     },
     "AC-344": {
       "status": "pass",
-      "testName": "@spec:AC-344 @spec:AC-345 @spec:AC-348 @spec:AC-349 @spec:AC-350 Supabase live seed publishes Dr. Leonardo briefing v2 and supersedes v1",
+      "testName": "@spec:AC-344 @spec:AC-345 @spec:AC-348 @spec:AC-349 @spec:AC-350 @spec:AC-436 @spec:AC-443 @spec:AC-444 Supabase live seed publishes Dr. Leonardo briefing v3 and supersedes older versions",
       "method": "tap"
     },
     "AC-345": {
       "status": "pass",
-      "testName": "@spec:AC-344 @spec:AC-345 @spec:AC-348 @spec:AC-349 @spec:AC-350 Supabase live seed publishes Dr. Leonardo briefing v2 and supersedes v1",
+      "testName": "@spec:AC-344 @spec:AC-345 @spec:AC-348 @spec:AC-349 @spec:AC-350 @spec:AC-436 @spec:AC-443 @spec:AC-444 Supabase live seed publishes Dr. Leonardo briefing v3 and supersedes older versions",
       "method": "tap"
     },
     "AC-346": {
@@ -469,17 +469,67 @@
     },
     "AC-348": {
       "status": "pass",
-      "testName": "@spec:AC-344 @spec:AC-345 @spec:AC-348 @spec:AC-349 @spec:AC-350 Supabase live seed publishes Dr. Leonardo briefing v2 and supersedes v1",
+      "testName": "@spec:AC-344 @spec:AC-345 @spec:AC-348 @spec:AC-349 @spec:AC-350 @spec:AC-436 @spec:AC-443 @spec:AC-444 Supabase live seed publishes Dr. Leonardo briefing v3 and supersedes older versions",
       "method": "tap"
     },
     "AC-349": {
       "status": "pass",
-      "testName": "@spec:AC-344 @spec:AC-345 @spec:AC-348 @spec:AC-349 @spec:AC-350 Supabase live seed publishes Dr. Leonardo briefing v2 and supersedes v1",
+      "testName": "@spec:AC-344 @spec:AC-345 @spec:AC-348 @spec:AC-349 @spec:AC-350 @spec:AC-436 @spec:AC-443 @spec:AC-444 Supabase live seed publishes Dr. Leonardo briefing v3 and supersedes older versions",
       "method": "tap"
     },
     "AC-350": {
       "status": "pass",
-      "testName": "@spec:AC-344 @spec:AC-345 @spec:AC-348 @spec:AC-349 @spec:AC-350 Supabase live seed publishes Dr. Leonardo briefing v2 and supersedes v1",
+      "testName": "@spec:AC-344 @spec:AC-345 @spec:AC-348 @spec:AC-349 @spec:AC-350 @spec:AC-436 @spec:AC-443 @spec:AC-444 Supabase live seed publishes Dr. Leonardo briefing v3 and supersedes older versions",
+      "method": "tap"
+    },
+    "AC-436": {
+      "status": "pass",
+      "testName": "@spec:AC-344 @spec:AC-345 @spec:AC-348 @spec:AC-349 @spec:AC-350 @spec:AC-436 @spec:AC-443 @spec:AC-444 Supabase live seed publishes Dr. Leonardo briefing v3 and supersedes older versions",
+      "method": "tap"
+    },
+    "AC-437": {
+      "status": "pass",
+      "testName": "@spec:AC-437 @spec:AC-438 @spec:AC-439 @spec:AC-440 @spec:AC-441 @spec:AC-442 @spec:AC-443 @spec:AC-445 Dr. Leonardo briefing v3 retrieval and runtime decisions match production source",
+      "method": "tap"
+    },
+    "AC-438": {
+      "status": "pass",
+      "testName": "@spec:AC-437 @spec:AC-438 @spec:AC-439 @spec:AC-440 @spec:AC-441 @spec:AC-442 @spec:AC-443 @spec:AC-445 Dr. Leonardo briefing v3 retrieval and runtime decisions match production source",
+      "method": "tap"
+    },
+    "AC-439": {
+      "status": "pass",
+      "testName": "@spec:AC-437 @spec:AC-438 @spec:AC-439 @spec:AC-440 @spec:AC-441 @spec:AC-442 @spec:AC-443 @spec:AC-445 Dr. Leonardo briefing v3 retrieval and runtime decisions match production source",
+      "method": "tap"
+    },
+    "AC-440": {
+      "status": "pass",
+      "testName": "@spec:AC-437 @spec:AC-438 @spec:AC-439 @spec:AC-440 @spec:AC-441 @spec:AC-442 @spec:AC-443 @spec:AC-445 Dr. Leonardo briefing v3 retrieval and runtime decisions match production source",
+      "method": "tap"
+    },
+    "AC-441": {
+      "status": "pass",
+      "testName": "@spec:AC-437 @spec:AC-438 @spec:AC-439 @spec:AC-440 @spec:AC-441 @spec:AC-442 @spec:AC-443 @spec:AC-445 Dr. Leonardo briefing v3 retrieval and runtime decisions match production source",
+      "method": "tap"
+    },
+    "AC-442": {
+      "status": "pass",
+      "testName": "@spec:AC-437 @spec:AC-438 @spec:AC-439 @spec:AC-440 @spec:AC-441 @spec:AC-442 @spec:AC-443 @spec:AC-445 Dr. Leonardo briefing v3 retrieval and runtime decisions match production source",
+      "method": "tap"
+    },
+    "AC-443": {
+      "status": "pass",
+      "testName": "@spec:AC-344 @spec:AC-345 @spec:AC-348 @spec:AC-349 @spec:AC-350 @spec:AC-436 @spec:AC-443 @spec:AC-444 Supabase live seed publishes Dr. Leonardo briefing v3 and supersedes older versions",
+      "method": "tap"
+    },
+    "AC-444": {
+      "status": "pass",
+      "testName": "@spec:AC-344 @spec:AC-345 @spec:AC-348 @spec:AC-349 @spec:AC-350 @spec:AC-436 @spec:AC-443 @spec:AC-444 Supabase live seed publishes Dr. Leonardo briefing v3 and supersedes older versions",
+      "method": "tap"
+    },
+    "AC-445": {
+      "status": "pass",
+      "testName": "@spec:AC-437 @spec:AC-438 @spec:AC-439 @spec:AC-440 @spec:AC-441 @spec:AC-442 @spec:AC-443 @spec:AC-445 Dr. Leonardo briefing v3 retrieval and runtime decisions match production source",
       "method": "tap"
     },
     "AC-351": {
