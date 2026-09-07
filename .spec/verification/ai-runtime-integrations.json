@@ -1,11 +1,11 @@
 {
   "feature": "ai-runtime-integrations",
-  "timestamp": "2026-08-21T01:20:00.922Z",
-  "gitRev": null,
+  "timestamp": "2026-09-07T14:13:27.196Z",
+  "gitRev": "8e319c3",
   "command": "node --test --test-reporter=tap",
   "reporter": "tap",
   "exitCode": 0,
-  "testsParsed": 59,
+  "testsParsed": 202,
   "results": {
     "AC-049": {
       "status": "pass",

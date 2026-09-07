@@ -1,0 +1,167 @@
+{
+  "feature": "ai-commercial-agent-playbook",
+  "timestamp": "2026-09-07T14:12:58.667Z",
+  "gitRev": "8e319c3",
+  "command": "node --test --test-reporter=tap",
+  "reporter": "tap",
+  "exitCode": 0,
+  "testsParsed": 202,
+  "results": {
+    "AC-254": {
+      "status": "pass",
+      "testName": "@spec:AC-254 @spec:AC-255 commercial playbook is central and does not authorize organization facts",
+      "method": "tap"
+    },
+    "AC-255": {
+      "status": "pass",
+      "testName": "@spec:AC-254 @spec:AC-255 commercial playbook is central and does not authorize organization facts",
+      "method": "tap"
+    },
+    "AC-256": {
+      "status": "pass",
+      "testName": "@spec:AC-256 @spec:AC-257 commercial state exposes structured fields and next best action",
+      "method": "tap"
+    },
+    "AC-257": {
+      "status": "pass",
+      "testName": "@spec:AC-256 @spec:AC-257 commercial state exposes structured fields and next best action",
+      "method": "tap"
+    },
+    "AC-258": {
+      "status": "pass",
+      "testName": "@spec:AC-258 @spec:AC-259 @spec:AC-269 need sufficiency moves from discovery to value bridge without checklist rigidity",
+      "method": "tap"
+    },
+    "AC-259": {
+      "status": "pass",
+      "testName": "@spec:AC-258 @spec:AC-259 @spec:AC-269 need sufficiency moves from discovery to value bridge without checklist rigidity",
+      "method": "tap"
+    },
+    "AC-260": {
+      "status": "pass",
+      "testName": "@spec:AC-260 @spec:AC-265 @spec:AC-266 repeated short answers raise fatigue and stop curiosity questions",
+      "method": "tap"
+    },
+    "AC-261": {
+      "status": "pass",
+      "testName": "@spec:AC-261 @spec:AC-262 @spec:AC-263 organization identity is used only when configured and only on first contact",
+      "method": "tap"
+    },
+    "AC-262": {
+      "status": "pass",
+      "testName": "@spec:AC-261 @spec:AC-262 @spec:AC-263 organization identity is used only when configured and only on first contact",
+      "method": "tap"
+    },
+    "AC-263": {
+      "status": "pass",
+      "testName": "@spec:AC-261 @spec:AC-262 @spec:AC-263 organization identity is used only when configured and only on first contact",
+      "method": "tap"
+    },
+    "AC-264": {
+      "status": "pass",
+      "testName": "@spec:AC-264 @spec:AC-271 prompt composition separates safety, playbook, organization, evidence, and state",
+      "method": "tap"
+    },
+    "AC-265": {
+      "status": "pass",
+      "testName": "@spec:AC-260 @spec:AC-265 @spec:AC-266 repeated short answers raise fatigue and stop curiosity questions",
+      "method": "tap"
+    },
+    "AC-266": {
+      "status": "pass",
+      "testName": "@spec:AC-260 @spec:AC-265 @spec:AC-266 repeated short answers raise fatigue and stop curiosity questions",
+      "method": "tap"
+    },
+    "AC-267": {
+      "status": "pass",
+      "testName": "@spec:AC-267 @spec:AC-268 objections are distinct from factual attribute questions",
+      "method": "tap"
+    },
+    "AC-268": {
+      "status": "pass",
+      "testName": "@spec:AC-267 @spec:AC-268 objections are distinct from factual attribute questions",
+      "method": "tap"
+    },
+    "AC-269": {
+      "status": "pass",
+      "testName": "@spec:AC-258 @spec:AC-259 @spec:AC-269 need sufficiency moves from discovery to value bridge without checklist rigidity",
+      "method": "tap"
+    },
+    "AC-270": {
+      "status": "pass",
+      "testName": "@spec:AC-270 runtime commercial state does not authorize calendar availability outside scheduling context",
+      "method": "tap"
+    },
+    "AC-271": {
+      "status": "pass",
+      "testName": "@spec:AC-264 @spec:AC-271 prompt composition separates safety, playbook, organization, evidence, and state",
+      "method": "tap"
+    },
+    "AC-272": {
+      "status": "pass",
+      "testName": "@spec:AC-272 Z-API live prompt uses the same central commercial playbook",
+      "method": "tap"
+    },
+    "AC-318": {
+      "status": "pass",
+      "testName": "@spec:AC-318 @spec:AC-319 @spec:AC-320 @spec:AC-321 commercial prompt bans internal gaps, technical forcing, and artificial style",
+      "method": "tap"
+    },
+    "AC-319": {
+      "status": "pass",
+      "testName": "@spec:AC-318 @spec:AC-319 @spec:AC-320 @spec:AC-321 commercial prompt bans internal gaps, technical forcing, and artificial style",
+      "method": "tap"
+    },
+    "AC-320": {
+      "status": "pass",
+      "testName": "@spec:AC-318 @spec:AC-319 @spec:AC-320 @spec:AC-321 commercial prompt bans internal gaps, technical forcing, and artificial style",
+      "method": "tap"
+    },
+    "AC-321": {
+      "status": "pass",
+      "testName": "@spec:AC-318 @spec:AC-319 @spec:AC-320 @spec:AC-321 commercial prompt bans internal gaps, technical forcing, and artificial style",
+      "method": "tap"
+    },
+    "AC-322": {
+      "status": "pass",
+      "testName": "@spec:AC-322 @spec:AC-323 @spec:AC-324 @spec:AC-325 operational memory extracts known scheduling data and WhatsApp phone",
+      "method": "tap"
+    },
+    "AC-323": {
+      "status": "pass",
+      "testName": "@spec:AC-322 @spec:AC-323 @spec:AC-324 @spec:AC-325 operational memory extracts known scheduling data and WhatsApp phone",
+      "method": "tap"
+    },
+    "AC-324": {
+      "status": "pass",
+      "testName": "@spec:AC-322 @spec:AC-323 @spec:AC-324 @spec:AC-325 operational memory extracts known scheduling data and WhatsApp phone",
+      "method": "tap"
+    },
+    "AC-325": {
+      "status": "pass",
+      "testName": "@spec:AC-322 @spec:AC-323 @spec:AC-324 @spec:AC-325 operational memory extracts known scheduling data and WhatsApp phone",
+      "method": "tap"
+    },
+    "AC-326": {
+      "status": "pass",
+      "testName": "@spec:AC-326 @spec:AC-327 registration collection groups missing fields and skips known ones",
+      "method": "tap"
+    },
+    "AC-327": {
+      "status": "pass",
+      "testName": "@spec:AC-326 @spec:AC-327 registration collection groups missing fields and skips known ones",
+      "method": "tap"
+    },
+    "AC-328": {
+      "status": "pass",
+      "testName": "@spec:AC-328 @spec:AC-329 correction state acknowledges current correction once and booking truth stays deterministic",
+      "method": "tap"
+    },
+    "AC-329": {
+      "status": "pass",
+      "testName": "@spec:AC-328 @spec:AC-329 correction state acknowledges current correction once and booking truth stays deterministic",
+      "method": "tap"
+    }
+  },
+  "principles": {}
+}

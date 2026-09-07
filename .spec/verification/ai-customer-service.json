@@ -1,11 +1,11 @@
 {
   "feature": "ai-customer-service",
-  "timestamp": "2026-08-21T01:19:59.068Z",
-  "gitRev": null,
+  "timestamp": "2026-09-07T14:12:58.629Z",
+  "gitRev": "8e319c3",
   "command": "node --test --test-reporter=tap",
   "reporter": "tap",
   "exitCode": 0,
-  "testsParsed": 59,
+  "testsParsed": 202,
   "results": {
     "AC-001": {
       "status": "pass",
@@ -40,6 +40,21 @@
     "AC-007": {
       "status": "pass",
       "testName": "@spec:AC-007 handoff transition message is clinic-configured and patient-safe",
+      "method": "tap"
+    },
+    "AC-223": {
+      "status": "pass",
+      "testName": "@spec:AC-226 @spec:AC-227 @spec:AC-223 HUMAN_HANDOFF_REQUIRED suppresses outbound and blocks later autonomy",
+      "method": "tap"
+    },
+    "AC-224": {
+      "status": "pass",
+      "testName": "@spec:AC-228 @spec:AC-224 @spec:AC-246 offered Botox interest is treated as commercial progression, not encyclopedia-first handoff",
+      "method": "tap"
+    },
+    "AC-225": {
+      "status": "pass",
+      "testName": "@spec:AC-229 @spec:AC-225 closed-world procedure absence returns authorized not-offered answer without handoff",
       "method": "tap"
     },
     "AC-008": {

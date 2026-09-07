@@ -119,6 +119,13 @@ Garantir que normalizacao e chunking nao removam ou alterem negacoes, condicoes,
 - Refs: AC-031, AC-032
 - Arquivos: src/ai-customer-service/domain/semantic-chunking.js, src/ai-customer-service/domain/grounding-validator.js, test/ai-customer-service/chunking.test.js, test/ai-customer-service/grounding-validator.test.js
 
+## T-019 — Atualizar contrato comercial de handoff e conversa [concluida]
+
+- Refs: AC-223, AC-224, AC-225
+- Arquivos: .spec/features/ai-customer-service/spec.md, .spec/features/ai-customer-service/tasks.md, src/ai_agent_runtime/whatsapp/adapter.py, src/ai_agent_runtime/whatsapp/zapi_server.py, test/ai-whatsapp-channel/whatsapp-channel.test.js, test/ai-whatsapp-zapi-provider/zapi-runtime.test.js
+
+Registrar que `HUMAN_HANDOFF_REQUIRED` suprime outbound automatico, que conducao comercial sem claim factual pode continuar sem evidencia e que catalogo fechado completo autoriza negativa deterministica de procedimento ausente.
+
 Implementar `parentChunkId`, source span quando aplicavel, `chunkingStrategy` e `chunkingVersion`, sem criar nova `DOCUMENT_VERSION` quando apenas a estrategia tecnica mudar.
 
 ## T-018 — Garantir que catalogo fechado nao dependa de retrieval vetorial [concluida]

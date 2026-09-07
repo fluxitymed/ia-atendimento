@@ -117,16 +117,22 @@ dataset = build_sandbox_dataset()
 plan = build_supabase_plan(config)
 print(json.dumps({
   "orgs": [org.name for org in dataset.organizations],
+  "fictitious": dataset.fictitious,
   "catalog": [doc.__dict__ for doc in dataset.documents if doc.document_type == "PROCEDURE_CATALOG"][0],
+  "limitations": list(dataset.source_limitations),
   "plan": plan,
   "gaps": ingestion_pipeline_gap_report(),
 }))
 `);
   const parsed = JSON.parse(output);
-  assert.deepEqual(parsed.orgs, ['Clinica Aurora Sandbox', 'Clinica Boreal Sandbox']);
-  assert.equal(parsed.catalog.knowledge_mode, 'CLOSED_WORLD');
-  assert.equal(parsed.catalog.closed_world_completeness_approved, true);
+  assert.deepEqual(parsed.orgs, ['Clinica Carvalho e Tavares Odontologia Integrada', 'Clinica Boreal Sandbox']);
+  assert.equal(parsed.fictitious, false);
+  assert.equal(parsed.catalog.knowledge_mode, 'OPEN_WORLD');
+  assert.equal(parsed.catalog.closed_world_completeness_approved, false);
   assert.equal(parsed.catalog.status, 'PUBLISHED');
+  assert.match(parsed.catalog.source_uri, /BRIEFING_IARA_PREENCHIDO_CARVALHO_E_TAVARES\.pdf$/);
+  assert.ok(parsed.limitations.some((item) => item.includes('catalogo CLOSED_WORLD')));
+  assert.ok(parsed.limitations.some((item) => item.includes('Avaliacao gratuita e fato autorizado')));
   assert.match(parsed.plan.migrationPath, /202608200001_ai_runtime_integrations\.sql$/);
   assert.equal(parsed.plan.requiresTables.includes('retrieval_index_entries'), true);
   assert.deepEqual(parsed.plan.scenarioIds, [
@@ -138,6 +144,103 @@ print(json.dumps({
   ]);
   assert.equal(parsed.gaps.remote_supabase_write, 'READY_FOR_LIVE_EXECUTION');
   assert.equal(parsed.gaps.live_retrieval, 'READY_FOR_LIVE_EXECUTION');
+});
+
+test('@spec:AC-344 @spec:AC-345 @spec:AC-348 @spec:AC-349 @spec:AC-350 Supabase live seed publishes Dr. Leonardo briefing v2 and supersedes v1', () => {
+  const output = runPython(`
+import json
+from ai_agent_runtime.sandbox.dataset import build_sandbox_dataset
+from ai_agent_runtime.sandbox.supabase_smoke import _persist_dataset, _lexical_query, _free_evaluation_decision, _missing_attribute_decision
+from ai_agent_runtime.sandbox_ids import BOREAL_ORG_ID, DATASET_VERSION, LEONARDO_ORG_ID, deterministic_sandbox_uuid
+
+class FakeOpenAI:
+    def create_embedding(self, *, text, embedding_version):
+        class Embedding:
+            vector = [0.1, 0.2, 0.3]
+            model = "text-embedding-3-small"
+            indexed_at = "2026-09-02T00:00:00+00:00"
+        Embedding.embedding_version = embedding_version
+        return Embedding()
+
+class FakeClient:
+    def __init__(self):
+        self.tables = {"organizations": [], "documents": [], "document_versions": [], "chunks": [], "retrieval_index_entries": []}
+    def upsert(self, table, rows, *, conflict):
+        ids = {row["id"]: row for row in self.tables[table]}
+        for row in rows:
+            ids[row["id"]] = {**ids.get(row["id"], {}), **row}
+        self.tables[table] = list(ids.values())
+        return rows
+    def get(self, table, *, params):
+        rows = list(self.tables[table])
+        for key, value in params.items():
+            if key in {"select", "limit", "order"}:
+                continue
+            if value.startswith("eq."):
+                expected = value[3:]
+                rows = [row for row in rows if str(row.get(key)) == expected]
+            elif value == "is.true":
+                rows = [row for row in rows if row.get(key) is True]
+            elif value.startswith("in.("):
+                allowed = set(value[4:-1].split(","))
+                rows = [row for row in rows if str(row.get(key)) in allowed]
+            elif value.startswith("ilike.*"):
+                needle = value[len("ilike.*"):-1].lower()
+                rows = [row for row in rows if needle in str(row.get(key, "")).lower()]
+        return rows[: int(params.get("limit", "100"))]
+
+client = FakeClient()
+dataset = build_sandbox_dataset()
+ids = _persist_dataset(client, FakeOpenAI(), dataset)
+primary_org = ids["primary_org"]
+boreal_org = deterministic_sandbox_uuid(BOREAL_ORG_ID)
+versions = [row for row in client.tables["document_versions"] if row["organization_id"] == primary_org]
+published = [row for row in versions if row["status"] == "PUBLISHED"]
+superseded = [row for row in versions if row["status"] == "SUPERSEDED"]
+client.tables["chunks"].append({
+    "id": "stale-v1-chunk",
+    "organization_id": primary_org,
+    "document_id": superseded[0]["document_id"],
+    "document_version_id": superseded[0]["id"],
+    "chunk_index": 99,
+    "content": "Avaliacao gratuita nao e regra universal e precisa ser confirmada pela equipe.",
+})
+evaluation_hits = _lexical_query(client, primary_org, "Avaliacao gratuita")
+stale_hits = _lexical_query(client, primary_org, "nao e regra universal")
+cross_hits = _lexical_query(client, primary_org, "Consulta com Dra. Helena")
+boreal_hits = _lexical_query(client, boreal_org, "Consulta com Dra. Helena")
+print(json.dumps({
+  "datasetVersion": DATASET_VERSION,
+  "sourceLabels": sorted({doc.source_label for doc in dataset.documents if doc.organization_id == LEONARDO_ORG_ID}),
+  "publishedNumbers": sorted({row["version_number"] for row in published}),
+  "supersededNumbers": sorted({row["version_number"] for row in superseded}),
+  "publishedCount": len(published),
+  "supersededCount": len(superseded),
+  "evaluationDecision": _free_evaluation_decision(client, primary_org, "Quanto custa a avaliacao?"),
+  "procedurePriceDecision": _missing_attribute_decision(client, primary_org, "Quanto custa o implante?"),
+  "evaluationContent": evaluation_hits[0]["content"],
+  "staleHitCount": len(stale_hits),
+  "crossHitCount": len(cross_hits),
+  "borealOwnHitCount": len(boreal_hits),
+  "oldCurrent": any(row["version_number"] == 1 and row["status"] == "PUBLISHED" for row in versions),
+}))
+`);
+  const parsed = JSON.parse(output);
+  assert.equal(parsed.datasetVersion, '2026-09-02.dr-leonardo-sandbox.v2');
+  assert.deepEqual(parsed.sourceLabels, ['BRIEFING_IARA_PREENCHIDO_CARVALHO_E_TAVARES.pdf']);
+  assert.deepEqual(parsed.publishedNumbers, [2]);
+  assert.deepEqual(parsed.supersededNumbers, [1]);
+  assert.equal(parsed.publishedCount, 5);
+  assert.equal(parsed.supersededCount, 5);
+  assert.equal(parsed.evaluationDecision, 'ANSWER_GROUNDED');
+  assert.equal(parsed.procedurePriceDecision, 'ANSWER_GROUNDED');
+  assert.match(parsed.evaluationContent, /Avaliacao gratuita/);
+  assert.match(parsed.evaluationContent, /busca por procedimento/);
+  assert.doesNotMatch(parsed.evaluationContent, /precisa ser confirmada|nao e regra universal|pode nao ser cobrada/i);
+  assert.equal(parsed.staleHitCount, 0);
+  assert.equal(parsed.crossHitCount, 0);
+  assert.equal(parsed.borealOwnHitCount, 1);
+  assert.equal(parsed.oldCurrent, false);
 });
 
 test('@spec:AC-113 @spec:AC-114 grounding and prompt-injection live scenarios are prepared for deterministic protection', () => {

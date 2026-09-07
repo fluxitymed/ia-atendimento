@@ -17,10 +17,10 @@
 - Arquivos: src/ai_agent_runtime/sandbox/openai_smoke.py, test/ai-agent-live-sandbox/live-sandbox.test.js
 - Notas: Responses API, Luna, structured output, usage quando disponivel e erro redigido.
 
-## T-004 — Preparar Supabase sandbox e dataset ficticio [concluida]
+## T-004 — Preparar Supabase sandbox e dataset controlado [concluida]
 - Refs: US-033, AC-109, AC-110, AC-111, AC-112
 - Arquivos: src/ai_agent_runtime/sandbox/dataset.py, src/ai_agent_runtime/sandbox/supabase_smoke.py, test/ai-agent-live-sandbox/live-sandbox.test.js
-- Notas: Clinica Aurora Sandbox, Clinica Boreal Sandbox, catalogo fechado e plano de gaps do pipeline.
+- Notas: Clinica Carvalho e Tavares Odontologia Integrada como cliente de teste, Clinica Boreal Sandbox para isolamento cross-org, catalogo aberto sem completude aprovada e plano de gaps do pipeline.
 
 ## T-005 — Preparar grounding, prompt injection e Google Calendar sandbox [concluida]
 - Refs: US-034, US-035, AC-113, AC-114, AC-115, AC-116, AC-117

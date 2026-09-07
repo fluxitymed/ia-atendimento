@@ -47,7 +47,7 @@ A primeira bateria deve rodar integralmente offline, sem internet e sem credenci
 - sem LangSmith real;
 - sem pacientes reais.
 
-O dataset deve usar apenas clinicas, profissionais, documentos, pacientes e telefones ficticios.
+O dataset base usa clinicas, profissionais, documentos, pacientes e telefones ficticios. A partir da validacao Z-API, ele tambem inclui cenarios comerciais offline do primeiro cliente de teste, Dr. Leonardo Carvalho / Clinica Carvalho e Tavares Odontologia Integrada, usando somente fatos confirmados do briefing autorizado e nenhum dado real de paciente.
 
 ## Resultado agregado esperado
 
@@ -66,6 +66,10 @@ A suite deve produzir resumo agregado equivalente a:
 - `Cross-org Leakage Rate`;
 - `Grounding Rejection Accuracy`;
 - `CRM Extraction Accuracy`.
+- `Value Bridge Rate`;
+- `Value Bridge Relevance Rate`;
+- `No Performative Empathy Rate`;
+- `Assistant Name Not Patient Name Rate`.
 
 Estes indicadores tem tolerancia zero para aprovacao:
 
@@ -73,6 +77,7 @@ Estes indicadores tem tolerancia zero para aprovacao:
 - `Invented Availability Rate > 0`;
 - `Unsupported Factual Answer Rate > 0`;
 - `Unauthorized Calendar Call Rate > 0`.
+- `Performative Empathy Rate > 0`.
 
 ## Historias de usuario e criterios de aceite
 
@@ -318,6 +323,302 @@ Como operador comercial, quero avaliar conversa longa, respostas curtas e CRM pr
 - **Quando** a avaliacao executa o cenario
 - **Entao** o estado final preserva apenas fatos atuais e decisoes coerentes com o contexto.
 
+### US-068 — Qualidade comercial e handoff silencioso
+
+Como gestor comercial, quero avaliar se a IA conduz venda de forma humana e progressiva, para evitar comportamento de FAQ, handoff desnecessario ou resposta factual sem suporte.
+
+#### AC-231 — Evaluation mede handoff desnecessario e handoff silencioso
+
+- **Dado** cenarios comerciais e de handoff
+- **Quando** a avaliacao calcula metricas
+- **Entao** existem metricas para `no_unnecessary_handoff`, `silent_handoff_rate` e `sales_progression_rate`.
+
+#### AC-232 — Cenario comercial de Botox nao e enciclopedico
+
+- **Dado** o paciente demonstra interesse em Botox oferecido
+- **Quando** a resposta e avaliada
+- **Entao** a avaliacao exige continuidade comercial, uma pergunta principal e ausencia de inicio enciclopedico.
+
+#### AC-233 — Atributo factual desconhecido exige handoff sem resposta
+
+- **Dado** pergunta sobre marca, preco ou outro atributo ausente
+- **Quando** a decisao esperada e `HUMAN_HANDOFF_REQUIRED`
+- **Entao** a avaliacao exige resposta vazia ao paciente e contexto de handoff preservado.
+
+#### AC-234 — Multiturno preserva contexto comercial
+
+- **Dado** uma conversa iniciada sobre Botox
+- **Quando** o paciente responde curto como `testa`
+- **Entao** a avaliacao exige continuidade contextual sem reiniciar descoberta.
+
+### US-071 — Ambiguidade lexical contextual em avaliacao comercial
+
+Como gestor comercial, quero que a avaliacao cubra respostas curtas e termos ambiguos como `marca`, para impedir regressao em conversas reais de qualificacao.
+
+#### AC-240 — Evaluation distingue marca brand de marca na pele
+
+- **Dado** cenarios em que `marca` pode significar fabricante ou sinal visivel na pele
+- **Quando** a avaliacao executa os casos comerciais
+- **Entao** apenas a pergunta de fabricante exige handoff por atributo factual.
+
+#### AC-241 — Evaluation cobre respostas curtas a pergunta anterior
+
+- **Dado** respostas como `testa`, `sim`, `nao`, `ha 2 anos`, `quero fazer` e `estou pesquisando`
+- **Quando** a avaliacao calcula qualidade comercial
+- **Entao** essas respostas sao avaliadas como continuidade contextual quando nao trazem pergunta factual nova.
+
+### US-073 — Avaliacao diferencia handoff necessario de alucinacao recuperavel
+
+Como gestor comercial, quero medir quando uma claim factual sem suporte foi introduzida pelo modelo e nao pelo paciente, para evitar handoff desnecessario sem permitir resposta alucinada.
+
+#### AC-249 — Evaluation mede handoff induzido pelo modelo
+
+- **Dado** cenarios conversacionais em que o usuario nao pediu fato factual
+- **Quando** o modelo introduz claim factual sem suporte e o runtime recupera com retry seguro
+- **Entao** a metrica `model_induced_handoff_rate` permanece `0`.
+
+#### AC-250 — Evaluation mede progressao conversacional com retrieval zero
+
+- **Dado** turno de qualificacao sem evidencia recuperada
+- **Quando** a resposta aprovada nao contem claim factual
+- **Entao** a metrica `conversational_zero_retrieval_progression_rate` e `1` nos cenarios aprovados.
+
+#### AC-251 — Evaluation mede escape de claim do modelo
+
+- **Dado** o modelo tenta afirmar preco, tecnica, resultado ou fato de procedimento sem evidencia
+- **Quando** a avaliacao executa cenarios comerciais
+- **Entao** a metrica `unsupported_model_claim_escape_rate` permanece `0`.
+
+#### AC-252 — Evaluation preserva handoff para fato pedido pelo paciente
+
+- **Dado** pergunta factual do paciente sem evidencia autorizada
+- **Quando** a avaliacao executa o caso
+- **Entao** `unsupported_user_fact_handoff_rate` e `1`.
+
+#### AC-253 — Evaluation cobre sucesso e falha de retry seguro
+
+- **Dado** cenarios de regeneracao `CONVERSATIONAL_NO_FACTS`
+- **Quando** o retry passa ou falha grounding
+- **Entao** `safe_regeneration_success_rate` mede sucesso recuperado e a falha nao conta como handoff factual pedido pelo paciente.
+
+### US-082 — Avaliacao mede playbook comercial global
+
+Como gestor comercial, quero avaliar o metodo comercial compartilhado usado no live, para detectar interrogatorio, repeticao, falta de CTA, fadiga ignorada e objecoes mal tratadas.
+
+#### AC-273 — Evaluation mede apresentacao inicial e nao repeticao
+
+- **Dado** conversas com primeiro contato e turnos seguintes
+- **Quando** a avaliacao comercial roda
+- **Entao** existem metricas `introduction_on_first_contact_rate` e `no_repeated_introduction_rate`.
+
+#### AC-274 — Evaluation mede suficiencia e eficiencia de descoberta
+
+- **Dado** conversa multiturno com necessidade suficiente informada
+- **Quando** a avaliacao calcula estado comercial
+- **Entao** existem metricas `discovery_efficiency_rate` e `minimum_discovery_completion_rate`.
+
+#### AC-275 — Evaluation mede excesso de perguntas e recapitulação
+
+- **Dado** respostas que fazem muitas perguntas ou repetem todo o historico
+- **Quando** a avaliacao comercial roda
+- **Entao** existem metricas `excessive_question_rate` e `excessive_recap_rate`, ambas esperadas em zero nos cenarios aprovados.
+
+#### AC-276 — Evaluation mede resposta a fadiga conversacional
+
+- **Dado** tres respostas curtas consecutivas ou muitos turnos em descoberta
+- **Quando** a avaliacao roda
+- **Entao** `conversation_fatigue_response_rate` mede se o agente reduziu descoberta e avancou.
+
+#### AC-277 — Evaluation mede tratamento de objecoes
+
+- **Dado** preocupacoes como preco alto ou medo de resultado artificial
+- **Quando** nao ha pergunta factual especifica
+- **Entao** `objection_handling_rate` mede tratamento comercial sem handoff automatico.
+
+#### AC-278 — Evaluation mede progressao para CTA/agendamento
+
+- **Dado** necessidade suficiente e interesse ativo
+- **Quando** o proximo passo esta disponivel
+- **Entao** `appointment_progression_rate` mede proposta de consulta/agendamento sem inventar disponibilidade.
+
+#### AC-279 — Evaluation mantem tolerancia zero para fatos sem suporte
+
+- **Dado** cenarios comerciais usando o playbook
+- **Quando** a avaliacao agrega metricas
+- **Entao** `unsupported_fact_escape_rate` permanece `0` e handoff factual silencioso continua medido por `silent_handoff_rate`.
+
+### US-084 — Avaliacao cobre primeiro cliente de teste Dr. Leonardo
+
+Como gestor comercial, quero cenarios offline baseados no briefing do Dr. Leonardo, para validar conversa comercial realista sem usar dados reais de paciente nem alterar o playbook global.
+
+#### AC-286 — Dataset inclui cenarios Dr. Leonardo com fonte autorizada
+
+- **Dado** o briefing autorizado do Dr. Leonardo
+- **Quando** o dataset de avaliacao e carregado
+- **Entao** existem cenarios sobre implante, medo, preco, avaliacao gratuita autorizada, urgencia, nome da assistente e localizacao.
+
+#### AC-287 — Ponte de valor usa diferencial relevante
+
+- **Dado** interesse em implante ou reabilitacao
+- **Quando** a resposta comercial e avaliada
+- **Entao** `value_bridge_rate` e `value_bridge_relevance_rate` medem se a resposta conecta necessidade do paciente a diferenciais autorizados, sem inventar promessa clinica.
+
+#### AC-288 — Empatia performatica e regressao critica
+
+- **Dado** resposta comercial com frase empatica automatica e pouco util
+- **Quando** a avaliacao agrega metricas
+- **Entao** `performative_empathy_rate` tem tolerancia zero e `no_performative_empathy_rate` permanece medido.
+
+#### AC-289 — Nome da assistente nao vira nome do paciente
+
+- **Dado** a assistente configurada com nome proprio
+- **Quando** o paciente interage sem informar seu nome
+- **Entao** a avaliacao mede `assistant_name_not_patient_name_rate` e falha se o nome da assistente for extraido como paciente.
+
+#### AC-290 — Ambiguidade e urgencia preservam handoff silencioso
+
+- **Dado** fatos ambíguos do briefing, como gratuidade da avaliacao, ou temas clinicos sensiveis
+- **Quando** o cenario e avaliado
+- **Entao** a decisao esperada e `HUMAN_HANDOFF_REQUIRED`, com outbound suprimido e contexto preservado.
+
+### US-087 — Avaliacao mede qualidade conversacional multi-turno
+
+Como gestor comercial, quero metricas deterministicas sobre retencao de contexto e naturalidade, para detectar regressao em conversas reais curtas sem enfraquecer grounding.
+
+#### AC-301 — Mede retencao de contexto do paciente
+
+- **Dado** conversa multi-turno com necessidade progressiva
+- **Quando** a avaliacao agrega resultados
+- **Entao** existe `patient_context_retention_rate`.
+
+#### AC-302 — Mede ganho de informacao na descoberta
+
+- **Dado** respostas do paciente que acrescentam situacao, objecao ou intencao
+- **Quando** a avaliacao agrega resultados
+- **Entao** existe `discovery_information_gain_rate`.
+
+#### AC-303 — Mede anti-eco
+
+- **Dado** respostas comerciais multi-turno
+- **Quando** a avaliacao agrega resultados
+- **Entao** existe `anti_echo_rate`.
+
+#### AC-304 — Mede escolha forcada
+
+- **Dado** respostas com padrao de menu ou formulario
+- **Quando** a avaliacao agrega resultados
+- **Entao** existe `forced_choice_rate` com tolerancia zero critica.
+
+#### AC-305 — Mede resolucao de resposta curta contextual
+
+- **Dado** respostas como `Sim`, `Os dois`, `Isso` ou `Exatamente`
+- **Quando** a avaliacao agrega resultados
+- **Entao** existe `contextual_short_answer_resolution_rate`.
+
+#### AC-306 — Mede reuso de evidencia da conversa
+
+- **Dado** evidencia recente do mesmo escopo conversacional
+- **Quando** a avaliacao agrega resultados
+- **Entao** existe `conversation_evidence_reuse_rate`.
+
+#### AC-307 — Mede timing da ponte de valor
+
+- **Dado** descoberta suficiente e objecao contextualizada
+- **Quando** a avaliacao agrega resultados
+- **Entao** existe `value_bridge_timing_rate`.
+
+#### AC-308 — Mede naturalidade geral
+
+- **Dado** respostas comerciais sem empatia performatica, eco ou formulario
+- **Quando** a avaliacao agrega resultados
+- **Entao** existe `naturalness_rate`.
+
+#### AC-309 — Mede conclusao de resposta do runtime
+
+- **Dado** fluxo live-like com grounding aprovado
+- **Quando** a avaliacao agrega resultados
+- **Entao** existe `runtime_response_completion_rate`.
+
+### US-090 — Avaliacao mede eficiencia comercial e operacional
+
+Como gestor comercial, quero metricas sobre lacunas internas, memoria, cadastro, agendamento e estilo de WhatsApp, para detectar regressao antes de novos testes live.
+
+#### AC-333 — Mede exposicao de limitacao interna
+
+- **Dado** respostas que mencionam nao conseguir confirmar, nao ter informacao, base, evidencia ou acesso
+- **Quando** a avaliacao agrega resultados
+- **Entao** existe `internal_limitation_exposure_rate` com tolerancia zero critica.
+
+#### AC-334 — Mede retencao de memoria operacional
+
+- **Dado** paciente informa unidade, data, horario, telefone ou dado cadastral
+- **Quando** a avaliacao agrega resultados
+- **Entao** existe `operational_memory_retention_rate`.
+
+#### AC-335 — Mede pergunta repetida sobre dado conhecido
+
+- **Dado** um dado ja conhecido no estado operacional
+- **Quando** a avaliacao agrega resultados
+- **Entao** existe `repeated_question_rate` com tolerancia zero critica.
+
+#### AC-336 — Mede pedido redundante de telefone WhatsApp
+
+- **Dado** canal WhatsApp com telefone utilizavel
+- **Quando** a avaliacao agrega resultados
+- **Entao** existe `redundant_phone_request_rate` com tolerancia zero critica.
+
+#### AC-337 — Mede eficiencia de coleta cadastral
+
+- **Dado** varios campos cadastrais faltantes
+- **Quando** a avaliacao agrega resultados
+- **Entao** existe `registration_batch_efficiency_rate`.
+
+#### AC-338 — Mede escolha tecnica prematura
+
+- **Dado** interesse geral suficiente para avaliacao
+- **Quando** a avaliacao agrega resultados
+- **Entao** existe `premature_technical_choice_rate` com tolerancia zero critica.
+
+#### AC-339 — Mede confirmacao prematura de booking
+
+- **Dado** CalendarProvider ainda nao confirmou o agendamento
+- **Quando** a avaliacao agrega resultados
+- **Entao** existe `premature_booking_confirmation_rate` com tolerancia zero critica.
+
+#### AC-340 — Mede maneirismos repetitivos e nome em excesso
+
+- **Dado** conversa longa com respostas consecutivas
+- **Quando** a avaliacao agrega resultados
+- **Entao** existem `repetitive_acknowledgement_rate` e `patient_name_overuse_rate`.
+
+#### AC-341 — Mede repeticao de correcao
+
+- **Dado** paciente corrigiu nome, genero linguistico, pronome ou preferencia de tratamento
+- **Quando** a avaliacao agrega resultados
+- **Entao** existe `correction_repetition_rate`.
+
+#### AC-342 — Mede artificialidade visual de WhatsApp
+
+- **Dado** respostas com Markdown artificial ou travessao recorrente
+- **Quando** a avaliacao agrega resultados
+- **Entao** existem `markdown_artificiality_rate` e `em_dash_rate`.
+
+#### AC-343 — Mede clareza de proxima acao
+
+- **Dado** resposta comercial ou operacional
+- **Quando** a avaliacao agrega resultados
+- **Entao** existem `conversational_efficiency_rate`, `scheduling_state_accuracy_rate` e `next_action_clarity_rate`.
+
+### US-095 — Metricas de memoria operacional live
+
+Como responsavel por qualidade comercial, quero medir repeticao factual, apresentacao, cadastro e regressao de agendamento, para impedir que problemas observados no live WhatsApp voltem silenciosamente.
+
+#### AC-372 — Mede memoria factual, apresentacao e cadastro operacional
+
+- **Dado** resultados de avaliacao comercial multiturno
+- **Quando** a avaliacao agrega resultados
+- **Entao** existem `repeated_fact_rate`, `repeated_free_evaluation_rate`, `introduction_accuracy`, `premature_appointment_intent_rate`, `scheduling_stage_regression_rate`, `operational_rag_call_rate`, `registration_field_extraction_accuracy`, `cpf_rg_cep_confusion_rate`, `redundant_confirmation_rate`, `missing_field_precision`, `address_inference_rate` e `registration_completion_efficiency`.
+
 ## Fora de escopo
 
 - WhatsApp.
@@ -335,6 +636,9 @@ Como operador comercial, quero avaliar conversa longa, respostas curtas e CRM pr
 |---|---|---|---|
 | ASM-012 | A primeira bateria de avaliacao pode ser deterministica e offline, usando fakes e resultados simulados do agente, ate a fase `ai-agent-live-sandbox`. | confirmada | Definida pelo prompt da feature. |
 | ASM-013 | As metricas iniciais podem ser calculadas sobre cenarios representativos versionados, sem exigir volume estatistico grande nesta fase. | confirmada | O prompt exige dataset inicial que possa crescer posteriormente. |
+| ASM-033 | As primeiras metricas de qualidade comercial podem ser deterministicas sobre campos observados, sem LLM judge, ate haver volume real suficiente. | confirmada | O pedido prioriza assercoes deterministicas quando possivel. |
+| ASM-035 | A avaliacao pode representar falha de geracao interna como `INTERNAL_GENERATION_FAILURE`, sem classificar esse caso como `HUMAN_HANDOFF_REQUIRED`. | confirmada | Necessario para medir retry seguro que continua alucinando sem atribuir a falha ao pedido do paciente. |
+| ASM-039 | A avaliacao comercial do playbook global usa os mesmos campos estruturados que o runtime live coloca em `commercialState`. | confirmada | Garante paridade sem depender de prompt paralelo ou LLM judge obrigatorio. |
 
 ## Perguntas em aberto
 

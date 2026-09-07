@@ -17,26 +17,26 @@ def build_sandbox_scenarios() -> tuple[SandboxScenario, ...]:
         SandboxScenario(
             id="supabase-existing-info",
             category="supabase_retrieval",
-            message="Quanto custa a consulta com Dra. Marina?",
+            message="Quero saber sobre implante com Dr. Leonardo Carvalho.",
             expected_decision="ANSWER_GROUNDED",
         ),
         SandboxScenario(
             id="supabase-missing-info",
             category="supabase_retrieval",
-            message="Quanto custa a rinoplastia?",
+            message="Quanto custa uma rinoplastia?",
             expected_decision="HUMAN_HANDOFF_REQUIRED",
         ),
         SandboxScenario(
             id="supabase-not-offered",
             category="procedure_catalog",
             message="Vocês fazem transplante capilar?",
-            expected_decision="NOT_OFFERED",
+            expected_decision="HUMAN_HANDOFF_REQUIRED",
         ),
         SandboxScenario(
             id="supabase-missing-attribute",
             category="procedure_attribute",
-            message="Botox pode ser parcelado em 10 vezes?",
-            expected_decision="HUMAN_HANDOFF_REQUIRED",
+            message="Quanto custa o implante?",
+            expected_decision="ANSWER_GROUNDED",
         ),
         SandboxScenario(
             id="supabase-cross-org",

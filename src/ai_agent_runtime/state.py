@@ -39,13 +39,17 @@ class AgentState:
     messages: list[dict[str, Any]] = field(default_factory=list)
     context: dict[str, Any] = field(default_factory=dict)
     handoff_context: dict[str, Any] | None = None
+    response_text: str | None = None
 
     @property
     def scheduling_context_active(self) -> bool:
         return self.stage == AgentStage.SCHEDULING_CONTEXT_ACTIVE
 
-    def append_message(self, direction: str, text: str) -> None:
-        self.messages.append({"direction": direction, "text": text})
+    def append_message(self, direction: str, text: str, metadata: dict[str, Any] | None = None) -> None:
+        message = {"direction": direction, "text": text}
+        if metadata:
+            message["metadata"] = dict(metadata)
+        self.messages.append(message)
 
     def snapshot(self) -> dict[str, Any]:
         return {
@@ -58,4 +62,5 @@ class AgentState:
             "messages": list(self.messages),
             "context": dict(self.context),
             "handoffContext": self.handoff_context,
+            "responseText": self.response_text,
         }

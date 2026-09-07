@@ -8,6 +8,7 @@ from urllib import error, parse, request
 
 from ai_agent_runtime.integrations.langsmith_observer import LangSmithObserver
 from ai_agent_runtime.observability import AuditEvent, AuditStore, RuntimeObservability
+from ai_agent_runtime.sandbox_ids import LEONARDO_ORG_ID
 from langsmith import Client as LangSmithSdkClient
 
 from .config import DEFAULT_LANGSMITH_PROJECT, SandboxConfig
@@ -18,7 +19,7 @@ def build_langsmith_plan(config: SandboxConfig) -> dict:
     observer = LangSmithObserver(api_key=config.integrations.langsmith_api_key, project=config.langsmith_project)
     event = AuditEvent(
         conversation_id="sandbox-conv",
-        organization_id="sandbox-org-aurora",
+        organization_id=LEONARDO_ORG_ID,
         intent="FACTUAL_QUESTION",
         decision="HUMAN_HANDOFF_REQUIRED",
         tool_called=None,
@@ -64,7 +65,7 @@ def run_langsmith_smoke(config: SandboxConfig) -> dict:
         name="ai-agent-live-sandbox-smoke",
         run_type="chain",
         project_name=config.langsmith_project,
-        inputs={"message": "Paciente ficticio pergunta sobre Botox"},
+        inputs={"message": "Paciente teste pergunta sobre implante"},
         start_time=started_at,
         extra={"metadata": {"environment": "sandbox", "feature": "ai-agent-live-sandbox"}},
     )

@@ -3,12 +3,14 @@ from __future__ import annotations
 import json
 import math
 from dataclasses import dataclass
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 from urllib import parse, request
 from uuid import NAMESPACE_URL, uuid5
 
 from ai_agent_runtime.integrations.openai_provider import OpenAIResponsesProvider
+from ai_agent_runtime.sandbox_ids import BOREAL_ORG_ID, LEONARDO_ORG_ID
 
 from .config import SandboxConfig
 from .dataset import build_sandbox_dataset, ingestion_pipeline_gap_report
@@ -105,23 +107,30 @@ def run_supabase_smoke(config: SandboxConfig) -> dict:
     dataset = build_sandbox_dataset()
     table_checks = _check_tables(client)
     ids = _persist_dataset(client, openai, dataset)
-    lexical = _lexical_query(client, ids["aurora_org"], "Dra. Marina")
-    vector = _vector_query(client, ids["aurora_org"], openai.create_embedding(text="consulta Dra. Marina R$ 500", embedding_version=dataset.version).vector)
-    cross_org = _lexical_query(client, ids["aurora_org"], "Dra. Helena")
-    closed_world = _closed_world_decision(client, ids["aurora_org"], "transplante capilar")
-    missing_attribute = _missing_attribute_decision(client, ids["aurora_org"], "Botox pode ser parcelado em 10 vezes?")
-    grounding = "PASS" if any("R$ 500" in item["content"] for item in lexical) else "FAIL"
+    primary_org = ids["primary_org"]
+    version_state = _document_version_state(client, primary_org)
+    lexical = _lexical_query(client, primary_org, "implantes")
+    vector = _vector_query(client, primary_org, openai.create_embedding(text="Scanner Virtuo odontologia digital", embedding_version=dataset.version).vector)
+    cross_org = _lexical_query(client, primary_org, "Dra. Helena")
+    closed_world = _closed_world_decision(client, primary_org, "transplante capilar")
+    missing_attribute = _missing_attribute_decision(client, primary_org, "Qual o valor do implante?")
+    free_evaluation = _free_evaluation_decision(client, primary_org, "Quanto custa a avaliacao?")
+    grounding = "PASS" if any("Dr. Leonardo Carvalho" in item["content"] or "implantes" in item["content"] for item in lexical) else "FAIL"
 
     if not lexical or grounding != "PASS":
-        raise SupabaseSmokeError("Supabase lexical retrieval did not return grounded Aurora evidence")
-    if not vector or vector[0]["organization_id"] != ids["aurora_org"]:
-        raise SupabaseSmokeError("Supabase vector retrieval did not return Aurora evidence")
+        raise SupabaseSmokeError("Supabase lexical retrieval did not return grounded Dr. Leonardo evidence")
+    if not vector or vector[0]["organization_id"] != primary_org:
+        raise SupabaseSmokeError("Supabase vector retrieval did not return Dr. Leonardo evidence")
     if cross_org:
-        raise SupabaseSmokeError("Supabase cross-org isolation failed for Boreal query inside Aurora org")
-    if closed_world != "NOT_OFFERED":
-        raise SupabaseSmokeError("Supabase closed-world procedure absence did not produce NOT_OFFERED")
-    if missing_attribute != "HUMAN_HANDOFF_REQUIRED":
-        raise SupabaseSmokeError("Supabase missing attribute did not produce HUMAN_HANDOFF_REQUIRED")
+        raise SupabaseSmokeError("Supabase cross-org isolation failed for Boreal query inside Dr. Leonardo org")
+    if closed_world != "HUMAN_HANDOFF_REQUIRED":
+        raise SupabaseSmokeError("Supabase open-world procedure absence should not produce NOT_OFFERED")
+    if missing_attribute != "ANSWER_GROUNDED":
+        raise SupabaseSmokeError("Supabase authorized post-evaluation pricing policy was not retrieved")
+    if free_evaluation != "ANSWER_GROUNDED":
+        raise SupabaseSmokeError("Supabase authorized free evaluation policy was not retrieved")
+    if any(row["status"] == "PUBLISHED" and row["version_number"] == 1 for row in version_state):
+        raise SupabaseSmokeError("Supabase old Dr. Leonardo briefing version is still current")
 
     return {
         **build_supabase_plan(config),
@@ -135,8 +144,10 @@ def run_supabase_smoke(config: SandboxConfig) -> dict:
         "crossOrgLeakage": 0,
         "existingInfoDecision": "ANSWER_GROUNDED",
         "missingAttributeDecision": missing_attribute,
-        "closedWorldDecision": closed_world,
+        "freeEvaluationDecision": free_evaluation,
+        "procedureAbsenceDecision": closed_world,
         "grounding": grounding,
+        "documentVersions": version_state,
     }
 
 
@@ -157,14 +168,17 @@ def _persist_dataset(client: SupabaseRestClient, openai: OpenAIResponsesProvider
     client.upsert("organizations", [{"id": org_ids[org.id], "name": org.name} for org in dataset.organizations], conflict="id")
 
     document_rows = []
+    superseded_version_rows = []
     version_rows = []
     chunk_rows = []
     index_rows = []
+    now = datetime.now(timezone.utc).isoformat()
     for document in dataset.documents:
         document_id = _uuid(document.id)
-        version_id = _uuid(f"{document.id}:v1")
-        chunk_id = _uuid(f"{document.id}:chunk:0")
-        index_id = _uuid(f"{document.id}:index:0")
+        previous_version_id = _uuid(f"{document.id}:v1")
+        version_id = _uuid(f"{document.id}:v2")
+        chunk_id = _uuid(f"{document.id}:chunk:0:v2")
+        index_id = _uuid(f"{document.id}:index:0:v2")
         organization_id = org_ids[document.organization_id]
         document_rows.append({
             "id": document_id,
@@ -172,17 +186,32 @@ def _persist_dataset(client: SupabaseRestClient, openai: OpenAIResponsesProvider
             "document_type": document.document_type,
             "title": document.title,
         })
+        superseded_version_rows.append({
+            "id": previous_version_id,
+            "organization_id": organization_id,
+            "document_id": document_id,
+            "version_number": 1,
+            "status": "SUPERSEDED",
+            "effective_until": now,
+            "processing_valid": False,
+            "knowledge_mode": document.knowledge_mode,
+            "closed_world_completeness_approved": document.closed_world_completeness_approved,
+            "approved_by": "sandbox",
+            "published_by": "sandbox",
+        })
         version_rows.append({
             "id": version_id,
             "organization_id": organization_id,
             "document_id": document_id,
-            "version_number": 1,
+            "version_number": 2,
             "status": document.status,
             "processing_valid": True,
             "knowledge_mode": document.knowledge_mode,
             "closed_world_completeness_approved": document.closed_world_completeness_approved,
             "approved_by": "sandbox",
             "published_by": "sandbox",
+            "published_at": now,
+            "supersedes_version_id": previous_version_id,
         })
         chunk_rows.append({
             "id": chunk_id,
@@ -211,10 +240,17 @@ def _persist_dataset(client: SupabaseRestClient, openai: OpenAIResponsesProvider
             "metadata": {"environment": "sandbox"},
         })
     client.upsert("documents", document_rows, conflict="id")
+    client.upsert("document_versions", superseded_version_rows, conflict="id")
     client.upsert("document_versions", version_rows, conflict="id")
     client.upsert("chunks", chunk_rows, conflict="id")
     client.upsert("retrieval_index_entries", index_rows, conflict="id")
-    return {"aurora_org": org_ids["sandbox-org-aurora"], "boreal_org": org_ids["sandbox-org-boreal"], "index_ids": [row["id"] for row in index_rows]}
+    return {
+        "primary_org": org_ids[LEONARDO_ORG_ID],
+        "leonardo_org": org_ids[LEONARDO_ORG_ID],
+        "boreal_org": org_ids[BOREAL_ORG_ID],
+        "index_ids": [row["id"] for row in index_rows],
+        "version_ids": [row["id"] for row in version_rows],
+    }
 
 
 def _pgvector(vector: list[float]) -> str:
@@ -228,10 +264,14 @@ def _parse_vector(value: Any) -> list[float]:
 
 
 def _lexical_query(client: SupabaseRestClient, organization_id: str, query: str) -> list[dict[str, Any]]:
+    version_ids = _published_processed_version_ids(client, organization_id)
+    if not version_ids:
+        return []
     escaped = query.replace("*", "")
     rows = client.get("chunks", params={
         "select": "id,organization_id,document_version_id,content",
         "organization_id": f"eq.{organization_id}",
+        "document_version_id": f"in.({','.join(sorted(version_ids))})",
         "content": f"ilike.*{escaped}*",
         "limit": "8",
     })
@@ -239,9 +279,13 @@ def _lexical_query(client: SupabaseRestClient, organization_id: str, query: str)
 
 
 def _vector_query(client: SupabaseRestClient, organization_id: str, query_vector: list[float]) -> list[dict[str, Any]]:
+    version_ids = _published_processed_version_ids(client, organization_id)
+    if not version_ids:
+        return []
     rows = client.get("retrieval_index_entries", params={
-        "select": "id,organization_id,chunk_id,embedding",
+        "select": "id,organization_id,chunk_id,document_version_id,embedding",
         "organization_id": f"eq.{organization_id}",
+        "document_version_id": f"in.({','.join(sorted(version_ids))})",
         "limit": "32",
     })
     chunk_ids = [row["chunk_id"] for row in rows]
@@ -269,6 +313,41 @@ def _chunks_by_id(client: SupabaseRestClient, chunk_ids: list[str]) -> dict[str,
     return {row["id"]: row for row in rows}
 
 
+def _published_processed_version_ids(client: SupabaseRestClient, organization_id: str) -> set[str]:
+    rows = client.get("document_versions", params={
+        "select": "id,organization_id,status,processing_valid",
+        "organization_id": f"eq.{organization_id}",
+        "status": "eq.PUBLISHED",
+        "processing_valid": "is.true",
+        "limit": "100",
+    })
+    return {
+        str(row["id"])
+        for row in rows
+        if row.get("organization_id") == organization_id and row.get("status") == "PUBLISHED" and row.get("processing_valid") is True
+    }
+
+
+def _document_version_state(client: SupabaseRestClient, organization_id: str) -> list[dict[str, Any]]:
+    rows = client.get("document_versions", params={
+        "select": "id,organization_id,document_id,version_number,status,processing_valid,supersedes_version_id",
+        "organization_id": f"eq.{organization_id}",
+        "order": "document_id.asc,version_number.asc",
+        "limit": "100",
+    })
+    return [
+        {
+            "id": row.get("id"),
+            "document_id": row.get("document_id"),
+            "version_number": row.get("version_number"),
+            "status": row.get("status"),
+            "processing_valid": row.get("processing_valid"),
+            "supersedes_version_id": row.get("supersedes_version_id"),
+        }
+        for row in rows
+    ]
+
+
 def _cosine(a: list[float], b: list[float]) -> float:
     numerator = sum(x * y for x, y in zip(a, b))
     denom = math.sqrt(sum(x * x for x in a)) * math.sqrt(sum(y * y for y in b))
@@ -276,12 +355,22 @@ def _cosine(a: list[float], b: list[float]) -> float:
 
 
 def _closed_world_decision(client: SupabaseRestClient, organization_id: str, procedure_name: str) -> str:
-    catalogs = _lexical_query(client, organization_id, "Botox")
-    if catalogs and procedure_name.lower() not in "\n".join(item["content"].lower() for item in catalogs):
+    catalogs = _lexical_query(client, organization_id, "servicos")
+    catalog_text = "\n".join(item["content"].lower() for item in catalogs)
+    closed_world_approved = "completude" in catalog_text and "nao comprova" not in catalog_text
+    if closed_world_approved and catalogs and procedure_name.lower() not in catalog_text:
         return "NOT_OFFERED"
     return "HUMAN_HANDOFF_REQUIRED"
 
 
 def _missing_attribute_decision(client: SupabaseRestClient, organization_id: str, question: str) -> str:
-    hits = _lexical_query(client, organization_id, "10 vezes")
+    hits = _lexical_query(client, organization_id, "Valores dos procedimentos")
     return "ANSWER_GROUNDED" if hits else "HUMAN_HANDOFF_REQUIRED"
+
+
+def _free_evaluation_decision(client: SupabaseRestClient, organization_id: str, question: str) -> str:
+    hits = _lexical_query(client, organization_id, "Avaliacao gratuita")
+    evidence_text = "\n".join(row.get("content", "") for row in hits).lower()
+    if "avaliacao gratuita" in evidence_text and "busca por procedimento" in evidence_text:
+        return "ANSWER_GROUNDED"
+    return "HUMAN_HANDOFF_REQUIRED"

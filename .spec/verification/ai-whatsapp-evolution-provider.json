@@ -1,0 +1,117 @@
+{
+  "feature": "ai-whatsapp-evolution-provider",
+  "timestamp": "2026-09-07T14:13:46.421Z",
+  "gitRev": "8e319c3",
+  "command": "node --test --test-reporter=tap",
+  "reporter": "tap",
+  "exitCode": 0,
+  "testsParsed": 202,
+  "results": {
+    "AC-156": {
+      "status": "pass",
+      "testName": "@spec:AC-156 @spec:AC-158 @spec:AC-175 Evolution provider implements WhatsAppProvider and factory preserves Meta",
+      "method": "tap"
+    },
+    "AC-157": {
+      "status": "pass",
+      "testName": "@spec:AC-157 Evolution config is env-driven and .env.example does not contain real secrets",
+      "method": "tap"
+    },
+    "AC-158": {
+      "status": "pass",
+      "testName": "@spec:AC-156 @spec:AC-158 @spec:AC-175 Evolution provider implements WhatsAppProvider and factory preserves Meta",
+      "method": "tap"
+    },
+    "AC-159": {
+      "status": "pass",
+      "testName": "@spec:AC-159 @spec:AC-169 @spec:AC-170 @spec:AC-171 Evolution provider calls documented endpoints",
+      "method": "tap"
+    },
+    "AC-160": {
+      "status": "pass",
+      "testName": "@spec:AC-160 @spec:AC-174 Evolution errors redact API key and webhook secret",
+      "method": "tap"
+    },
+    "AC-161": {
+      "status": "pass",
+      "testName": "@spec:AC-161 Evolution webhook validates configured shared secret",
+      "method": "tap"
+    },
+    "AC-162": {
+      "status": "pass",
+      "testName": "@spec:AC-162 Evolution parser normalizes text, audio, image, and document events",
+      "method": "tap"
+    },
+    "AC-163": {
+      "status": "pass",
+      "testName": "@spec:AC-163 Evolution webhook blocks unknown instance before runtime and ignores payload organizationId",
+      "method": "tap"
+    },
+    "AC-164": {
+      "status": "pass",
+      "testName": "@spec:AC-164 Evolution webhook preserves idempotency, ordering, and self-message protection",
+      "method": "tap"
+    },
+    "AC-165": {
+      "status": "pass",
+      "testName": "@spec:AC-165 @spec:AC-166 @spec:AC-167 @spec:AC-168 Evolution media flows use safe download and existing policies",
+      "method": "tap"
+    },
+    "AC-166": {
+      "status": "pass",
+      "testName": "@spec:AC-165 @spec:AC-166 @spec:AC-167 @spec:AC-168 Evolution media flows use safe download and existing policies",
+      "method": "tap"
+    },
+    "AC-167": {
+      "status": "pass",
+      "testName": "@spec:AC-165 @spec:AC-166 @spec:AC-167 @spec:AC-168 Evolution media flows use safe download and existing policies",
+      "method": "tap"
+    },
+    "AC-168": {
+      "status": "pass",
+      "testName": "@spec:AC-165 @spec:AC-166 @spec:AC-167 @spec:AC-168 Evolution media flows use safe download and existing policies",
+      "method": "tap"
+    },
+    "AC-169": {
+      "status": "pass",
+      "testName": "@spec:AC-159 @spec:AC-169 @spec:AC-170 @spec:AC-171 Evolution provider calls documented endpoints",
+      "method": "tap"
+    },
+    "AC-170": {
+      "status": "pass",
+      "testName": "@spec:AC-159 @spec:AC-169 @spec:AC-170 @spec:AC-171 Evolution provider calls documented endpoints",
+      "method": "tap"
+    },
+    "AC-171": {
+      "status": "pass",
+      "testName": "@spec:AC-159 @spec:AC-169 @spec:AC-170 @spec:AC-171 Evolution provider calls documented endpoints",
+      "method": "tap"
+    },
+    "AC-172": {
+      "status": "pass",
+      "testName": "@spec:AC-172 @spec:AC-174 Evolution smoke blocks without credentials and prints names only",
+      "method": "tap"
+    },
+    "AC-173": {
+      "status": "pass",
+      "testName": "@spec:AC-173 Evolution smoke plans all live scenarios and never marks LIVE_VERIFIED without real calls",
+      "method": "tap"
+    },
+    "AC-174": {
+      "status": "pass",
+      "testName": "@spec:AC-160 @spec:AC-174 Evolution errors redact API key and webhook secret",
+      "method": "tap"
+    },
+    "AC-175": {
+      "status": "pass",
+      "testName": "@spec:AC-156 @spec:AC-158 @spec:AC-175 Evolution provider implements WhatsAppProvider and factory preserves Meta",
+      "method": "tap"
+    },
+    "AC-176": {
+      "status": "pass",
+      "testName": "@spec:AC-176 Evolution feature does not alter CRM, RAG, Calendar, or grounding contracts",
+      "method": "tap"
+    }
+  },
+  "principles": {}
+}

@@ -27,6 +27,7 @@ print(json.dumps({
   "openai": cfg.openai_api_key,
   "model": cfg.openai_responses_model,
   "effort": cfg.openai_reasoning_effort,
+  "sttModel": cfg.openai_stt_model,
   "supabase": cfg.supabase_url,
 }))
 `);
@@ -34,6 +35,7 @@ print(json.dumps({
   assert.equal(parsed.openai, 'test-key-from-env');
   assert.equal(parsed.model, 'gpt-5.6-luna');
   assert.equal(parsed.effort, 'low');
+  assert.equal(parsed.sttModel, 'gpt-4o-mini-transcribe');
   assert.equal(parsed.supabase, 'https://example.supabase.co');
 
   const envExample = readFileSync('.env.example', 'utf8');
@@ -41,6 +43,34 @@ print(json.dumps({
     assert.match(envExample, new RegExp(`^${key}$`, 'm'));
   }
   assert.doesNotMatch(envExample, /(sk-|Bearer\s+[A-Za-z0-9]|AIza|ya29\.)/);
+});
+
+test('@spec:AC-382 OpenAI speech-to-text provider uses env model and multipart audio endpoint', () => {
+  const output = runPython(`
+import json
+from ai_agent_runtime.integrations.config import IntegrationConfig
+from ai_agent_runtime.whatsapp import OpenAISpeechToTextProvider
+
+class Transport:
+    def __init__(self): self.calls = []
+    def post_multipart(self, url, *, headers, fields, files):
+        self.calls.append({"url": url, "headers": headers, "fields": fields, "files": {key: (value[0], len(value[1]), value[2]) for key, value in files.items()}})
+        return {"text": "Oi, gostaria de saber sobre implante"}
+
+transport = Transport()
+provider = OpenAISpeechToTextProvider(IntegrationConfig(openai_api_key="test-key", openai_stt_model="gpt-4o-mini-transcribe"), transport)
+text = provider.transcribe(audio=b"audio-bytes", mime_type="audio/ogg", file_name="voice.ogg")
+print(json.dumps({"text": text, "model": provider.model, "call": transport.calls[0]}))
+`);
+  const parsed = JSON.parse(output);
+  assert.equal(parsed.text, 'Oi, gostaria de saber sobre implante');
+  assert.equal(parsed.model, 'gpt-4o-mini-transcribe');
+  assert.equal(parsed.call.url, 'https://api.openai.com/v1/audio/transcriptions');
+  assert.equal(parsed.call.fields.model, 'gpt-4o-mini-transcribe');
+  assert.equal(parsed.call.files.file[0], 'voice.ogg');
+  assert.equal(parsed.call.files.file[1], 11);
+  assert.equal(parsed.call.files.file[2], 'audio/ogg');
+  assert.match(parsed.call.headers.Authorization, /^Bearer /);
 });
 
 test('@spec:AC-051 @spec:AC-052 @spec:AC-053 migration enables pgvector, org constraints, and no patient memory in knowledge tables', () => {

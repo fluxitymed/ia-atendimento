@@ -2,7 +2,9 @@
 .env.*
 !.env.example
 .secrets/
+.sandbox/
 *.token.json
 *oauth*.json
 __pycache__/
 *.pyc
+cloudflared.tgz

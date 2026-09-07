@@ -1,0 +1,832 @@
+{
+  "feature": "ai-whatsapp-zapi-provider",
+  "timestamp": "2026-09-07T14:12:58.651Z",
+  "gitRev": "8e319c3",
+  "command": "node --test --test-reporter=tap",
+  "reporter": "tap",
+  "exitCode": 0,
+  "testsParsed": 202,
+  "results": {
+    "AC-177": {
+      "status": "pass",
+      "testName": "@spec:AC-177 @spec:AC-179 @spec:AC-196 Z-API implements WhatsAppProvider and factory preserves Meta and Evolution",
+      "method": "tap"
+    },
+    "AC-178": {
+      "status": "pass",
+      "testName": "@spec:AC-178 Z-API config is env-driven and .env.example lists names without real secrets",
+      "method": "tap"
+    },
+    "AC-179": {
+      "status": "pass",
+      "testName": "@spec:AC-177 @spec:AC-179 @spec:AC-196 Z-API implements WhatsAppProvider and factory preserves Meta and Evolution",
+      "method": "tap"
+    },
+    "AC-180": {
+      "status": "pass",
+      "testName": "@spec:AC-180 @spec:AC-181 @spec:AC-191 @spec:AC-192 @spec:AC-193 Z-API provider calls official endpoints",
+      "method": "tap"
+    },
+    "AC-181": {
+      "status": "pass",
+      "testName": "@spec:AC-180 @spec:AC-181 @spec:AC-191 @spec:AC-192 @spec:AC-193 Z-API provider calls official endpoints",
+      "method": "tap"
+    },
+    "AC-182": {
+      "status": "pass",
+      "testName": "@spec:AC-182 Z-API errors redact instance token, client token and accidental secret text",
+      "method": "tap"
+    },
+    "AC-183": {
+      "status": "pass",
+      "testName": "@spec:AC-183 Z-API legitimate webhook without native secret is not rejected",
+      "method": "tap"
+    },
+    "AC-184": {
+      "status": "pass",
+      "testName": "@spec:AC-184 Z-API parser normalizes official text, audio, image, and document callbacks",
+      "method": "tap"
+    },
+    "AC-185": {
+      "status": "pass",
+      "testName": "@spec:AC-185 Z-API webhook blocks unknown instance and ignores payload organizationId",
+      "method": "tap"
+    },
+    "AC-186": {
+      "status": "pass",
+      "testName": "@spec:AC-186 Z-API webhook preserves idempotency, ordering, and self-message protection",
+      "method": "tap"
+    },
+    "AC-187": {
+      "status": "pass",
+      "testName": "@spec:AC-187 @spec:AC-188 @spec:AC-189 @spec:AC-190 @spec:AC-408 @spec:AC-409 @spec:AC-410 Z-API media flows use safe download, ingress observability, and explicit invalid-media rejection",
+      "method": "tap"
+    },
+    "AC-188": {
+      "status": "pass",
+      "testName": "@spec:AC-187 @spec:AC-188 @spec:AC-189 @spec:AC-190 @spec:AC-408 @spec:AC-409 @spec:AC-410 Z-API media flows use safe download, ingress observability, and explicit invalid-media rejection",
+      "method": "tap"
+    },
+    "AC-189": {
+      "status": "pass",
+      "testName": "@spec:AC-187 @spec:AC-188 @spec:AC-189 @spec:AC-190 @spec:AC-408 @spec:AC-409 @spec:AC-410 Z-API media flows use safe download, ingress observability, and explicit invalid-media rejection",
+      "method": "tap"
+    },
+    "AC-190": {
+      "status": "pass",
+      "testName": "@spec:AC-187 @spec:AC-188 @spec:AC-189 @spec:AC-190 @spec:AC-408 @spec:AC-409 @spec:AC-410 Z-API media flows use safe download, ingress observability, and explicit invalid-media rejection",
+      "method": "tap"
+    },
+    "AC-191": {
+      "status": "pass",
+      "testName": "@spec:AC-180 @spec:AC-181 @spec:AC-191 @spec:AC-192 @spec:AC-193 Z-API provider calls official endpoints",
+      "method": "tap"
+    },
+    "AC-192": {
+      "status": "pass",
+      "testName": "@spec:AC-180 @spec:AC-181 @spec:AC-191 @spec:AC-192 @spec:AC-193 Z-API provider calls official endpoints",
+      "method": "tap"
+    },
+    "AC-193": {
+      "status": "pass",
+      "testName": "@spec:AC-180 @spec:AC-181 @spec:AC-191 @spec:AC-192 @spec:AC-193 Z-API provider calls official endpoints",
+      "method": "tap"
+    },
+    "AC-194": {
+      "status": "pass",
+      "testName": "@spec:AC-194 Z-API smoke blocks without credentials and prints names only",
+      "method": "tap"
+    },
+    "AC-195": {
+      "status": "pass",
+      "testName": "@spec:AC-195 Z-API smoke plans all live scenarios and never marks LIVE_VERIFIED without real calls",
+      "method": "tap"
+    },
+    "AC-196": {
+      "status": "pass",
+      "testName": "@spec:AC-177 @spec:AC-179 @spec:AC-196 Z-API implements WhatsAppProvider and factory preserves Meta and Evolution",
+      "method": "tap"
+    },
+    "AC-197": {
+      "status": "pass",
+      "testName": "@spec:AC-197 @spec:AC-420 Z-API feature does not alter CRM, RAG, Calendar, or grounding contracts",
+      "method": "tap"
+    },
+    "AC-198": {
+      "status": "pass",
+      "testName": "@spec:AC-198 inbound Z-API text reaches runtime and outbound uses generated response",
+      "method": "tap"
+    },
+    "AC-199": {
+      "status": "pass",
+      "testName": "@spec:AC-199 sequential Z-API turns reuse conversation state and previous history",
+      "method": "tap"
+    },
+    "AC-200": {
+      "status": "pass",
+      "testName": "@spec:AC-200 contacts and organizations do not share Z-API conversation history",
+      "method": "tap"
+    },
+    "AC-201": {
+      "status": "pass",
+      "testName": "@spec:AC-201 runtime failure is not masked by successful placeholder response",
+      "method": "tap"
+    },
+    "AC-202": {
+      "status": "pass",
+      "testName": "@spec:AC-202 live Z-API path exposes safe observability stages and no fake providers",
+      "method": "tap"
+    },
+    "AC-203": {
+      "status": "pass",
+      "testName": "@spec:AC-203 @spec:AC-206 Supabase retrieval HTTP 400 logs provider stage and sanitized body",
+      "method": "tap"
+    },
+    "AC-204": {
+      "status": "pass",
+      "testName": "@spec:AC-204 @spec:AC-207 Z-API live server maps sandbox organization slug to Supabase UUID",
+      "method": "tap"
+    },
+    "AC-205": {
+      "status": "pass",
+      "testName": "@spec:AC-205 @spec:AC-206 OpenAI HTTP 400 logs model call stage and sanitized body",
+      "method": "tap"
+    },
+    "AC-206": {
+      "status": "pass",
+      "testName": "@spec:AC-203 @spec:AC-206 Supabase retrieval HTTP 400 logs provider stage and sanitized body",
+      "method": "tap"
+    },
+    "AC-207": {
+      "status": "pass",
+      "testName": "@spec:AC-204 @spec:AC-207 Z-API live server maps sandbox organization slug to Supabase UUID",
+      "method": "tap"
+    },
+    "AC-208": {
+      "status": "pass",
+      "testName": "@spec:AC-208 importing zapi_server does not require langsmith or sandbox package bootstrap",
+      "method": "tap"
+    },
+    "AC-209": {
+      "status": "pass",
+      "testName": "@spec:AC-209 sandbox dataset and Z-API runtime share neutral deterministic IDs",
+      "method": "tap"
+    },
+    "AC-210": {
+      "status": "pass",
+      "testName": "@spec:AC-210 @spec:AC-215 one inbound invokes runtime once and emits one outbound",
+      "method": "tap"
+    },
+    "AC-211": {
+      "status": "pass",
+      "testName": "@spec:AC-211 distinct messageIds reuse conversation and load previous history",
+      "method": "tap"
+    },
+    "AC-212": {
+      "status": "pass",
+      "testName": "@spec:AC-212 @spec:AC-215 duplicate, fromMe, and out-of-order callbacks do not reinvoke runtime",
+      "method": "tap"
+    },
+    "AC-213": {
+      "status": "pass",
+      "testName": "@spec:AC-213 @spec:AC-214 factual zero-evidence response fails grounding while conversational response can pass",
+      "method": "tap"
+    },
+    "AC-214": {
+      "status": "pass",
+      "testName": "@spec:AC-213 @spec:AC-214 factual zero-evidence response fails grounding while conversational response can pass",
+      "method": "tap"
+    },
+    "AC-215": {
+      "status": "pass",
+      "testName": "@spec:AC-210 @spec:AC-215 one inbound invokes runtime once and emits one outbound",
+      "method": "tap"
+    },
+    "AC-216": {
+      "status": "pass",
+      "testName": "@spec:AC-216 @spec:AC-217 Dr. Leonardo retrieval finds briefing terms without cross-org leakage",
+      "method": "tap"
+    },
+    "AC-217": {
+      "status": "pass",
+      "testName": "@spec:AC-216 @spec:AC-217 Dr. Leonardo retrieval finds briefing terms without cross-org leakage",
+      "method": "tap"
+    },
+    "AC-218": {
+      "status": "pass",
+      "testName": "@spec:AC-218 @spec:AC-219 @spec:AC-220 @spec:AC-221 live sandbox store persists history across restart-like reloads",
+      "method": "tap"
+    },
+    "AC-219": {
+      "status": "pass",
+      "testName": "@spec:AC-218 @spec:AC-219 @spec:AC-220 @spec:AC-221 live sandbox store persists history across restart-like reloads",
+      "method": "tap"
+    },
+    "AC-220": {
+      "status": "pass",
+      "testName": "@spec:AC-218 @spec:AC-219 @spec:AC-220 @spec:AC-221 live sandbox store persists history across restart-like reloads",
+      "method": "tap"
+    },
+    "AC-221": {
+      "status": "pass",
+      "testName": "@spec:AC-218 @spec:AC-219 @spec:AC-220 @spec:AC-221 live sandbox store persists history across restart-like reloads",
+      "method": "tap"
+    },
+    "AC-222": {
+      "status": "pass",
+      "testName": "@spec:AC-222 factual grounding still requires evidence after retrieval fix",
+      "method": "tap"
+    },
+    "AC-280": {
+      "status": "pass",
+      "testName": "@spec:AC-280 @spec:AC-281 @spec:AC-282 @spec:AC-283 Dr. Leonardo is active Z-API sandbox org and open catalog does not authorize absence",
+      "method": "tap"
+    },
+    "AC-281": {
+      "status": "pass",
+      "testName": "@spec:AC-280 @spec:AC-281 @spec:AC-282 @spec:AC-283 Dr. Leonardo is active Z-API sandbox org and open catalog does not authorize absence",
+      "method": "tap"
+    },
+    "AC-282": {
+      "status": "pass",
+      "testName": "@spec:AC-280 @spec:AC-281 @spec:AC-282 @spec:AC-283 Dr. Leonardo is active Z-API sandbox org and open catalog does not authorize absence",
+      "method": "tap"
+    },
+    "AC-283": {
+      "status": "pass",
+      "testName": "@spec:AC-280 @spec:AC-281 @spec:AC-282 @spec:AC-283 Dr. Leonardo is active Z-API sandbox org and open catalog does not authorize absence",
+      "method": "tap"
+    },
+    "AC-284": {
+      "status": "pass",
+      "testName": "@spec:AC-284 @spec:AC-285 clinical urgency for Dr. Leonardo produces silent handoff before model call",
+      "method": "tap"
+    },
+    "AC-285": {
+      "status": "pass",
+      "testName": "@spec:AC-284 @spec:AC-285 clinical urgency for Dr. Leonardo produces silent handoff before model call",
+      "method": "tap"
+    },
+    "AC-291": {
+      "status": "pass",
+      "testName": "@spec:AC-291 Dr. Leonardo seeded retrieval supports grounded outbound for implant interest",
+      "method": "tap"
+    },
+    "AC-292": {
+      "status": "pass",
+      "testName": "@spec:AC-292 @spec:AC-293 authorized organization config can ground opening but not procedure facts",
+      "method": "tap"
+    },
+    "AC-293": {
+      "status": "pass",
+      "testName": "@spec:AC-292 @spec:AC-293 authorized organization config can ground opening but not procedure facts",
+      "method": "tap"
+    },
+    "AC-228": {
+      "status": "pass",
+      "testName": "@spec:AC-228 @spec:AC-224 @spec:AC-246 offered Botox interest is treated as commercial progression, not encyclopedia-first handoff",
+      "method": "tap"
+    },
+    "AC-229": {
+      "status": "pass",
+      "testName": "@spec:AC-229 @spec:AC-225 closed-world procedure absence returns authorized not-offered answer without handoff",
+      "method": "tap"
+    },
+    "AC-230": {
+      "status": "pass",
+      "testName": "@spec:AC-230 @spec:AC-223 @spec:AC-226 @spec:AC-244 factual attribute missing for Botox produces silent handoff",
+      "method": "tap"
+    },
+    "AC-235": {
+      "status": "pass",
+      "testName": "@spec:AC-235 @spec:AC-238 @spec:AC-239 answer about visible skin marks is contextual and does not require handoff",
+      "method": "tap"
+    },
+    "AC-236": {
+      "status": "pass",
+      "testName": "@spec:AC-236 @spec:AC-239 brand query still requires evidence and produces silent handoff",
+      "method": "tap"
+    },
+    "AC-237": {
+      "status": "pass",
+      "testName": "@spec:AC-237 short choices and confirmations are classified as answers to the previous assistant question",
+      "method": "tap"
+    },
+    "AC-238": {
+      "status": "pass",
+      "testName": "@spec:AC-235 @spec:AC-238 @spec:AC-239 answer about visible skin marks is contextual and does not require handoff",
+      "method": "tap"
+    },
+    "AC-239": {
+      "status": "pass",
+      "testName": "@spec:AC-235 @spec:AC-238 @spec:AC-239 answer about visible skin marks is contextual and does not require handoff",
+      "method": "tap"
+    },
+    "AC-242": {
+      "status": "pass",
+      "testName": "@spec:AC-242 @spec:AC-245 @spec:AC-247 conversational zero-retrieval model factual claim is regenerated without handoff",
+      "method": "tap"
+    },
+    "AC-243": {
+      "status": "pass",
+      "testName": "@spec:AC-243 retry that still contains unsupported factual claim fails safely without outbound or false handoff",
+      "method": "tap"
+    },
+    "AC-244": {
+      "status": "pass",
+      "testName": "@spec:AC-230 @spec:AC-223 @spec:AC-226 @spec:AC-244 factual attribute missing for Botox produces silent handoff",
+      "method": "tap"
+    },
+    "AC-245": {
+      "status": "pass",
+      "testName": "@spec:AC-242 @spec:AC-245 @spec:AC-247 conversational zero-retrieval model factual claim is regenerated without handoff",
+      "method": "tap"
+    },
+    "AC-246": {
+      "status": "pass",
+      "testName": "@spec:AC-228 @spec:AC-224 @spec:AC-246 offered Botox interest is treated as commercial progression, not encyclopedia-first handoff",
+      "method": "tap"
+    },
+    "AC-247": {
+      "status": "pass",
+      "testName": "@spec:AC-242 @spec:AC-245 @spec:AC-247 conversational zero-retrieval model factual claim is regenerated without handoff",
+      "method": "tap"
+    },
+    "AC-248": {
+      "status": "pass",
+      "testName": "@spec:AC-248 supported factual answer passes grounding without safe regeneration",
+      "method": "tap"
+    },
+    "AC-294": {
+      "status": "pass",
+      "testName": "@spec:AC-294 @spec:AC-295 @spec:AC-296 @spec:AC-297 @spec:AC-298 @spec:AC-299 @spec:AC-300 contextual commercial implant flow preserves state, retrieval, evidence, and grounding",
+      "method": "tap"
+    },
+    "AC-295": {
+      "status": "pass",
+      "testName": "@spec:AC-294 @spec:AC-295 @spec:AC-296 @spec:AC-297 @spec:AC-298 @spec:AC-299 @spec:AC-300 contextual commercial implant flow preserves state, retrieval, evidence, and grounding",
+      "method": "tap"
+    },
+    "AC-296": {
+      "status": "pass",
+      "testName": "@spec:AC-294 @spec:AC-295 @spec:AC-296 @spec:AC-297 @spec:AC-298 @spec:AC-299 @spec:AC-300 contextual commercial implant flow preserves state, retrieval, evidence, and grounding",
+      "method": "tap"
+    },
+    "AC-297": {
+      "status": "pass",
+      "testName": "@spec:AC-294 @spec:AC-295 @spec:AC-296 @spec:AC-297 @spec:AC-298 @spec:AC-299 @spec:AC-300 contextual commercial implant flow preserves state, retrieval, evidence, and grounding",
+      "method": "tap"
+    },
+    "AC-298": {
+      "status": "pass",
+      "testName": "@spec:AC-294 @spec:AC-295 @spec:AC-296 @spec:AC-297 @spec:AC-298 @spec:AC-299 @spec:AC-300 contextual commercial implant flow preserves state, retrieval, evidence, and grounding",
+      "method": "tap"
+    },
+    "AC-299": {
+      "status": "pass",
+      "testName": "@spec:AC-294 @spec:AC-295 @spec:AC-296 @spec:AC-297 @spec:AC-298 @spec:AC-299 @spec:AC-300 contextual commercial implant flow preserves state, retrieval, evidence, and grounding",
+      "method": "tap"
+    },
+    "AC-300": {
+      "status": "pass",
+      "testName": "@spec:AC-294 @spec:AC-295 @spec:AC-296 @spec:AC-297 @spec:AC-298 @spec:AC-299 @spec:AC-300 contextual commercial implant flow preserves state, retrieval, evidence, and grounding",
+      "method": "tap"
+    },
+    "AC-310": {
+      "status": "pass",
+      "testName": "@spec:AC-310 @spec:AC-312 @spec:AC-315 @spec:AC-317 batching debounce creates one logical patient turn after silence",
+      "method": "tap"
+    },
+    "AC-311": {
+      "status": "pass",
+      "testName": "@spec:AC-311 max wait flushes continuous inbound without waiting indefinitely",
+      "method": "tap"
+    },
+    "AC-312": {
+      "status": "pass",
+      "testName": "@spec:AC-310 @spec:AC-312 @spec:AC-315 @spec:AC-317 batching debounce creates one logical patient turn after silence",
+      "method": "tap"
+    },
+    "AC-313": {
+      "status": "pass",
+      "testName": "@spec:AC-313 conversation lock queues next batch while runtime is active",
+      "method": "tap"
+    },
+    "AC-314": {
+      "status": "pass",
+      "testName": "@spec:AC-314 distinct conversations can process while another conversation lock is active",
+      "method": "tap"
+    },
+    "AC-315": {
+      "status": "pass",
+      "testName": "@spec:AC-310 @spec:AC-312 @spec:AC-315 @spec:AC-317 batching debounce creates one logical patient turn after silence",
+      "method": "tap"
+    },
+    "AC-316": {
+      "status": "pass",
+      "testName": "@spec:AC-316 early flush is deterministic and respects negation context",
+      "method": "tap"
+    },
+    "AC-317": {
+      "status": "pass",
+      "testName": "@spec:AC-310 @spec:AC-312 @spec:AC-315 @spec:AC-317 batching debounce creates one logical patient turn after silence",
+      "method": "tap"
+    },
+    "AC-330": {
+      "status": "pass",
+      "testName": "@spec:AC-330 @spec:AC-331 @spec:AC-332 Z-API live regenerates internal gap wording without inventing technique attributes",
+      "method": "tap"
+    },
+    "AC-331": {
+      "status": "pass",
+      "testName": "@spec:AC-330 @spec:AC-331 @spec:AC-332 Z-API live regenerates internal gap wording without inventing technique attributes",
+      "method": "tap"
+    },
+    "AC-332": {
+      "status": "pass",
+      "testName": "@spec:AC-322 @spec:AC-324 @spec:AC-328 @spec:AC-332 live grounding blocks repeated known fields and premature booking language",
+      "method": "tap"
+    },
+    "AC-344": {
+      "status": "pass",
+      "testName": "@spec:AC-344 @spec:AC-345 @spec:AC-348 @spec:AC-349 @spec:AC-350 Supabase live seed publishes Dr. Leonardo briefing v2 and supersedes v1",
+      "method": "tap"
+    },
+    "AC-345": {
+      "status": "pass",
+      "testName": "@spec:AC-344 @spec:AC-345 @spec:AC-348 @spec:AC-349 @spec:AC-350 Supabase live seed publishes Dr. Leonardo briefing v2 and supersedes v1",
+      "method": "tap"
+    },
+    "AC-346": {
+      "status": "pass",
+      "testName": "@spec:AC-344 @spec:AC-346 @spec:AC-347 @spec:AC-348 Dr. Leonardo evaluation and procedure price retrieval use current free-evaluation briefing",
+      "method": "tap"
+    },
+    "AC-347": {
+      "status": "pass",
+      "testName": "@spec:AC-344 @spec:AC-346 @spec:AC-347 @spec:AC-348 Dr. Leonardo evaluation and procedure price retrieval use current free-evaluation briefing",
+      "method": "tap"
+    },
+    "AC-348": {
+      "status": "pass",
+      "testName": "@spec:AC-344 @spec:AC-345 @spec:AC-348 @spec:AC-349 @spec:AC-350 Supabase live seed publishes Dr. Leonardo briefing v2 and supersedes v1",
+      "method": "tap"
+    },
+    "AC-349": {
+      "status": "pass",
+      "testName": "@spec:AC-344 @spec:AC-345 @spec:AC-348 @spec:AC-349 @spec:AC-350 Supabase live seed publishes Dr. Leonardo briefing v2 and supersedes v1",
+      "method": "tap"
+    },
+    "AC-350": {
+      "status": "pass",
+      "testName": "@spec:AC-344 @spec:AC-345 @spec:AC-348 @spec:AC-349 @spec:AC-350 Supabase live seed publishes Dr. Leonardo briefing v2 and supersedes v1",
+      "method": "tap"
+    },
+    "AC-351": {
+      "status": "pass",
+      "testName": "@spec:AC-351 factual retrieval retries transient Supabase failure and succeeds grounded",
+      "method": "tap"
+    },
+    "AC-352": {
+      "status": "pass",
+      "testName": "@spec:AC-352 deterministic Supabase error is not retried or masked",
+      "method": "tap"
+    },
+    "AC-353": {
+      "status": "pass",
+      "testName": "@spec:AC-353 @spec:AC-354 affirmative appointment CTA skips retrieval and advances scheduling",
+      "method": "tap"
+    },
+    "AC-354": {
+      "status": "pass",
+      "testName": "@spec:AC-353 @spec:AC-354 affirmative appointment CTA skips retrieval and advances scheduling",
+      "method": "tap"
+    },
+    "AC-355": {
+      "status": "pass",
+      "testName": "@spec:AC-355 factual query with exhausted transient retrieval failure becomes controlled safe handoff",
+      "method": "tap"
+    },
+    "AC-356": {
+      "status": "pass",
+      "testName": "@spec:AC-356 @spec:AC-357 @spec:AC-358 commercial fear state is patient-only and scoped per conversation",
+      "method": "tap"
+    },
+    "AC-357": {
+      "status": "pass",
+      "testName": "@spec:AC-356 @spec:AC-357 @spec:AC-358 commercial fear state is patient-only and scoped per conversation",
+      "method": "tap"
+    },
+    "AC-358": {
+      "status": "pass",
+      "testName": "@spec:AC-356 @spec:AC-357 @spec:AC-358 commercial fear state is patient-only and scoped per conversation",
+      "method": "tap"
+    },
+    "AC-359": {
+      "status": "pass",
+      "testName": "@spec:AC-359 runtime failure inside batch releases lock and next message can be processed",
+      "method": "tap"
+    },
+    "AC-360": {
+      "status": "pass",
+      "testName": "@spec:AC-360 @spec:AC-361 @spec:AC-362 @spec:AC-363 introduction and answered facts are persisted after outbound and not repeated in scheduling",
+      "method": "tap"
+    },
+    "AC-361": {
+      "status": "pass",
+      "testName": "@spec:AC-360 @spec:AC-361 @spec:AC-362 @spec:AC-363 introduction and answered facts are persisted after outbound and not repeated in scheduling",
+      "method": "tap"
+    },
+    "AC-362": {
+      "status": "pass",
+      "testName": "@spec:AC-360 @spec:AC-361 @spec:AC-362 @spec:AC-363 introduction and answered facts are persisted after outbound and not repeated in scheduling",
+      "method": "tap"
+    },
+    "AC-363": {
+      "status": "pass",
+      "testName": "@spec:AC-360 @spec:AC-361 @spec:AC-362 @spec:AC-363 introduction and answered facts are persisted after outbound and not repeated in scheduling",
+      "method": "tap"
+    },
+    "AC-364": {
+      "status": "pass",
+      "testName": "@spec:AC-364 @spec:AC-365 appointment intent starts only after explicit or contextual scheduling acceptance",
+      "method": "tap"
+    },
+    "AC-365": {
+      "status": "pass",
+      "testName": "@spec:AC-364 @spec:AC-365 appointment intent starts only after explicit or contextual scheduling acceptance",
+      "method": "tap"
+    },
+    "AC-366": {
+      "status": "pass",
+      "testName": "@spec:AC-366 @spec:AC-368 @spec:AC-369 @spec:AC-370 @spec:AC-371 registration memory parses block, asks only missing fields, and avoids address inference",
+      "method": "tap"
+    },
+    "AC-367": {
+      "status": "pass",
+      "testName": "@spec:AC-367 @spec:AC-369 @spec:AC-371 registration turn skips RAG, asks only missing fields, and avoids confirmation loop",
+      "method": "tap"
+    },
+    "AC-368": {
+      "status": "pass",
+      "testName": "@spec:AC-366 @spec:AC-368 @spec:AC-369 @spec:AC-370 @spec:AC-371 registration memory parses block, asks only missing fields, and avoids address inference",
+      "method": "tap"
+    },
+    "AC-369": {
+      "status": "pass",
+      "testName": "@spec:AC-366 @spec:AC-368 @spec:AC-369 @spec:AC-370 @spec:AC-371 registration memory parses block, asks only missing fields, and avoids address inference",
+      "method": "tap"
+    },
+    "AC-370": {
+      "status": "pass",
+      "testName": "@spec:AC-366 @spec:AC-368 @spec:AC-369 @spec:AC-370 @spec:AC-371 registration memory parses block, asks only missing fields, and avoids address inference",
+      "method": "tap"
+    },
+    "AC-371": {
+      "status": "pass",
+      "testName": "@spec:AC-366 @spec:AC-368 @spec:AC-369 @spec:AC-370 @spec:AC-371 registration memory parses block, asks only missing fields, and avoids address inference",
+      "method": "tap"
+    },
+    "AC-373": {
+      "status": "pass",
+      "testName": "@spec:AC-373 @spec:AC-374 same Z-API message id with phone and LID is rejected before second conversation",
+      "method": "tap"
+    },
+    "AC-374": {
+      "status": "pass",
+      "testName": "@spec:AC-373 @spec:AC-374 same Z-API message id with phone and LID is rejected before second conversation",
+      "method": "tap"
+    },
+    "AC-375": {
+      "status": "pass",
+      "testName": "@spec:AC-375 phone/LID alias resolves later LID-only turn to same conversation and history",
+      "method": "tap"
+    },
+    "AC-376": {
+      "status": "pass",
+      "testName": "@spec:AC-376 @spec:AC-377 distinct LIDs are not merged and same id across accounts is isolated",
+      "method": "tap"
+    },
+    "AC-377": {
+      "status": "pass",
+      "testName": "@spec:AC-376 @spec:AC-377 distinct LIDs are not merged and same id across accounts is isolated",
+      "method": "tap"
+    },
+    "AC-378": {
+      "status": "pass",
+      "testName": "@spec:AC-378 @spec:AC-380 duplicate provider message inside batch is not added twice",
+      "method": "tap"
+    },
+    "AC-379": {
+      "status": "pass",
+      "testName": "@spec:AC-379 unknown Z-API instance with aliases remains blocked and persists no alias",
+      "method": "tap"
+    },
+    "AC-380": {
+      "status": "pass",
+      "testName": "@spec:AC-378 @spec:AC-380 duplicate provider message inside batch is not added twice",
+      "method": "tap"
+    },
+    "AC-381": {
+      "status": "pass",
+      "testName": "@spec:AC-381 @spec:AC-383 @spec:AC-390 audible Z-API audio is transcribed once and replies with text only",
+      "method": "tap"
+    },
+    "AC-382": {
+      "status": "pass",
+      "testName": "@spec:AC-382 OpenAI speech-to-text provider uses env model and multipart audio endpoint",
+      "method": "tap"
+    },
+    "AC-383": {
+      "status": "pass",
+      "testName": "@spec:AC-381 @spec:AC-383 @spec:AC-390 audible Z-API audio is transcribed once and replies with text only",
+      "method": "tap"
+    },
+    "AC-384": {
+      "status": "pass",
+      "testName": "@spec:AC-384 audio plus text creates one multimodal batch with preserved order",
+      "method": "tap"
+    },
+    "AC-385": {
+      "status": "pass",
+      "testName": "@spec:AC-385 duplicate Z-API audio by phone and LID is not transcribed twice",
+      "method": "tap"
+    },
+    "AC-386": {
+      "status": "pass",
+      "testName": "@spec:AC-386 @spec:AC-387 inaudible and transient STT failures return controlled media retry",
+      "method": "tap"
+    },
+    "AC-387": {
+      "status": "pass",
+      "testName": "@spec:AC-386 @spec:AC-387 inaudible and transient STT failures return controlled media retry",
+      "method": "tap"
+    },
+    "AC-388": {
+      "status": "pass",
+      "testName": "@spec:AC-388 audio transcript with clinical urgency follows text policy before model call",
+      "method": "tap"
+    },
+    "AC-389": {
+      "status": "pass",
+      "testName": "@spec:AC-389 audio transcript respects negation and asks clarification for unclear procedure",
+      "method": "tap"
+    },
+    "AC-390": {
+      "status": "pass",
+      "testName": "@spec:AC-381 @spec:AC-383 @spec:AC-390 audible Z-API audio is transcribed once and replies with text only",
+      "method": "tap"
+    },
+    "AC-391": {
+      "status": "pass",
+      "testName": "@spec:AC-391 @spec:AC-392 @spec:AC-396 @spec:AC-397 @spec:AC-398 current turn intent suppresses stale commercial carryover",
+      "method": "tap"
+    },
+    "AC-392": {
+      "status": "pass",
+      "testName": "@spec:AC-391 @spec:AC-392 @spec:AC-396 @spec:AC-397 @spec:AC-398 current turn intent suppresses stale commercial carryover",
+      "method": "tap"
+    },
+    "AC-393": {
+      "status": "pass",
+      "testName": "@spec:AC-393 @spec:AC-394 @spec:AC-395 current semantic continuation can resume scheduling or change topic",
+      "method": "tap"
+    },
+    "AC-394": {
+      "status": "pass",
+      "testName": "@spec:AC-393 @spec:AC-394 @spec:AC-395 current semantic continuation can resume scheduling or change topic",
+      "method": "tap"
+    },
+    "AC-395": {
+      "status": "pass",
+      "testName": "@spec:AC-393 @spec:AC-394 @spec:AC-395 current semantic continuation can resume scheduling or change topic",
+      "method": "tap"
+    },
+    "AC-396": {
+      "status": "pass",
+      "testName": "@spec:AC-391 @spec:AC-392 @spec:AC-396 @spec:AC-397 @spec:AC-398 current turn intent suppresses stale commercial carryover",
+      "method": "tap"
+    },
+    "AC-397": {
+      "status": "pass",
+      "testName": "@spec:AC-391 @spec:AC-392 @spec:AC-396 @spec:AC-397 @spec:AC-398 current turn intent suppresses stale commercial carryover",
+      "method": "tap"
+    },
+    "AC-398": {
+      "status": "pass",
+      "testName": "@spec:AC-391 @spec:AC-392 @spec:AC-396 @spec:AC-397 @spec:AC-398 current turn intent suppresses stale commercial carryover",
+      "method": "tap"
+    },
+    "AC-399": {
+      "status": "pass",
+      "testName": "@spec:AC-399 audio transcript follows current-turn-first identity behavior",
+      "method": "tap"
+    },
+    "AC-400": {
+      "status": "pass",
+      "testName": "@spec:AC-400 evaluation detects stale commercial carryover and current-turn naturalness",
+      "method": "tap"
+    },
+    "AC-401": {
+      "status": "pass",
+      "testName": "@spec:AC-401 @spec:AC-404 OTHER neutral turn suppresses stale context and keeps context age in seconds",
+      "method": "tap"
+    },
+    "AC-402": {
+      "status": "pass",
+      "testName": "@spec:AC-401 @spec:AC-402 @spec:AC-403 NEW_NEUTRAL_TURN OTHER short-circuits stale retrieval and answered facts echo",
+      "method": "tap"
+    },
+    "AC-403": {
+      "status": "pass",
+      "testName": "@spec:AC-401 @spec:AC-402 @spec:AC-403 NEW_NEUTRAL_TURN OTHER short-circuits stale retrieval and answered facts echo",
+      "method": "tap"
+    },
+    "AC-404": {
+      "status": "pass",
+      "testName": "@spec:AC-401 @spec:AC-404 OTHER neutral turn suppresses stale context and keeps context age in seconds",
+      "method": "tap"
+    },
+    "AC-405": {
+      "status": "pass",
+      "testName": "@spec:AC-405 @spec:AC-406 @spec:AC-407 Z-API webhook ingress logs text, image, and audio safely before normalization",
+      "method": "tap"
+    },
+    "AC-406": {
+      "status": "pass",
+      "testName": "@spec:AC-405 @spec:AC-406 @spec:AC-407 Z-API webhook ingress logs text, image, and audio safely before normalization",
+      "method": "tap"
+    },
+    "AC-407": {
+      "status": "pass",
+      "testName": "@spec:AC-405 @spec:AC-406 @spec:AC-407 Z-API webhook ingress logs text, image, and audio safely before normalization",
+      "method": "tap"
+    },
+    "AC-408": {
+      "status": "pass",
+      "testName": "@spec:AC-187 @spec:AC-188 @spec:AC-189 @spec:AC-190 @spec:AC-408 @spec:AC-409 @spec:AC-410 Z-API media flows use safe download, ingress observability, and explicit invalid-media rejection",
+      "method": "tap"
+    },
+    "AC-409": {
+      "status": "pass",
+      "testName": "@spec:AC-187 @spec:AC-188 @spec:AC-189 @spec:AC-190 @spec:AC-408 @spec:AC-409 @spec:AC-410 Z-API media flows use safe download, ingress observability, and explicit invalid-media rejection",
+      "method": "tap"
+    },
+    "AC-410": {
+      "status": "pass",
+      "testName": "@spec:AC-187 @spec:AC-188 @spec:AC-189 @spec:AC-190 @spec:AC-408 @spec:AC-409 @spec:AC-410 Z-API media flows use safe download, ingress observability, and explicit invalid-media rejection",
+      "method": "tap"
+    },
+    "AC-411": {
+      "status": "pass",
+      "testName": "@spec:AC-411 @spec:AC-412 Z-API server is Render-ready and health avoids external providers",
+      "method": "tap"
+    },
+    "AC-412": {
+      "status": "pass",
+      "testName": "@spec:AC-411 @spec:AC-412 Z-API server is Render-ready and health avoids external providers",
+      "method": "tap"
+    },
+    "AC-413": {
+      "status": "pass",
+      "testName": "@spec:AC-413 @spec:AC-414 Z-API store path supports persistent disk and production default",
+      "method": "tap"
+    },
+    "AC-414": {
+      "status": "pass",
+      "testName": "@spec:AC-413 @spec:AC-414 Z-API store path supports persistent disk and production default",
+      "method": "tap"
+    },
+    "AC-415": {
+      "status": "pass",
+      "testName": "@spec:AC-415 @spec:AC-416 @spec:AC-417 AI inbound kill switch accepts webhook without runtime or outbound",
+      "method": "tap"
+    },
+    "AC-416": {
+      "status": "pass",
+      "testName": "@spec:AC-415 @spec:AC-416 @spec:AC-417 AI inbound kill switch accepts webhook without runtime or outbound",
+      "method": "tap"
+    },
+    "AC-417": {
+      "status": "pass",
+      "testName": "@spec:AC-415 @spec:AC-416 @spec:AC-417 AI inbound kill switch accepts webhook without runtime or outbound",
+      "method": "tap"
+    },
+    "AC-418": {
+      "status": "pass",
+      "testName": "@spec:AC-418 @spec:AC-419 Render guide documents safe start, health, disk, and env names",
+      "method": "tap"
+    },
+    "AC-419": {
+      "status": "pass",
+      "testName": "@spec:AC-418 @spec:AC-419 Render guide documents safe start, health, disk, and env names",
+      "method": "tap"
+    },
+    "AC-420": {
+      "status": "pass",
+      "testName": "@spec:AC-197 @spec:AC-420 Z-API feature does not alter CRM, RAG, Calendar, or grounding contracts",
+      "method": "tap"
+    }
+  },
+  "principles": {}
+}

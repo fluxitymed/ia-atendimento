@@ -5,12 +5,12 @@
 
 ## Objetivo
 
-Validar o agente ponta a ponta com servicos reais em ambiente controlado, usando exclusivamente dados ficticios.
+Validar o agente ponta a ponta com servicos reais em ambiente controlado de sandbox, sem dados reais de pacientes.
 
 Fluxos alvo:
 
 ```text
-mensagem ficticia
+mensagem de sandbox
 -> LangGraph/runtime
 -> GPT-5.6 Luna
 -> retrieval Supabase sandbox
@@ -20,12 +20,12 @@ mensagem ficticia
 ```
 
 ```text
-mensagem ficticia
+mensagem de sandbox
 -> LangGraph/runtime
 -> SCHEDULING_CONTEXT_ACTIVE
 -> Google Calendar sandbox
 -> slots reais de teste
--> agendamento ficticio
+-> agendamento sandbox
 ```
 
 Tudo que puder ser preparado offline deve continuar rodando sem internet. Chamadas reais sao sempre opt-in e dependem de credenciais configuradas localmente.
@@ -70,12 +70,15 @@ RUN_LIVE_SANDBOX=true
 
 Sem `RUN_LIVE_SANDBOX=true`, nenhuma chamada externa pode ocorrer.
 
-## Dados ficticios
+## Dados de sandbox
 
 Organizacao principal:
 
 ```text
-Clínica Aurora Sandbox
+Clinica Carvalho e Tavares Odontologia Integrada
+Dr. Leonardo Carvalho
+ZAPI_ORGANIZATION_ID=sandbox-org-dr-leonardo-carvalho
+UUID: dfdcdff0-6d5f-58cc-9a83-2829820b7f8e
 ```
 
 Organizacao secundaria para teste cross-org:
@@ -84,22 +87,22 @@ Organizacao secundaria para teste cross-org:
 Clínica Boreal Sandbox
 ```
 
-Catalogo `PROCEDURE_CATALOG` fechado da Clinica Aurora Sandbox:
+Fonte primaria do cliente de teste:
 
 ```text
-Botox
-Preenchimento labial
-Blefaroplastia
+/Users/FernandoAndrade/Desktop/IA - TESTES/BRIEFING_IARA_PREENCHIDO_CARVALHO_E_TAVARES.pdf
 ```
 
 Metadados obrigatorios:
 
 ```text
-knowledgeMode = CLOSED_WORLD
-closedWorldCompletenessApproved = true
+knowledgeMode = OPEN_WORLD
+closedWorldCompletenessApproved = false
 status = PUBLISHED
 environment = sandbox
 ```
+
+A ausencia de procedimento no briefing do Dr. Leonardo nao autoriza negativa `NOT_OFFERED`, pois a completude fechada do catalogo ainda nao foi comprovada.
 
 ## Historias de usuario e criterios de aceite
 
@@ -176,9 +179,9 @@ Como auditor do LLM, quero smoke test real da Responses API com GPT-5.6 Luna, pa
 - **Entao** a falha e reportada como erro controlado
 - **E** a API key nao aparece em logs, stdout, relatorio ou trace.
 
-### US-033 — Supabase sandbox e dataset ficticio
+### US-033 — Supabase sandbox e dataset controlado
 
-Como arquiteto, quero preparar Supabase sandbox com schema e dados ficticios, para testar retrieval real sem tocar producao.
+Como arquiteto, quero preparar Supabase sandbox com schema e dados controlados, para testar retrieval real sem tocar producao nem dados reais de paciente.
 
 #### AC-109 — Supabase readiness exige sandbox e migration existente
 
@@ -187,17 +190,17 @@ Como arquiteto, quero preparar Supabase sandbox com schema e dados ficticios, pa
 - **Entao** exige `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` e ambiente sandbox
 - **E** referencia a migration existente que cria pgvector, organizacoes, documentos, versoes, chunks, indices, conversas, mensagens e auditoria.
 
-#### AC-110 — Dataset sandbox contem organizacoes e catalogo fechado ficticios
+#### AC-110 — Dataset sandbox contem Dr. Leonardo, Boreal e catalogo aberto
 
 - **Dado** o dataset de homologacao
 - **Quando** ele e inspecionado
-- **Entao** contem Clinica Aurora Sandbox, Clinica Boreal Sandbox, documentos ficticios, profissionais ficticios e `PROCEDURE_CATALOG` fechado aprovado.
+- **Entao** contem Clinica Carvalho e Tavares Odontologia Integrada, Clinica Boreal Sandbox, fonte do briefing do Dr. Leonardo e `PROCEDURE_CATALOG` aberto sem completude aprovada.
 
 #### AC-111 — Cenarios Supabase cobrem retrieval, ausencia, atributo e cross-org
 
 - **Dado** Supabase sandbox populado
 - **Quando** os smoke tests live forem executados
-- **Entao** eles testam informacao existente, informacao inexistente, procedimento inexistente `NOT_OFFERED`, atributo ausente com `HUMAN_HANDOFF_REQUIRED` e isolamento cross-org.
+- **Entao** eles testam informacao existente, informacao inexistente, procedimento ausente em catalogo aberto com `HUMAN_HANDOFF_REQUIRED`, atributo suportado por briefing quando houver fonte autorizada e isolamento cross-org.
 
 #### AC-112 — Gap de ingestao real e documentado
 

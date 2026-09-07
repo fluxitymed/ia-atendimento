@@ -1,0 +1,182 @@
+{
+  "feature": "ai-whatsapp-channel",
+  "timestamp": "2026-09-07T14:13:36.888Z",
+  "gitRev": "8e319c3",
+  "command": "node --test --test-reporter=tap",
+  "reporter": "tap",
+  "exitCode": 0,
+  "testsParsed": 202,
+  "results": {
+    "AC-124": {
+      "status": "pass",
+      "testName": "@spec:AC-124 @spec:AC-126 @spec:AC-127 provider contract, normalized message, and org-scoped conversation mapping",
+      "method": "tap"
+    },
+    "AC-125": {
+      "status": "pass",
+      "testName": "@spec:AC-125 @spec:AC-128 @spec:AC-129 @spec:AC-130 text enters runtime once and preserves ordering",
+      "method": "tap"
+    },
+    "AC-126": {
+      "status": "pass",
+      "testName": "@spec:AC-124 @spec:AC-126 @spec:AC-127 provider contract, normalized message, and org-scoped conversation mapping",
+      "method": "tap"
+    },
+    "AC-127": {
+      "status": "pass",
+      "testName": "@spec:AC-124 @spec:AC-126 @spec:AC-127 provider contract, normalized message, and org-scoped conversation mapping",
+      "method": "tap"
+    },
+    "AC-128": {
+      "status": "pass",
+      "testName": "@spec:AC-125 @spec:AC-128 @spec:AC-129 @spec:AC-130 text enters runtime once and preserves ordering",
+      "method": "tap"
+    },
+    "AC-129": {
+      "status": "pass",
+      "testName": "@spec:AC-125 @spec:AC-128 @spec:AC-129 @spec:AC-130 text enters runtime once and preserves ordering",
+      "method": "tap"
+    },
+    "AC-130": {
+      "status": "pass",
+      "testName": "@spec:AC-125 @spec:AC-128 @spec:AC-129 @spec:AC-130 text enters runtime once and preserves ordering",
+      "method": "tap"
+    },
+    "AC-131": {
+      "status": "pass",
+      "testName": "@spec:AC-131 @spec:AC-132 audio is transcribed before runtime or asks safe retry",
+      "method": "tap"
+    },
+    "AC-132": {
+      "status": "pass",
+      "testName": "@spec:AC-131 @spec:AC-132 audio is transcribed before runtime or asks safe retry",
+      "method": "tap"
+    },
+    "AC-133": {
+      "status": "pass",
+      "testName": "@spec:AC-133 @spec:AC-134 @spec:AC-135 @spec:AC-136 image and document policies avoid unsafe clinical interpretation",
+      "method": "tap"
+    },
+    "AC-134": {
+      "status": "pass",
+      "testName": "@spec:AC-133 @spec:AC-134 @spec:AC-135 @spec:AC-136 image and document policies avoid unsafe clinical interpretation",
+      "method": "tap"
+    },
+    "AC-135": {
+      "status": "pass",
+      "testName": "@spec:AC-133 @spec:AC-134 @spec:AC-135 @spec:AC-136 image and document policies avoid unsafe clinical interpretation",
+      "method": "tap"
+    },
+    "AC-136": {
+      "status": "pass",
+      "testName": "@spec:AC-133 @spec:AC-134 @spec:AC-135 @spec:AC-136 image and document policies avoid unsafe clinical interpretation",
+      "method": "tap"
+    },
+    "AC-137": {
+      "status": "pass",
+      "testName": "@spec:AC-137 @spec:AC-138 @spec:AC-139 @spec:AC-140 multimodal injection cannot change controls and handoff is patient-safe",
+      "method": "tap"
+    },
+    "AC-138": {
+      "status": "pass",
+      "testName": "@spec:AC-137 @spec:AC-138 @spec:AC-139 @spec:AC-140 multimodal injection cannot change controls and handoff is patient-safe",
+      "method": "tap"
+    },
+    "AC-139": {
+      "status": "pass",
+      "testName": "@spec:AC-137 @spec:AC-138 @spec:AC-139 @spec:AC-140 multimodal injection cannot change controls and handoff is patient-safe",
+      "method": "tap"
+    },
+    "AC-140": {
+      "status": "pass",
+      "testName": "@spec:AC-137 @spec:AC-138 @spec:AC-139 @spec:AC-140 multimodal injection cannot change controls and handoff is patient-safe",
+      "method": "tap"
+    },
+    "AC-141": {
+      "status": "pass",
+      "testName": "@spec:AC-141 @spec:AC-142 store records metrics without storing media bytes and self-message does not loop",
+      "method": "tap"
+    },
+    "AC-142": {
+      "status": "pass",
+      "testName": "@spec:AC-141 @spec:AC-142 store records metrics without storing media bytes and self-message does not loop",
+      "method": "tap"
+    },
+    "AC-143": {
+      "status": "pass",
+      "testName": "@spec:AC-143 @spec:AC-144 multimodal evaluation covers audio, image, document, ambiguity, clinical media, and injection with zero critical rates",
+      "method": "tap"
+    },
+    "AC-144": {
+      "status": "pass",
+      "testName": "@spec:AC-143 @spec:AC-144 multimodal evaluation covers audio, image, document, ambiguity, clinical media, and injection with zero critical rates",
+      "method": "tap"
+    },
+    "AC-145": {
+      "status": "pass",
+      "testName": "@spec:AC-145 Meta WhatsApp config is env-driven and env example contains no real secrets",
+      "method": "tap"
+    },
+    "AC-146": {
+      "status": "pass",
+      "testName": "@spec:AC-146 @spec:AC-147 Meta provider implements WhatsAppProvider and sends outbound text through messages endpoint",
+      "method": "tap"
+    },
+    "AC-147": {
+      "status": "pass",
+      "testName": "@spec:AC-146 @spec:AC-147 Meta provider implements WhatsAppProvider and sends outbound text through messages endpoint",
+      "method": "tap"
+    },
+    "AC-148": {
+      "status": "pass",
+      "testName": "@spec:AC-148 Meta provider resolves media URL with auth and downloads bytes without persisting temporary URL",
+      "method": "tap"
+    },
+    "AC-149": {
+      "status": "pass",
+      "testName": "@spec:AC-149 Meta webhook GET verification returns challenge only for matching verify token",
+      "method": "tap"
+    },
+    "AC-150": {
+      "status": "pass",
+      "testName": "@spec:AC-150 Meta webhook validates X-Hub-Signature-256 when app secret is configured",
+      "method": "tap"
+    },
+    "AC-151": {
+      "status": "pass",
+      "testName": "@spec:AC-151 Meta webhook parser normalizes text, audio, image, and document payloads safely",
+      "method": "tap"
+    },
+    "AC-152": {
+      "status": "pass",
+      "testName": "@spec:AC-152 @spec:AC-153 Meta webhook controller delegates to adapter, suppresses duplicate, and ignores status self-events",
+      "method": "tap"
+    },
+    "AC-153": {
+      "status": "pass",
+      "testName": "@spec:AC-152 @spec:AC-153 Meta webhook controller delegates to adapter, suppresses duplicate, and ignores status self-events",
+      "method": "tap"
+    },
+    "AC-154": {
+      "status": "pass",
+      "testName": "@spec:AC-154 Meta live smoke blocks by credential names only and never prints secret values",
+      "method": "tap"
+    },
+    "AC-155": {
+      "status": "pass",
+      "testName": "@spec:AC-155 Meta live smoke declares all required scenarios and does not mark LIVE_VERIFIED without real Meta calls",
+      "method": "tap"
+    },
+    "AC-226": {
+      "status": "pass",
+      "testName": "@spec:AC-226 @spec:AC-227 @spec:AC-223 HUMAN_HANDOFF_REQUIRED suppresses outbound and blocks later autonomy",
+      "method": "tap"
+    },
+    "AC-227": {
+      "status": "pass",
+      "testName": "@spec:AC-226 @spec:AC-227 @spec:AC-223 HUMAN_HANDOFF_REQUIRED suppresses outbound and blocks later autonomy",
+      "method": "tap"
+    }
+  },
+  "principles": {}
+}

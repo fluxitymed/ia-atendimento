@@ -243,6 +243,26 @@ Como atendente humano, quero receber o contexto da conversa ao assumir um handof
 - **Entao** a mensagem usa texto autorizado e configuravel pela clinica
 - **E** nao menciona limitacoes tecnicas ou ausencia de informacao.
 
+#### AC-223 — Handoff requerido suprime outbound automatico
+
+- **Dado** que o runtime decidiu `HUMAN_HANDOFF_REQUIRED`
+- **Quando** o turno atual e finalizado
+- **Entao** o sistema registra `suppress_outbound=true`
+- **E** nenhuma mensagem automatica e enviada ao paciente nesse turno.
+
+#### AC-224 — Pergunta comercial conversacional nao exige evidencia factual
+
+- **Dado** uma mensagem de qualificacao ou conducao comercial sem afirmacao factual sobre clinica, procedimento, preco, politica, tecnica, agenda ou medico
+- **Quando** o grounding avalia a resposta
+- **Entao** a conversa pode continuar sem exigir retrieval factual.
+
+#### AC-225 — Catalogo fechado autoriza negativa de procedimento ausente
+
+- **Dado** um `PROCEDURE_CATALOG` completo, aprovado, publicado, vigente e `CLOSED_WORLD`
+- **Quando** o paciente pergunta se a clinica realiza um procedimento ausente desse catalogo
+- **Entao** a IA pode responder deterministicamente que o procedimento nao e oferecido
+- **E** nao gera `HUMAN_HANDOFF_REQUIRED` apenas por essa ausencia.
+
 ### US-005 — Administrador publica conhecimento autorizado
 
 Como administrador autorizado da clinica, quero que documentos passem por ingestao, validacao, aprovacao e publicacao antes de alimentar a IA, para impedir que conteudo nao autorizado fundamente respostas a pacientes.

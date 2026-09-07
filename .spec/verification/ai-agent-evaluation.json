@@ -1,11 +1,11 @@
 {
   "feature": "ai-agent-evaluation",
-  "timestamp": "2026-08-21T01:19:53.489Z",
-  "gitRev": null,
+  "timestamp": "2026-09-07T14:12:58.461Z",
+  "gitRev": "8e319c3",
   "command": "node --test --test-reporter=tap",
   "reporter": "tap",
   "exitCode": 0,
-  "testsParsed": 59,
+  "testsParsed": 202,
   "results": {
     "AC-067": {
       "status": "pass",
@@ -170,6 +170,226 @@
     "AC-099": {
       "status": "pass",
       "testName": "@spec:AC-094 @spec:AC-095 @spec:AC-096 @spec:AC-097 @spec:AC-098 @spec:AC-099 CRM, handoff, and long conversation state stay progressive and current",
+      "method": "tap"
+    },
+    "AC-231": {
+      "status": "pass",
+      "testName": "@spec:AC-231 @spec:AC-232 @spec:AC-233 @spec:AC-234 @spec:AC-240 @spec:AC-241 @spec:AC-249 @spec:AC-250 @spec:AC-251 @spec:AC-252 @spec:AC-253 @spec:AC-273 @spec:AC-274 @spec:AC-275 @spec:AC-276 @spec:AC-277 @spec:AC-278 @spec:AC-279 @spec:AC-286 @spec:AC-287 @spec:AC-288 @spec:AC-289 @spec:AC-290 commercial evaluation covers sales quality, ambiguity, safe regeneration, playbook metrics, silent handoff, and context continuity",
+      "method": "tap"
+    },
+    "AC-232": {
+      "status": "pass",
+      "testName": "@spec:AC-231 @spec:AC-232 @spec:AC-233 @spec:AC-234 @spec:AC-240 @spec:AC-241 @spec:AC-249 @spec:AC-250 @spec:AC-251 @spec:AC-252 @spec:AC-253 @spec:AC-273 @spec:AC-274 @spec:AC-275 @spec:AC-276 @spec:AC-277 @spec:AC-278 @spec:AC-279 @spec:AC-286 @spec:AC-287 @spec:AC-288 @spec:AC-289 @spec:AC-290 commercial evaluation covers sales quality, ambiguity, safe regeneration, playbook metrics, silent handoff, and context continuity",
+      "method": "tap"
+    },
+    "AC-233": {
+      "status": "pass",
+      "testName": "@spec:AC-231 @spec:AC-232 @spec:AC-233 @spec:AC-234 @spec:AC-240 @spec:AC-241 @spec:AC-249 @spec:AC-250 @spec:AC-251 @spec:AC-252 @spec:AC-253 @spec:AC-273 @spec:AC-274 @spec:AC-275 @spec:AC-276 @spec:AC-277 @spec:AC-278 @spec:AC-279 @spec:AC-286 @spec:AC-287 @spec:AC-288 @spec:AC-289 @spec:AC-290 commercial evaluation covers sales quality, ambiguity, safe regeneration, playbook metrics, silent handoff, and context continuity",
+      "method": "tap"
+    },
+    "AC-234": {
+      "status": "pass",
+      "testName": "@spec:AC-231 @spec:AC-232 @spec:AC-233 @spec:AC-234 @spec:AC-240 @spec:AC-241 @spec:AC-249 @spec:AC-250 @spec:AC-251 @spec:AC-252 @spec:AC-253 @spec:AC-273 @spec:AC-274 @spec:AC-275 @spec:AC-276 @spec:AC-277 @spec:AC-278 @spec:AC-279 @spec:AC-286 @spec:AC-287 @spec:AC-288 @spec:AC-289 @spec:AC-290 commercial evaluation covers sales quality, ambiguity, safe regeneration, playbook metrics, silent handoff, and context continuity",
+      "method": "tap"
+    },
+    "AC-240": {
+      "status": "pass",
+      "testName": "@spec:AC-231 @spec:AC-232 @spec:AC-233 @spec:AC-234 @spec:AC-240 @spec:AC-241 @spec:AC-249 @spec:AC-250 @spec:AC-251 @spec:AC-252 @spec:AC-253 @spec:AC-273 @spec:AC-274 @spec:AC-275 @spec:AC-276 @spec:AC-277 @spec:AC-278 @spec:AC-279 @spec:AC-286 @spec:AC-287 @spec:AC-288 @spec:AC-289 @spec:AC-290 commercial evaluation covers sales quality, ambiguity, safe regeneration, playbook metrics, silent handoff, and context continuity",
+      "method": "tap"
+    },
+    "AC-241": {
+      "status": "pass",
+      "testName": "@spec:AC-231 @spec:AC-232 @spec:AC-233 @spec:AC-234 @spec:AC-240 @spec:AC-241 @spec:AC-249 @spec:AC-250 @spec:AC-251 @spec:AC-252 @spec:AC-253 @spec:AC-273 @spec:AC-274 @spec:AC-275 @spec:AC-276 @spec:AC-277 @spec:AC-278 @spec:AC-279 @spec:AC-286 @spec:AC-287 @spec:AC-288 @spec:AC-289 @spec:AC-290 commercial evaluation covers sales quality, ambiguity, safe regeneration, playbook metrics, silent handoff, and context continuity",
+      "method": "tap"
+    },
+    "AC-249": {
+      "status": "pass",
+      "testName": "@spec:AC-231 @spec:AC-232 @spec:AC-233 @spec:AC-234 @spec:AC-240 @spec:AC-241 @spec:AC-249 @spec:AC-250 @spec:AC-251 @spec:AC-252 @spec:AC-253 @spec:AC-273 @spec:AC-274 @spec:AC-275 @spec:AC-276 @spec:AC-277 @spec:AC-278 @spec:AC-279 @spec:AC-286 @spec:AC-287 @spec:AC-288 @spec:AC-289 @spec:AC-290 commercial evaluation covers sales quality, ambiguity, safe regeneration, playbook metrics, silent handoff, and context continuity",
+      "method": "tap"
+    },
+    "AC-250": {
+      "status": "pass",
+      "testName": "@spec:AC-231 @spec:AC-232 @spec:AC-233 @spec:AC-234 @spec:AC-240 @spec:AC-241 @spec:AC-249 @spec:AC-250 @spec:AC-251 @spec:AC-252 @spec:AC-253 @spec:AC-273 @spec:AC-274 @spec:AC-275 @spec:AC-276 @spec:AC-277 @spec:AC-278 @spec:AC-279 @spec:AC-286 @spec:AC-287 @spec:AC-288 @spec:AC-289 @spec:AC-290 commercial evaluation covers sales quality, ambiguity, safe regeneration, playbook metrics, silent handoff, and context continuity",
+      "method": "tap"
+    },
+    "AC-251": {
+      "status": "pass",
+      "testName": "@spec:AC-231 @spec:AC-232 @spec:AC-233 @spec:AC-234 @spec:AC-240 @spec:AC-241 @spec:AC-249 @spec:AC-250 @spec:AC-251 @spec:AC-252 @spec:AC-253 @spec:AC-273 @spec:AC-274 @spec:AC-275 @spec:AC-276 @spec:AC-277 @spec:AC-278 @spec:AC-279 @spec:AC-286 @spec:AC-287 @spec:AC-288 @spec:AC-289 @spec:AC-290 commercial evaluation covers sales quality, ambiguity, safe regeneration, playbook metrics, silent handoff, and context continuity",
+      "method": "tap"
+    },
+    "AC-252": {
+      "status": "pass",
+      "testName": "@spec:AC-231 @spec:AC-232 @spec:AC-233 @spec:AC-234 @spec:AC-240 @spec:AC-241 @spec:AC-249 @spec:AC-250 @spec:AC-251 @spec:AC-252 @spec:AC-253 @spec:AC-273 @spec:AC-274 @spec:AC-275 @spec:AC-276 @spec:AC-277 @spec:AC-278 @spec:AC-279 @spec:AC-286 @spec:AC-287 @spec:AC-288 @spec:AC-289 @spec:AC-290 commercial evaluation covers sales quality, ambiguity, safe regeneration, playbook metrics, silent handoff, and context continuity",
+      "method": "tap"
+    },
+    "AC-253": {
+      "status": "pass",
+      "testName": "@spec:AC-231 @spec:AC-232 @spec:AC-233 @spec:AC-234 @spec:AC-240 @spec:AC-241 @spec:AC-249 @spec:AC-250 @spec:AC-251 @spec:AC-252 @spec:AC-253 @spec:AC-273 @spec:AC-274 @spec:AC-275 @spec:AC-276 @spec:AC-277 @spec:AC-278 @spec:AC-279 @spec:AC-286 @spec:AC-287 @spec:AC-288 @spec:AC-289 @spec:AC-290 commercial evaluation covers sales quality, ambiguity, safe regeneration, playbook metrics, silent handoff, and context continuity",
+      "method": "tap"
+    },
+    "AC-273": {
+      "status": "pass",
+      "testName": "@spec:AC-231 @spec:AC-232 @spec:AC-233 @spec:AC-234 @spec:AC-240 @spec:AC-241 @spec:AC-249 @spec:AC-250 @spec:AC-251 @spec:AC-252 @spec:AC-253 @spec:AC-273 @spec:AC-274 @spec:AC-275 @spec:AC-276 @spec:AC-277 @spec:AC-278 @spec:AC-279 @spec:AC-286 @spec:AC-287 @spec:AC-288 @spec:AC-289 @spec:AC-290 commercial evaluation covers sales quality, ambiguity, safe regeneration, playbook metrics, silent handoff, and context continuity",
+      "method": "tap"
+    },
+    "AC-274": {
+      "status": "pass",
+      "testName": "@spec:AC-231 @spec:AC-232 @spec:AC-233 @spec:AC-234 @spec:AC-240 @spec:AC-241 @spec:AC-249 @spec:AC-250 @spec:AC-251 @spec:AC-252 @spec:AC-253 @spec:AC-273 @spec:AC-274 @spec:AC-275 @spec:AC-276 @spec:AC-277 @spec:AC-278 @spec:AC-279 @spec:AC-286 @spec:AC-287 @spec:AC-288 @spec:AC-289 @spec:AC-290 commercial evaluation covers sales quality, ambiguity, safe regeneration, playbook metrics, silent handoff, and context continuity",
+      "method": "tap"
+    },
+    "AC-275": {
+      "status": "pass",
+      "testName": "@spec:AC-231 @spec:AC-232 @spec:AC-233 @spec:AC-234 @spec:AC-240 @spec:AC-241 @spec:AC-249 @spec:AC-250 @spec:AC-251 @spec:AC-252 @spec:AC-253 @spec:AC-273 @spec:AC-274 @spec:AC-275 @spec:AC-276 @spec:AC-277 @spec:AC-278 @spec:AC-279 @spec:AC-286 @spec:AC-287 @spec:AC-288 @spec:AC-289 @spec:AC-290 commercial evaluation covers sales quality, ambiguity, safe regeneration, playbook metrics, silent handoff, and context continuity",
+      "method": "tap"
+    },
+    "AC-276": {
+      "status": "pass",
+      "testName": "@spec:AC-231 @spec:AC-232 @spec:AC-233 @spec:AC-234 @spec:AC-240 @spec:AC-241 @spec:AC-249 @spec:AC-250 @spec:AC-251 @spec:AC-252 @spec:AC-253 @spec:AC-273 @spec:AC-274 @spec:AC-275 @spec:AC-276 @spec:AC-277 @spec:AC-278 @spec:AC-279 @spec:AC-286 @spec:AC-287 @spec:AC-288 @spec:AC-289 @spec:AC-290 commercial evaluation covers sales quality, ambiguity, safe regeneration, playbook metrics, silent handoff, and context continuity",
+      "method": "tap"
+    },
+    "AC-277": {
+      "status": "pass",
+      "testName": "@spec:AC-231 @spec:AC-232 @spec:AC-233 @spec:AC-234 @spec:AC-240 @spec:AC-241 @spec:AC-249 @spec:AC-250 @spec:AC-251 @spec:AC-252 @spec:AC-253 @spec:AC-273 @spec:AC-274 @spec:AC-275 @spec:AC-276 @spec:AC-277 @spec:AC-278 @spec:AC-279 @spec:AC-286 @spec:AC-287 @spec:AC-288 @spec:AC-289 @spec:AC-290 commercial evaluation covers sales quality, ambiguity, safe regeneration, playbook metrics, silent handoff, and context continuity",
+      "method": "tap"
+    },
+    "AC-278": {
+      "status": "pass",
+      "testName": "@spec:AC-231 @spec:AC-232 @spec:AC-233 @spec:AC-234 @spec:AC-240 @spec:AC-241 @spec:AC-249 @spec:AC-250 @spec:AC-251 @spec:AC-252 @spec:AC-253 @spec:AC-273 @spec:AC-274 @spec:AC-275 @spec:AC-276 @spec:AC-277 @spec:AC-278 @spec:AC-279 @spec:AC-286 @spec:AC-287 @spec:AC-288 @spec:AC-289 @spec:AC-290 commercial evaluation covers sales quality, ambiguity, safe regeneration, playbook metrics, silent handoff, and context continuity",
+      "method": "tap"
+    },
+    "AC-279": {
+      "status": "pass",
+      "testName": "@spec:AC-231 @spec:AC-232 @spec:AC-233 @spec:AC-234 @spec:AC-240 @spec:AC-241 @spec:AC-249 @spec:AC-250 @spec:AC-251 @spec:AC-252 @spec:AC-253 @spec:AC-273 @spec:AC-274 @spec:AC-275 @spec:AC-276 @spec:AC-277 @spec:AC-278 @spec:AC-279 @spec:AC-286 @spec:AC-287 @spec:AC-288 @spec:AC-289 @spec:AC-290 commercial evaluation covers sales quality, ambiguity, safe regeneration, playbook metrics, silent handoff, and context continuity",
+      "method": "tap"
+    },
+    "AC-286": {
+      "status": "pass",
+      "testName": "@spec:AC-231 @spec:AC-232 @spec:AC-233 @spec:AC-234 @spec:AC-240 @spec:AC-241 @spec:AC-249 @spec:AC-250 @spec:AC-251 @spec:AC-252 @spec:AC-253 @spec:AC-273 @spec:AC-274 @spec:AC-275 @spec:AC-276 @spec:AC-277 @spec:AC-278 @spec:AC-279 @spec:AC-286 @spec:AC-287 @spec:AC-288 @spec:AC-289 @spec:AC-290 commercial evaluation covers sales quality, ambiguity, safe regeneration, playbook metrics, silent handoff, and context continuity",
+      "method": "tap"
+    },
+    "AC-287": {
+      "status": "pass",
+      "testName": "@spec:AC-231 @spec:AC-232 @spec:AC-233 @spec:AC-234 @spec:AC-240 @spec:AC-241 @spec:AC-249 @spec:AC-250 @spec:AC-251 @spec:AC-252 @spec:AC-253 @spec:AC-273 @spec:AC-274 @spec:AC-275 @spec:AC-276 @spec:AC-277 @spec:AC-278 @spec:AC-279 @spec:AC-286 @spec:AC-287 @spec:AC-288 @spec:AC-289 @spec:AC-290 commercial evaluation covers sales quality, ambiguity, safe regeneration, playbook metrics, silent handoff, and context continuity",
+      "method": "tap"
+    },
+    "AC-288": {
+      "status": "pass",
+      "testName": "@spec:AC-231 @spec:AC-232 @spec:AC-233 @spec:AC-234 @spec:AC-240 @spec:AC-241 @spec:AC-249 @spec:AC-250 @spec:AC-251 @spec:AC-252 @spec:AC-253 @spec:AC-273 @spec:AC-274 @spec:AC-275 @spec:AC-276 @spec:AC-277 @spec:AC-278 @spec:AC-279 @spec:AC-286 @spec:AC-287 @spec:AC-288 @spec:AC-289 @spec:AC-290 commercial evaluation covers sales quality, ambiguity, safe regeneration, playbook metrics, silent handoff, and context continuity",
+      "method": "tap"
+    },
+    "AC-289": {
+      "status": "pass",
+      "testName": "@spec:AC-231 @spec:AC-232 @spec:AC-233 @spec:AC-234 @spec:AC-240 @spec:AC-241 @spec:AC-249 @spec:AC-250 @spec:AC-251 @spec:AC-252 @spec:AC-253 @spec:AC-273 @spec:AC-274 @spec:AC-275 @spec:AC-276 @spec:AC-277 @spec:AC-278 @spec:AC-279 @spec:AC-286 @spec:AC-287 @spec:AC-288 @spec:AC-289 @spec:AC-290 commercial evaluation covers sales quality, ambiguity, safe regeneration, playbook metrics, silent handoff, and context continuity",
+      "method": "tap"
+    },
+    "AC-290": {
+      "status": "pass",
+      "testName": "@spec:AC-231 @spec:AC-232 @spec:AC-233 @spec:AC-234 @spec:AC-240 @spec:AC-241 @spec:AC-249 @spec:AC-250 @spec:AC-251 @spec:AC-252 @spec:AC-253 @spec:AC-273 @spec:AC-274 @spec:AC-275 @spec:AC-276 @spec:AC-277 @spec:AC-278 @spec:AC-279 @spec:AC-286 @spec:AC-287 @spec:AC-288 @spec:AC-289 @spec:AC-290 commercial evaluation covers sales quality, ambiguity, safe regeneration, playbook metrics, silent handoff, and context continuity",
+      "method": "tap"
+    },
+    "AC-301": {
+      "status": "pass",
+      "testName": "@spec:AC-301 @spec:AC-302 @spec:AC-303 @spec:AC-304 @spec:AC-305 @spec:AC-306 @spec:AC-307 @spec:AC-308 @spec:AC-309 commercial quality metrics cover context, naturalness, evidence reuse, and completion",
+      "method": "tap"
+    },
+    "AC-302": {
+      "status": "pass",
+      "testName": "@spec:AC-301 @spec:AC-302 @spec:AC-303 @spec:AC-304 @spec:AC-305 @spec:AC-306 @spec:AC-307 @spec:AC-308 @spec:AC-309 commercial quality metrics cover context, naturalness, evidence reuse, and completion",
+      "method": "tap"
+    },
+    "AC-303": {
+      "status": "pass",
+      "testName": "@spec:AC-301 @spec:AC-302 @spec:AC-303 @spec:AC-304 @spec:AC-305 @spec:AC-306 @spec:AC-307 @spec:AC-308 @spec:AC-309 commercial quality metrics cover context, naturalness, evidence reuse, and completion",
+      "method": "tap"
+    },
+    "AC-304": {
+      "status": "pass",
+      "testName": "@spec:AC-301 @spec:AC-302 @spec:AC-303 @spec:AC-304 @spec:AC-305 @spec:AC-306 @spec:AC-307 @spec:AC-308 @spec:AC-309 commercial quality metrics cover context, naturalness, evidence reuse, and completion",
+      "method": "tap"
+    },
+    "AC-305": {
+      "status": "pass",
+      "testName": "@spec:AC-301 @spec:AC-302 @spec:AC-303 @spec:AC-304 @spec:AC-305 @spec:AC-306 @spec:AC-307 @spec:AC-308 @spec:AC-309 commercial quality metrics cover context, naturalness, evidence reuse, and completion",
+      "method": "tap"
+    },
+    "AC-306": {
+      "status": "pass",
+      "testName": "@spec:AC-301 @spec:AC-302 @spec:AC-303 @spec:AC-304 @spec:AC-305 @spec:AC-306 @spec:AC-307 @spec:AC-308 @spec:AC-309 commercial quality metrics cover context, naturalness, evidence reuse, and completion",
+      "method": "tap"
+    },
+    "AC-307": {
+      "status": "pass",
+      "testName": "@spec:AC-301 @spec:AC-302 @spec:AC-303 @spec:AC-304 @spec:AC-305 @spec:AC-306 @spec:AC-307 @spec:AC-308 @spec:AC-309 commercial quality metrics cover context, naturalness, evidence reuse, and completion",
+      "method": "tap"
+    },
+    "AC-308": {
+      "status": "pass",
+      "testName": "@spec:AC-301 @spec:AC-302 @spec:AC-303 @spec:AC-304 @spec:AC-305 @spec:AC-306 @spec:AC-307 @spec:AC-308 @spec:AC-309 commercial quality metrics cover context, naturalness, evidence reuse, and completion",
+      "method": "tap"
+    },
+    "AC-309": {
+      "status": "pass",
+      "testName": "@spec:AC-301 @spec:AC-302 @spec:AC-303 @spec:AC-304 @spec:AC-305 @spec:AC-306 @spec:AC-307 @spec:AC-308 @spec:AC-309 commercial quality metrics cover context, naturalness, evidence reuse, and completion",
+      "method": "tap"
+    },
+    "AC-333": {
+      "status": "pass",
+      "testName": "@spec:AC-333 @spec:AC-334 @spec:AC-335 @spec:AC-336 @spec:AC-337 @spec:AC-338 @spec:AC-339 @spec:AC-340 @spec:AC-341 @spec:AC-342 @spec:AC-343 commercial operations metrics cover internal gaps, memory, booking truth, corrections, and WhatsApp style",
+      "method": "tap"
+    },
+    "AC-334": {
+      "status": "pass",
+      "testName": "@spec:AC-333 @spec:AC-334 @spec:AC-335 @spec:AC-336 @spec:AC-337 @spec:AC-338 @spec:AC-339 @spec:AC-340 @spec:AC-341 @spec:AC-342 @spec:AC-343 commercial operations metrics cover internal gaps, memory, booking truth, corrections, and WhatsApp style",
+      "method": "tap"
+    },
+    "AC-335": {
+      "status": "pass",
+      "testName": "@spec:AC-333 @spec:AC-334 @spec:AC-335 @spec:AC-336 @spec:AC-337 @spec:AC-338 @spec:AC-339 @spec:AC-340 @spec:AC-341 @spec:AC-342 @spec:AC-343 commercial operations metrics cover internal gaps, memory, booking truth, corrections, and WhatsApp style",
+      "method": "tap"
+    },
+    "AC-336": {
+      "status": "pass",
+      "testName": "@spec:AC-333 @spec:AC-334 @spec:AC-335 @spec:AC-336 @spec:AC-337 @spec:AC-338 @spec:AC-339 @spec:AC-340 @spec:AC-341 @spec:AC-342 @spec:AC-343 commercial operations metrics cover internal gaps, memory, booking truth, corrections, and WhatsApp style",
+      "method": "tap"
+    },
+    "AC-337": {
+      "status": "pass",
+      "testName": "@spec:AC-333 @spec:AC-334 @spec:AC-335 @spec:AC-336 @spec:AC-337 @spec:AC-338 @spec:AC-339 @spec:AC-340 @spec:AC-341 @spec:AC-342 @spec:AC-343 commercial operations metrics cover internal gaps, memory, booking truth, corrections, and WhatsApp style",
+      "method": "tap"
+    },
+    "AC-338": {
+      "status": "pass",
+      "testName": "@spec:AC-333 @spec:AC-334 @spec:AC-335 @spec:AC-336 @spec:AC-337 @spec:AC-338 @spec:AC-339 @spec:AC-340 @spec:AC-341 @spec:AC-342 @spec:AC-343 commercial operations metrics cover internal gaps, memory, booking truth, corrections, and WhatsApp style",
+      "method": "tap"
+    },
+    "AC-339": {
+      "status": "pass",
+      "testName": "@spec:AC-333 @spec:AC-334 @spec:AC-335 @spec:AC-336 @spec:AC-337 @spec:AC-338 @spec:AC-339 @spec:AC-340 @spec:AC-341 @spec:AC-342 @spec:AC-343 commercial operations metrics cover internal gaps, memory, booking truth, corrections, and WhatsApp style",
+      "method": "tap"
+    },
+    "AC-340": {
+      "status": "pass",
+      "testName": "@spec:AC-333 @spec:AC-334 @spec:AC-335 @spec:AC-336 @spec:AC-337 @spec:AC-338 @spec:AC-339 @spec:AC-340 @spec:AC-341 @spec:AC-342 @spec:AC-343 commercial operations metrics cover internal gaps, memory, booking truth, corrections, and WhatsApp style",
+      "method": "tap"
+    },
+    "AC-341": {
+      "status": "pass",
+      "testName": "@spec:AC-333 @spec:AC-334 @spec:AC-335 @spec:AC-336 @spec:AC-337 @spec:AC-338 @spec:AC-339 @spec:AC-340 @spec:AC-341 @spec:AC-342 @spec:AC-343 commercial operations metrics cover internal gaps, memory, booking truth, corrections, and WhatsApp style",
+      "method": "tap"
+    },
+    "AC-342": {
+      "status": "pass",
+      "testName": "@spec:AC-333 @spec:AC-334 @spec:AC-335 @spec:AC-336 @spec:AC-337 @spec:AC-338 @spec:AC-339 @spec:AC-340 @spec:AC-341 @spec:AC-342 @spec:AC-343 commercial operations metrics cover internal gaps, memory, booking truth, corrections, and WhatsApp style",
+      "method": "tap"
+    },
+    "AC-343": {
+      "status": "pass",
+      "testName": "@spec:AC-333 @spec:AC-334 @spec:AC-335 @spec:AC-336 @spec:AC-337 @spec:AC-338 @spec:AC-339 @spec:AC-340 @spec:AC-341 @spec:AC-342 @spec:AC-343 commercial operations metrics cover internal gaps, memory, booking truth, corrections, and WhatsApp style",
+      "method": "tap"
+    },
+    "AC-372": {
+      "status": "pass",
+      "testName": "@spec:AC-372 operational live memory metrics cover repetition, introduction, registration, and scheduling regressions",
       "method": "tap"
     }
   },

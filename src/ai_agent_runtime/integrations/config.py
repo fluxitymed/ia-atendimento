@@ -27,6 +27,7 @@ class IntegrationConfig:
     openai_responses_model: str = "gpt-5.6-luna"
     openai_reasoning_effort: str = "low"
     openai_embedding_model: str = "text-embedding-3-small"
+    openai_stt_model: str = "gpt-4o-mini-transcribe"
     supabase_url: str | None = None
     supabase_service_role_key: str | None = None
     langsmith_api_key: str | None = None
@@ -51,6 +52,7 @@ class IntegrationConfig:
             openai_responses_model=environ.get("OPENAI_RESPONSES_MODEL", cls.openai_responses_model),
             openai_reasoning_effort=environ.get("OPENAI_REASONING_EFFORT", cls.openai_reasoning_effort),
             openai_embedding_model=environ.get("OPENAI_EMBEDDING_MODEL", cls.openai_embedding_model),
+            openai_stt_model=environ.get("OPENAI_STT_MODEL", cls.openai_stt_model),
             supabase_url=environ.get("SUPABASE_URL"),
             supabase_service_role_key=environ.get("SUPABASE_SERVICE_ROLE_KEY"),
             langsmith_api_key=environ.get("LANGSMITH_API_KEY"),
