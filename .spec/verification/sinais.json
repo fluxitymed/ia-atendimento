@@ -581,10 +581,10 @@
       "codigo": "VERIFY_OBSOLETO",
       "feature": "ai-customer-service",
       "ref": "—",
-      "ocorrencias": 39,
+      "ocorrencias": 40,
       "primeiraVez": "2026-08-20T01:55:42.223Z",
-      "ultimaVez": "2026-09-07T14:12:11.071Z",
-      "gitRev": "8e319c3"
+      "ultimaVez": "2026-09-07T16:57:11.318Z",
+      "gitRev": "e1d2a48"
     },
     "ID_DUPLICADO::ai-customer-service::US-001": {
       "codigo": "ID_DUPLICADO",
@@ -1625,10 +1625,10 @@
       "codigo": "VERIFY_OBSOLETO",
       "feature": "ai-agent-runtime",
       "ref": "—",
-      "ocorrencias": 31,
+      "ocorrencias": 32,
       "primeiraVez": "2026-08-20T18:53:21.874Z",
-      "ultimaVez": "2026-09-07T14:13:05.037Z",
-      "gitRev": "8e319c3"
+      "ultimaVez": "2026-09-07T16:57:11.318Z",
+      "gitRev": "e1d2a48"
     },
     "ARQUIVO_ORFAO::—::src/ai_agent_runtime/integrations/__init__.py": {
       "codigo": "ARQUIVO_ORFAO",
@@ -1994,28 +1994,28 @@
       "codigo": "VERIFY_OBSOLETO",
       "feature": "ai-runtime-integrations",
       "ref": "—",
-      "ocorrencias": 36,
+      "ocorrencias": 37,
       "primeiraVez": "2026-08-20T19:42:35.889Z",
-      "ultimaVez": "2026-09-07T14:13:05.037Z",
-      "gitRev": "8e319c3"
+      "ultimaVez": "2026-09-07T16:57:11.319Z",
+      "gitRev": "e1d2a48"
     },
     "VERIFY_OBSOLETO::ai-agent-evaluation::—": {
       "codigo": "VERIFY_OBSOLETO",
       "feature": "ai-agent-evaluation",
       "ref": "—",
-      "ocorrencias": 23,
+      "ocorrencias": 24,
       "primeiraVez": "2026-08-20T20:13:47.439Z",
-      "ultimaVez": "2026-09-07T14:12:11.071Z",
-      "gitRev": "8e319c3"
+      "ultimaVez": "2026-09-07T16:57:11.318Z",
+      "gitRev": "e1d2a48"
     },
     "VERIFY_OBSOLETO::ai-agent-live-sandbox::—": {
       "codigo": "VERIFY_OBSOLETO",
       "feature": "ai-agent-live-sandbox",
       "ref": "—",
-      "ocorrencias": 30,
+      "ocorrencias": 31,
       "primeiraVez": "2026-08-21T01:19:42.607Z",
-      "ultimaVez": "2026-09-07T14:12:11.071Z",
-      "gitRev": "8e319c3"
+      "ultimaVez": "2026-09-07T16:57:11.318Z",
+      "gitRev": "e1d2a48"
     },
     "Q_ABERTA::ai-whatsapp-channel::Q-006": {
       "codigo": "Q_ABERTA",
@@ -2273,28 +2273,28 @@
       "codigo": "VERIFY_OBSOLETO",
       "feature": "ai-whatsapp-channel",
       "ref": "—",
-      "ocorrencias": 23,
+      "ocorrencias": 24,
       "primeiraVez": "2026-08-29T19:09:51.239Z",
-      "ultimaVez": "2026-09-07T14:13:05.037Z",
-      "gitRev": "8e319c3"
+      "ultimaVez": "2026-09-07T16:57:11.319Z",
+      "gitRev": "e1d2a48"
     },
     "VERIFY_OBSOLETO::ai-whatsapp-evolution-provider::—": {
       "codigo": "VERIFY_OBSOLETO",
       "feature": "ai-whatsapp-evolution-provider",
       "ref": "—",
-      "ocorrencias": 26,
+      "ocorrencias": 27,
       "primeiraVez": "2026-08-30T19:36:34.384Z",
-      "ultimaVez": "2026-09-07T14:13:05.037Z",
-      "gitRev": "8e319c3"
+      "ultimaVez": "2026-09-07T16:57:11.319Z",
+      "gitRev": "e1d2a48"
     },
     "VERIFY_OBSOLETO::ai-whatsapp-zapi-provider::—": {
       "codigo": "VERIFY_OBSOLETO",
       "feature": "ai-whatsapp-zapi-provider",
       "ref": "—",
-      "ocorrencias": 3,
+      "ocorrencias": 4,
       "primeiraVez": "2026-08-31T21:19:09.166Z",
-      "ultimaVez": "2026-09-02T18:26:08.280Z",
-      "gitRev": "8e319c3"
+      "ultimaVez": "2026-09-07T16:57:11.319Z",
+      "gitRev": "e1d2a48"
     },
     "TASK_CONCLUIDA_SEM_PROVA::ai-whatsapp-zapi-provider::T-052": {
       "codigo": "TASK_CONCLUIDA_SEM_PROVA",
@@ -2399,10 +2399,10 @@
       "codigo": "VERIFY_OBSOLETO",
       "feature": "ai-commercial-agent-playbook",
       "ref": "—",
-      "ocorrencias": 7,
+      "ocorrencias": 8,
       "primeiraVez": "2026-09-02T01:51:51.040Z",
-      "ultimaVez": "2026-09-07T14:12:11.071Z",
-      "gitRev": "8e319c3"
+      "ultimaVez": "2026-09-07T16:57:11.318Z",
+      "gitRev": "e1d2a48"
     },
     "TASK_CONCLUIDA_SEM_PROVA::ai-whatsapp-zapi-provider::T-061": {
       "codigo": "TASK_CONCLUIDA_SEM_PROVA",
@@ -2547,6 +2547,213 @@
       "primeiraVez": "2026-09-07T14:12:11.071Z",
       "ultimaVez": "2026-09-07T14:12:11.071Z",
       "gitRev": "8e319c3"
+    },
+    "ID_DUPLICADO::ai-organization-runtime-config::ASM-001": {
+      "codigo": "ID_DUPLICADO",
+      "feature": "ai-organization-runtime-config",
+      "ref": "ASM-001",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-07T16:57:11.306Z",
+      "ultimaVez": "2026-09-07T16:57:11.318Z",
+      "gitRev": "e1d2a48"
+    },
+    "ID_DUPLICADO::ai-organization-runtime-config::ASM-002": {
+      "codigo": "ID_DUPLICADO",
+      "feature": "ai-organization-runtime-config",
+      "ref": "ASM-002",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-07T16:57:11.318Z",
+      "ultimaVez": "2026-09-07T16:57:11.318Z",
+      "gitRev": "e1d2a48"
+    },
+    "ID_DUPLICADO::ai-organization-runtime-config::ASM-003": {
+      "codigo": "ID_DUPLICADO",
+      "feature": "ai-organization-runtime-config",
+      "ref": "ASM-003",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-07T16:57:11.318Z",
+      "ultimaVez": "2026-09-07T16:57:11.318Z",
+      "gitRev": "e1d2a48"
+    },
+    "ID_DUPLICADO::ai-organization-runtime-config::Q-001": {
+      "codigo": "ID_DUPLICADO",
+      "feature": "ai-organization-runtime-config",
+      "ref": "Q-001",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-07T16:57:11.318Z",
+      "ultimaVez": "2026-09-07T16:57:11.318Z",
+      "gitRev": "e1d2a48"
+    },
+    "Q_ABERTA::ai-organization-runtime-config::Q-001": {
+      "codigo": "Q_ABERTA",
+      "feature": "ai-organization-runtime-config",
+      "ref": "Q-001",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-07T16:57:11.318Z",
+      "ultimaVez": "2026-09-07T16:57:11.318Z",
+      "gitRev": "e1d2a48"
+    },
+    "TASK_CONCLUIDA_SEM_PROVA::ai-organization-runtime-config::T-069": {
+      "codigo": "TASK_CONCLUIDA_SEM_PROVA",
+      "feature": "ai-organization-runtime-config",
+      "ref": "T-069",
+      "ocorrencias": 15,
+      "primeiraVez": "2026-09-07T16:57:11.318Z",
+      "ultimaVez": "2026-09-07T16:57:11.319Z",
+      "gitRev": "e1d2a48"
+    },
+    "TASK_CONCLUIDA_SEM_PROVA::ai-organization-runtime-config::T-070": {
+      "codigo": "TASK_CONCLUIDA_SEM_PROVA",
+      "feature": "ai-organization-runtime-config",
+      "ref": "T-070",
+      "ocorrencias": 9,
+      "primeiraVez": "2026-09-07T16:57:11.319Z",
+      "ultimaVez": "2026-09-07T16:57:11.319Z",
+      "gitRev": "e1d2a48"
+    },
+    "TASK_CONCLUIDA_SEM_PROVA::ai-organization-runtime-config::T-072": {
+      "codigo": "TASK_CONCLUIDA_SEM_PROVA",
+      "feature": "ai-organization-runtime-config",
+      "ref": "T-072",
+      "ocorrencias": 15,
+      "primeiraVez": "2026-09-07T16:57:11.319Z",
+      "ultimaVez": "2026-09-07T16:57:11.319Z",
+      "gitRev": "e1d2a48"
+    },
+    "AC_SEM_PROVA::ai-organization-runtime-config::AC-421": {
+      "codigo": "AC_SEM_PROVA",
+      "feature": "ai-organization-runtime-config",
+      "ref": "AC-421",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-07T16:57:11.319Z",
+      "ultimaVez": "2026-09-07T16:57:11.319Z",
+      "gitRev": "e1d2a48"
+    },
+    "AC_SEM_PROVA::ai-organization-runtime-config::AC-422": {
+      "codigo": "AC_SEM_PROVA",
+      "feature": "ai-organization-runtime-config",
+      "ref": "AC-422",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-07T16:57:11.319Z",
+      "ultimaVez": "2026-09-07T16:57:11.319Z",
+      "gitRev": "e1d2a48"
+    },
+    "AC_SEM_PROVA::ai-organization-runtime-config::AC-423": {
+      "codigo": "AC_SEM_PROVA",
+      "feature": "ai-organization-runtime-config",
+      "ref": "AC-423",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-07T16:57:11.319Z",
+      "ultimaVez": "2026-09-07T16:57:11.319Z",
+      "gitRev": "e1d2a48"
+    },
+    "AC_SEM_PROVA::ai-organization-runtime-config::AC-424": {
+      "codigo": "AC_SEM_PROVA",
+      "feature": "ai-organization-runtime-config",
+      "ref": "AC-424",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-07T16:57:11.319Z",
+      "ultimaVez": "2026-09-07T16:57:11.319Z",
+      "gitRev": "e1d2a48"
+    },
+    "AC_SEM_PROVA::ai-organization-runtime-config::AC-425": {
+      "codigo": "AC_SEM_PROVA",
+      "feature": "ai-organization-runtime-config",
+      "ref": "AC-425",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-07T16:57:11.319Z",
+      "ultimaVez": "2026-09-07T16:57:11.319Z",
+      "gitRev": "e1d2a48"
+    },
+    "AC_SEM_PROVA::ai-organization-runtime-config::AC-426": {
+      "codigo": "AC_SEM_PROVA",
+      "feature": "ai-organization-runtime-config",
+      "ref": "AC-426",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-07T16:57:11.319Z",
+      "ultimaVez": "2026-09-07T16:57:11.319Z",
+      "gitRev": "e1d2a48"
+    },
+    "AC_SEM_PROVA::ai-organization-runtime-config::AC-427": {
+      "codigo": "AC_SEM_PROVA",
+      "feature": "ai-organization-runtime-config",
+      "ref": "AC-427",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-07T16:57:11.319Z",
+      "ultimaVez": "2026-09-07T16:57:11.319Z",
+      "gitRev": "e1d2a48"
+    },
+    "AC_SEM_PROVA::ai-organization-runtime-config::AC-428": {
+      "codigo": "AC_SEM_PROVA",
+      "feature": "ai-organization-runtime-config",
+      "ref": "AC-428",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-07T16:57:11.319Z",
+      "ultimaVez": "2026-09-07T16:57:11.319Z",
+      "gitRev": "e1d2a48"
+    },
+    "AC_SEM_PROVA::ai-organization-runtime-config::AC-429": {
+      "codigo": "AC_SEM_PROVA",
+      "feature": "ai-organization-runtime-config",
+      "ref": "AC-429",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-07T16:57:11.319Z",
+      "ultimaVez": "2026-09-07T16:57:11.319Z",
+      "gitRev": "e1d2a48"
+    },
+    "AC_SEM_PROVA::ai-organization-runtime-config::AC-430": {
+      "codigo": "AC_SEM_PROVA",
+      "feature": "ai-organization-runtime-config",
+      "ref": "AC-430",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-07T16:57:11.319Z",
+      "ultimaVez": "2026-09-07T16:57:11.319Z",
+      "gitRev": "e1d2a48"
+    },
+    "AC_SEM_PROVA::ai-organization-runtime-config::AC-431": {
+      "codigo": "AC_SEM_PROVA",
+      "feature": "ai-organization-runtime-config",
+      "ref": "AC-431",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-07T16:57:11.319Z",
+      "ultimaVez": "2026-09-07T16:57:11.319Z",
+      "gitRev": "e1d2a48"
+    },
+    "AC_SEM_PROVA::ai-organization-runtime-config::AC-432": {
+      "codigo": "AC_SEM_PROVA",
+      "feature": "ai-organization-runtime-config",
+      "ref": "AC-432",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-07T16:57:11.319Z",
+      "ultimaVez": "2026-09-07T16:57:11.319Z",
+      "gitRev": "e1d2a48"
+    },
+    "AC_SEM_PROVA::ai-organization-runtime-config::AC-433": {
+      "codigo": "AC_SEM_PROVA",
+      "feature": "ai-organization-runtime-config",
+      "ref": "AC-433",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-07T16:57:11.319Z",
+      "ultimaVez": "2026-09-07T16:57:11.319Z",
+      "gitRev": "e1d2a48"
+    },
+    "AC_SEM_PROVA::ai-organization-runtime-config::AC-434": {
+      "codigo": "AC_SEM_PROVA",
+      "feature": "ai-organization-runtime-config",
+      "ref": "AC-434",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-07T16:57:11.319Z",
+      "ultimaVez": "2026-09-07T16:57:11.319Z",
+      "gitRev": "e1d2a48"
+    },
+    "AC_SEM_PROVA::ai-organization-runtime-config::AC-435": {
+      "codigo": "AC_SEM_PROVA",
+      "feature": "ai-organization-runtime-config",
+      "ref": "AC-435",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-07T16:57:11.319Z",
+      "ultimaVez": "2026-09-07T16:57:11.319Z",
+      "gitRev": "e1d2a48"
     }
   }
 }

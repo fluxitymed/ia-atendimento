@@ -1,0 +1,87 @@
+{
+  "feature": "ai-organization-runtime-config",
+  "timestamp": "2026-09-07T16:58:46.222Z",
+  "gitRev": "e1d2a48",
+  "command": "node --test --test-reporter=tap",
+  "reporter": "tap",
+  "exitCode": 0,
+  "testsParsed": 211,
+  "results": {
+    "AC-421": {
+      "status": "pass",
+      "testName": "@spec:AC-421 @spec:AC-422 runtime config loads active organization without cross-org leakage",
+      "method": "tap"
+    },
+    "AC-422": {
+      "status": "pass",
+      "testName": "@spec:AC-421 @spec:AC-422 runtime config loads active organization without cross-org leakage",
+      "method": "tap"
+    },
+    "AC-423": {
+      "status": "pass",
+      "testName": "@spec:AC-423 legacy runtime config fallback preserves current Carvalho env shape",
+      "method": "tap"
+    },
+    "AC-424": {
+      "status": "pass",
+      "testName": "@spec:AC-424 @spec:AC-425 @spec:AC-427 organization credentials resolve by provider and secrets stay out of logs",
+      "method": "tap"
+    },
+    "AC-425": {
+      "status": "pass",
+      "testName": "@spec:AC-424 @spec:AC-425 @spec:AC-427 organization credentials resolve by provider and secrets stay out of logs",
+      "method": "tap"
+    },
+    "AC-426": {
+      "status": "pass",
+      "testName": "@spec:AC-426 @spec:AC-433 Z-API instance mapping ignores payload organization and rejects unknown instance",
+      "method": "tap"
+    },
+    "AC-427": {
+      "status": "pass",
+      "testName": "@spec:AC-424 @spec:AC-425 @spec:AC-427 organization credentials resolve by provider and secrets stay out of logs",
+      "method": "tap"
+    },
+    "AC-428": {
+      "status": "pass",
+      "testName": "@spec:AC-428 migration defines multi-tenant tables without plaintext secret columns",
+      "method": "tap"
+    },
+    "AC-429": {
+      "status": "pass",
+      "testName": "@spec:AC-429 Carvalho seed keeps existing organizationId and does not duplicate knowledge",
+      "method": "tap"
+    },
+    "AC-430": {
+      "status": "pass",
+      "testName": "@spec:AC-430 @spec:AC-431 OpenAI usage is recorded by organization and idempotent by provider request id",
+      "method": "tap"
+    },
+    "AC-431": {
+      "status": "pass",
+      "testName": "@spec:AC-430 @spec:AC-431 OpenAI usage is recorded by organization and idempotent by provider request id",
+      "method": "tap"
+    },
+    "AC-432": {
+      "status": "pass",
+      "testName": "@spec:AC-432 usage write failure does not repeat OpenAI call or leak secret",
+      "method": "tap"
+    },
+    "AC-433": {
+      "status": "pass",
+      "testName": "@spec:AC-426 @spec:AC-433 Z-API instance mapping ignores payload organization and rejects unknown instance",
+      "method": "tap"
+    },
+    "AC-434": {
+      "status": "pass",
+      "testName": "@spec:AC-434 @spec:AC-435 env example and docs preserve legacy fallback and OpenAI project setup",
+      "method": "tap"
+    },
+    "AC-435": {
+      "status": "pass",
+      "testName": "@spec:AC-434 @spec:AC-435 env example and docs preserve legacy fallback and OpenAI project setup",
+      "method": "tap"
+    }
+  },
+  "principles": {}
+}

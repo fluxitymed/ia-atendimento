@@ -4,6 +4,7 @@ import json
 import re
 import socket
 import time
+from dataclasses import replace
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from os import environ
 from pathlib import Path
@@ -14,6 +15,18 @@ from ai_agent_runtime.commercial import CommercialPlaybook, OrganizationCommerci
 from ai_agent_runtime.graph import AgentRuntimeGraph
 from ai_agent_runtime.integrations.config import IntegrationConfig
 from ai_agent_runtime.integrations.openai_provider import OpenAIResponsesProvider
+from ai_agent_runtime.organization_config import (
+    EnvironmentCredentialProvider,
+    EnvironmentOrganizationConfigRepository,
+    LegacyEnvironmentCredentialProvider,
+    LegacyEnvironmentOrganizationConfigRepository,
+    OPENAI_PROVIDER,
+    SupabaseAiUsageTracker,
+    SupabaseOrganizationConfigRepository,
+    resolve_credential,
+    resolve_runtime_config,
+    zapi_instance_organization_map_from_env,
+)
 from ai_agent_runtime.sandbox_ids import AURORA_ORG_ID, BOREAL_ORG_ID, DATASET_VERSION, LEONARDO_ORG_ID, deterministic_sandbox_uuid
 from ai_agent_runtime.state import AgentDecision, AgentStage
 
@@ -85,11 +98,19 @@ class OpenAIWhatsAppResponseGenerator:
         retrieval: "ZApiRuntimeRetrieval | None" = None,
         commercial_playbook: CommercialPlaybook | None = None,
         organization_config: OrganizationCommercialConfig | None = None,
+        organization_config_repository=None,
+        organization_config_fallback_repository=None,
+        credential_provider=None,
+        credential_fallback_provider=None,
     ):
         self.provider = provider
         self.retrieval = retrieval
         self.commercial_playbook = commercial_playbook or CommercialPlaybook()
         self.organization_config = organization_config
+        self.organization_config_repository = organization_config_repository
+        self.organization_config_fallback_repository = organization_config_fallback_repository
+        self.credential_provider = credential_provider
+        self.credential_fallback_provider = credential_fallback_provider
 
     def generate(self, state, *, emit):
         evidence = []
@@ -98,7 +119,7 @@ class OpenAIWhatsAppResponseGenerator:
             [str(item.get("text") or "") for item in state.messages if item.get("text")]
         )
         previous_assistant_question = str(state.context.get("previousAssistantQuestion") or "")
-        organization_config = self.organization_config or organization_config_from_context(state.context)
+        organization_config = self._organization_config_for_state(state, emit)
         commercial_state = self.commercial_playbook.evaluate(
             state.messages,
             current_message=state.current_message,
@@ -390,7 +411,11 @@ class OpenAIWhatsAppResponseGenerator:
         ]
         emit("model_call_started", {"provider": "openai", "endpoint": "responses", "model": self.provider.config.openai_responses_model})
         try:
-            response = self.provider.create_response(input_messages=input_messages)
+            response = self._provider_for_state(state, emit).create_response(
+                input_messages=input_messages,
+                organization_id=state.organization_id,
+                conversation_id=state.conversation_id,
+            )
         except LiveRuntimeHttpError as exc:
             emit("model_call_failed", exc.details())
             raise
@@ -459,6 +484,7 @@ class OpenAIWhatsAppResponseGenerator:
                 evidence=evidence,
                 organization_config=organization_config,
                 commercial_state=commercial_state.as_dict(),
+                state=state,
                 emit=emit,
             )
             state.context["assistantIntroduced"] = _assistant_introduced_after_response(
@@ -490,6 +516,7 @@ class OpenAIWhatsAppResponseGenerator:
         *,
         evidence_count: int,
         organization_config: OrganizationCommercialConfig | None,
+        state,
         emit,
         evidence: list[dict[str, Any]] | None = None,
         commercial_state: dict[str, Any] | None = None,
@@ -498,7 +525,11 @@ class OpenAIWhatsAppResponseGenerator:
         retry_messages = _conversational_no_facts_messages(input_messages)
         emit("model_call_started", {"provider": "openai", "endpoint": "responses", "model": self.provider.config.openai_responses_model, "mode": "CONVERSATIONAL_NO_FACTS"})
         try:
-            response = self.provider.create_response(input_messages=retry_messages)
+            response = self._provider_for_state(state, emit).create_response(
+                input_messages=retry_messages,
+                organization_id=state.organization_id,
+                conversation_id=state.conversation_id,
+            )
         except LiveRuntimeHttpError as exc:
             emit("model_call_failed", exc.details())
             raise
@@ -544,6 +575,34 @@ class OpenAIWhatsAppResponseGenerator:
             emit("response_regeneration_failed", {"reason": retry_grounding["reason"], "maxRetriesReached": True})
             raise LiveRuntimeGenerationError("CONVERSATIONAL_REGENERATION_UNGROUNDED")
         return retry_text
+
+    def _organization_config_for_state(self, state, emit) -> OrganizationCommercialConfig:
+        if self.organization_config_repository:
+            resolved = resolve_runtime_config(
+                state.organization_id,
+                repository=self.organization_config_repository,
+                fallback_repository=self.organization_config_fallback_repository,
+                logger=emit,
+            )
+            return resolved.to_commercial_config()
+        return self.organization_config or organization_config_from_context(state.context)
+
+    def _provider_for_state(self, state, emit) -> OpenAIResponsesProvider:
+        if not self.credential_provider:
+            return self.provider
+        credential = resolve_credential(
+            state.organization_id,
+            OPENAI_PROVIDER,
+            credential_provider=self.credential_provider,
+            fallback_provider=self.credential_fallback_provider,
+            logger=emit,
+        )
+        return OpenAIResponsesProvider(
+            replace(self.provider.config, openai_api_key=credential.secret),
+            self.provider.transport,
+            usage_tracker=self.provider.usage_tracker,
+            usage_logger=self.provider.usage_logger,
+        )
 
 
 class ZApiRuntimeRetrieval:
@@ -696,12 +755,16 @@ class ZApiRuntimeRetrieval:
 def build_default_adapter(config: ZApiWhatsAppConfig) -> WhatsAppChannelAdapter:
     stage_logger = JsonStageLogger()
     provider = build_whatsapp_provider("zapi", zapi_config=config)
-    instance = config.instance_id or "missing-zapi-instance"
     organization_id = _runtime_organization_id(config.organization_id)
-    resolver = OrganizationResolver({instance: organization_id})
+    resolver = OrganizationResolver(zapi_instance_organization_map_from_env(config.instance_id, organization_id))
     integrations = IntegrationConfig.from_env()
+    organization_config_repository = _organization_config_repository(integrations)
+    organization_config_fallback_repository = LegacyEnvironmentOrganizationConfigRepository(organization_id)
+    credential_provider = EnvironmentCredentialProvider.from_env()
+    credential_fallback_provider = LegacyEnvironmentCredentialProvider(organization_id)
+    usage_tracker = _usage_tracker(integrations)
     response_generator = None
-    if integrations.openai_api_key:
+    if integrations.openai_api_key or environ.get("ORGANIZATION_CREDENTIALS_JSON"):
         retrieval = None
         if integrations.supabase_url and integrations.supabase_service_role_key:
             retrieval = ZApiRuntimeRetrieval(
@@ -710,10 +773,17 @@ def build_default_adapter(config: ZApiWhatsAppConfig) -> WhatsAppChannelAdapter:
             )
         commercial_playbook = CommercialPlaybook()
         response_generator = OpenAIWhatsAppResponseGenerator(
-            OpenAIResponsesProvider(integrations),
+            OpenAIResponsesProvider(
+                integrations if integrations.openai_api_key else replace(integrations, openai_api_key="organization-scoped-openai-key"),
+                usage_tracker=usage_tracker,
+                usage_logger=stage_logger,
+            ),
             retrieval=retrieval,
             commercial_playbook=commercial_playbook,
-            organization_config=_organization_commercial_config_from_env(),
+            organization_config_repository=organization_config_repository,
+            organization_config_fallback_repository=organization_config_fallback_repository,
+            credential_provider=credential_provider,
+            credential_fallback_provider=credential_fallback_provider,
         )
     runtime_graph = AgentRuntimeGraph(response_generator=response_generator, stage_logger=stage_logger)
     media_processor = None
@@ -740,6 +810,31 @@ def build_default_adapter(config: ZApiWhatsAppConfig) -> WhatsAppChannelAdapter:
     if not batching_config.enabled:
         return adapter
     return MessageBatchingWhatsAppChannelAdapter(adapter, config=batching_config)
+
+
+def _organization_config_repository(integrations: IntegrationConfig):
+    repositories = [EnvironmentOrganizationConfigRepository.from_env()]
+    if integrations.supabase_url and integrations.supabase_service_role_key:
+        repositories.append(
+            SupabaseOrganizationConfigRepository(
+                supabase_url=integrations.supabase_url,
+                service_role_key=integrations.supabase_service_role_key,
+            )
+        )
+    if len(repositories) == 1:
+        return repositories[0]
+    from ai_agent_runtime.organization_config import CompositeOrganizationConfigRepository
+
+    return CompositeOrganizationConfigRepository(*repositories)
+
+
+def _usage_tracker(integrations: IntegrationConfig):
+    if integrations.supabase_url and integrations.supabase_service_role_key:
+        return SupabaseAiUsageTracker(
+            supabase_url=integrations.supabase_url,
+            service_role_key=integrations.supabase_service_role_key,
+        )
+    return None
 
 
 class ZApiWebhookRequestHandler(BaseHTTPRequestHandler):
