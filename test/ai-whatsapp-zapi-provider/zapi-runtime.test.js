@@ -2388,6 +2388,62 @@ print(json.dumps({
   assert.equal(parsed.schedulingTransition.scheduling_state, 'COLLECTING_REQUIRED_DATA');
 });
 
+test('@spec:AC-456 WhatsApp runtime logs patient-name resolution and appointment-intent source without name PII', () => {
+  const output = runPython(`
+import json
+from ai_agent_runtime.commercial import OrganizationCommercialConfig
+from ai_agent_runtime.graph import AgentRuntimeGraph
+from ai_agent_runtime.integrations.config import IntegrationConfig
+from ai_agent_runtime.integrations.openai_provider import OpenAIResponsesProvider
+from ai_agent_runtime.whatsapp import FakeWhatsAppProvider, InMemoryWhatsAppStore, OrganizationResolver, WhatsAppChannelAdapter, ZApiWhatsAppConfig
+from ai_agent_runtime.whatsapp.zapi_server import OpenAIWhatsAppResponseGenerator
+from ai_agent_runtime.whatsapp.zapi_webhook import handle_zapi_webhook_post
+
+class Retrieval:
+    def search(self, organization_id, query):
+        return []
+    def closed_world_procedure_decision(self, organization_id, query):
+        return None
+
+class Transport:
+    def post_json(self, url, *, headers, payload):
+        raise AssertionError("registration turns are deterministic")
+
+logs = []
+adapter = WhatsAppChannelAdapter(
+    provider=FakeWhatsAppProvider(),
+    store=InMemoryWhatsAppStore(),
+    organization_resolver=OrganizationResolver({"clinic-a": "org-a"}),
+    runtime_graph=AgentRuntimeGraph(
+        response_generator=OpenAIWhatsAppResponseGenerator(
+            OpenAIResponsesProvider(IntegrationConfig(openai_api_key="test-key"), Transport()),
+            retrieval=Retrieval(),
+            organization_config=OrganizationCommercialConfig(locations=("Matatu", "Pituba")),
+        ),
+        stage_logger=lambda stage, details=None: logs.append({"stage": stage, "details": details or {}}),
+    ),
+    allow_placeholder_ack=False,
+    stage_logger=lambda stage, details=None: logs.append({"stage": stage, "details": details or {}}),
+)
+payloads = [
+    {"type": "ReceivedCallback", "instanceId": "clinic-a", "messageId": "name-ok", "phone": "5571001", "momment": "10", "text": {"message": "Meu nome e Fernando Andrade, email fernando@example.com"}},
+    {"type": "ReceivedCallback", "instanceId": "clinic-a", "messageId": "name-bad", "phone": "5571002", "momment": "11", "text": {"message": "Dois dentes de cima, email outro@example.com"}},
+]
+for payload in payloads:
+    handle_zapi_webhook_post(raw_body=json.dumps(payload).encode(), headers={}, config=ZApiWhatsAppConfig(), adapter=adapter)
+resolution_logs = [entry for entry in logs if entry["stage"] in {"patient_name_extraction_accepted", "patient_name_extraction_rejected", "appointment_intent_resolved"}]
+print(json.dumps(resolution_logs, sort_keys=True))
+`);
+  const parsed = JSON.parse(output);
+  assert.ok(parsed.some((entry) => entry.stage === 'patient_name_extraction_accepted' && entry.details.source === 'CURRENT_TURN_EXPLICIT'));
+  assert.ok(parsed.some((entry) => entry.stage === 'patient_name_extraction_rejected' && entry.details.reason === 'AMBIGUOUS_OR_NON_NAME_TEXT'));
+  assert.ok(parsed.some((entry) => entry.stage === 'appointment_intent_resolved' && entry.details.active === false && entry.details.source === 'NONE_CURRENT_TURN'));
+  for (const entry of parsed) {
+    const serialized = JSON.stringify(entry.details);
+    assert.doesNotMatch(serialized, /Fernando|Andrade|dentes de cima/i);
+  }
+});
+
 test('@spec:AC-355 factual query with exhausted transient retrieval failure becomes controlled safe handoff', () => {
   const output = runPython(`
 import json

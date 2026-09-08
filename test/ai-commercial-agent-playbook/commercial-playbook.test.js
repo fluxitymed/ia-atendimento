@@ -491,3 +491,128 @@ print(json.dumps({
   assert.equal(parsed.neutral.answered_facts.evaluation_price.value, 'free');
   assert.deepEqual(parsed.ages, [10, 300, 3600, 7200, 10]);
 });
+
+test('@spec:AC-446 @spec:AC-447 @spec:AC-448 @spec:AC-449 @spec:AC-450 patient name requires strong semantic evidence and never consumes dental need text', () => {
+  const output = runPython(`
+import json
+from ai_agent_runtime.commercial import CommercialPlaybook
+
+p = CommercialPlaybook()
+need_then_registration = p.evaluate(
+    [
+        {"direction": "inbound", "text": "Quero saber sobre implante"},
+        {"direction": "inbound", "text": "Dois dentes de cima"},
+        {"direction": "inbound", "text": "fernando@example.com"},
+    ],
+    current_message="fernando@example.com",
+    previous_assistant_question="Qual seu e-mail?",
+).as_dict()
+asked_name = p.evaluate(
+    [{"direction": "inbound", "text": "Fernando Andrade"}],
+    current_message="Fernando Andrade",
+    previous_assistant_question="Qual seu nome completo?",
+).as_dict()
+explicit = p.evaluate(
+    [{"direction": "inbound", "text": "Meu nome e Fernando Andrade e quero saber sobre implante"}],
+    current_message="Meu nome e Fernando Andrade e quero saber sobre implante",
+).as_dict()
+short_explicit = [
+    p.evaluate([{"direction": "inbound", "text": text}], current_message=text).as_dict()
+    for text in ("Sou Fernando", "Pode colocar Fernando")
+]
+preserved = p.evaluate(
+    [
+        {"direction": "inbound", "text": "Meu nome e Fernando Andrade"},
+        {"direction": "inbound", "text": "Dois dentes de cima"},
+    ],
+    current_message="Dois dentes de cima",
+    previous_assistant_question="O que voce gostaria de resolver?",
+).as_dict()
+blocked = [
+    p.evaluate([{"direction": "inbound", "text": text}], current_message=text).as_dict()
+    for text in ("os dois da frente", "implante dentario", "dente de baixo", "lado esquerdo", "quero colocar dois implantes", "terca de manha", "Pituba")
+]
+print(json.dumps({
+    "need": need_then_registration,
+    "asked": asked_name,
+    "explicit": explicit,
+    "short": short_explicit,
+    "preserved": preserved,
+    "blocked": blocked,
+}, sort_keys=True))
+`);
+  const parsed = JSON.parse(output);
+  assert.equal(parsed.need.operational_memory.patient_name, undefined);
+  assert.equal(parsed.asked.operational_memory.patient_name, 'Fernando Andrade');
+  assert.equal(parsed.asked.patient_name_resolution.source, 'ACTIVE_NAME_QUESTION');
+  assert.equal(parsed.explicit.operational_memory.patient_name, 'Fernando Andrade');
+  assert.equal(parsed.explicit.operational_memory.procedure_interest, 'implante');
+  assert.equal(parsed.explicit.patient_name_resolution.source, 'CURRENT_TURN_EXPLICIT');
+  assert.deepEqual(parsed.short.map((state) => state.operational_memory.patient_name), ['Fernando', 'Fernando']);
+  assert.equal(parsed.preserved.operational_memory.patient_name, 'Fernando Andrade');
+  assert.equal(parsed.preserved.patient_name_resolution.source, 'HISTORICAL_EXPLICIT');
+  for (const state of parsed.blocked) assert.equal(state.operational_memory.patient_name, undefined);
+  assert.equal(parsed.need.patient_name_resolution.status, 'REJECTED');
+});
+
+test('@spec:AC-451 @spec:AC-452 @spec:AC-453 @spec:AC-454 @spec:AC-455 appointment intent follows current turn then compatible active context then persistent memory', () => {
+  const output = runPython(`
+import json
+from ai_agent_runtime.commercial import CommercialPlaybook
+
+p = CommercialPlaybook()
+history = [{"direction": "inbound", "text": "Quero marcar uma avaliacao"}]
+def state(text, previous=""):
+    return p.evaluate(
+        [*history, {"direction": "inbound", "text": text}],
+        current_message=text,
+        previous_assistant_question=previous,
+        current_message_at="400",
+        previous_assistant_message_at="100",
+    ).as_dict()
+
+neutral = state("TESTE123")
+greeting = state("oi")
+thanks = state("obrigado")
+explicit = p.evaluate([{"direction": "inbound", "text": "quero marcar uma avaliacao"}], current_message="quero marcar uma avaliacao").as_dict()
+availability = p.evaluate([{"direction": "inbound", "text": "qual horario voces tem?"}], current_message="qual horario voces tem?").as_dict()
+cta_yes = p.evaluate(
+    [{"direction": "inbound", "text": "sim"}],
+    current_message="sim",
+    previous_assistant_question="Quer que eu encaminhe para confirmar um horario?",
+).as_dict()
+plain_yes = p.evaluate([{"direction": "inbound", "text": "sim"}], current_message="sim").as_dict()
+topic_change = state("Tenho outra duvida: voces aceitam boleto?")
+compatible_date = state("terca de manha", "Qual dia e periodo voce prefere?")
+print(json.dumps({
+    "neutral": neutral,
+    "greeting": greeting,
+    "thanks": thanks,
+    "explicit": explicit,
+    "availability": availability,
+    "ctaYes": cta_yes,
+    "plainYes": plain_yes,
+    "topicChange": topic_change,
+    "compatibleDate": compatible_date,
+}, sort_keys=True))
+`);
+  const parsed = JSON.parse(output);
+  assert.equal(parsed.neutral.current_turn_intent, 'OTHER');
+  assert.equal(parsed.neutral.context_continuity, 'NEW_NEUTRAL_TURN');
+  assert.equal(parsed.neutral.operational_memory.appointment_intent, undefined);
+  assert.equal(parsed.neutral.scheduling_state, 'NONE');
+  assert.equal(parsed.neutral.next_best_action, 'RESPOND_ONLY');
+  for (const state of [parsed.greeting, parsed.thanks, parsed.plainYes, parsed.topicChange]) {
+    assert.equal(state.operational_memory.appointment_intent, undefined);
+    assert.notEqual(state.next_best_action, 'SCHEDULE');
+  }
+  assert.equal(parsed.explicit.operational_memory.appointment_intent, 'true');
+  assert.equal(parsed.explicit.next_best_action, 'SCHEDULE');
+  assert.equal(parsed.explicit.appointment_intent_resolution.source, 'CURRENT_TURN_EXPLICIT');
+  assert.equal(parsed.availability.operational_memory.appointment_intent, 'true');
+  assert.equal(parsed.ctaYes.operational_memory.appointment_intent, 'true');
+  assert.equal(parsed.ctaYes.appointment_intent_resolution.source, 'ACTIVE_APPOINTMENT_CTA');
+  assert.equal(parsed.plainYes.appointment_intent_resolution.source, 'NONE_CURRENT_TURN');
+  assert.equal(parsed.compatibleDate.operational_memory.appointment_intent, 'true');
+  assert.equal(parsed.compatibleDate.appointment_intent_resolution.source, 'ACTIVE_SCHEDULING_CONTEXT');
+});

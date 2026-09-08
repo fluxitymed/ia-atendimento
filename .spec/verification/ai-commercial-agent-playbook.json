@@ -1,11 +1,11 @@
 {
   "feature": "ai-commercial-agent-playbook",
-  "timestamp": "2026-09-07T20:55:28.067Z",
-  "gitRev": "b3d127a",
+  "timestamp": "2026-09-07T22:57:30.479Z",
+  "gitRev": "cb110a7",
   "command": "node --test --test-reporter=tap",
   "reporter": "tap",
   "exitCode": 0,
-  "testsParsed": 212,
+  "testsParsed": 215,
   "results": {
     "AC-254": {
       "status": "pass",
@@ -160,6 +160,61 @@
     "AC-329": {
       "status": "pass",
       "testName": "@spec:AC-328 @spec:AC-329 correction state acknowledges current correction once and booking truth stays deterministic",
+      "method": "tap"
+    },
+    "AC-446": {
+      "status": "pass",
+      "testName": "@spec:AC-446 @spec:AC-447 @spec:AC-448 @spec:AC-449 @spec:AC-450 patient name requires strong semantic evidence and never consumes dental need text",
+      "method": "tap"
+    },
+    "AC-447": {
+      "status": "pass",
+      "testName": "@spec:AC-446 @spec:AC-447 @spec:AC-448 @spec:AC-449 @spec:AC-450 patient name requires strong semantic evidence and never consumes dental need text",
+      "method": "tap"
+    },
+    "AC-448": {
+      "status": "pass",
+      "testName": "@spec:AC-446 @spec:AC-447 @spec:AC-448 @spec:AC-449 @spec:AC-450 patient name requires strong semantic evidence and never consumes dental need text",
+      "method": "tap"
+    },
+    "AC-449": {
+      "status": "pass",
+      "testName": "@spec:AC-446 @spec:AC-447 @spec:AC-448 @spec:AC-449 @spec:AC-450 patient name requires strong semantic evidence and never consumes dental need text",
+      "method": "tap"
+    },
+    "AC-450": {
+      "status": "pass",
+      "testName": "@spec:AC-446 @spec:AC-447 @spec:AC-448 @spec:AC-449 @spec:AC-450 patient name requires strong semantic evidence and never consumes dental need text",
+      "method": "tap"
+    },
+    "AC-451": {
+      "status": "pass",
+      "testName": "@spec:AC-451 @spec:AC-452 @spec:AC-453 @spec:AC-454 @spec:AC-455 appointment intent follows current turn then compatible active context then persistent memory",
+      "method": "tap"
+    },
+    "AC-452": {
+      "status": "pass",
+      "testName": "@spec:AC-451 @spec:AC-452 @spec:AC-453 @spec:AC-454 @spec:AC-455 appointment intent follows current turn then compatible active context then persistent memory",
+      "method": "tap"
+    },
+    "AC-453": {
+      "status": "pass",
+      "testName": "@spec:AC-451 @spec:AC-452 @spec:AC-453 @spec:AC-454 @spec:AC-455 appointment intent follows current turn then compatible active context then persistent memory",
+      "method": "tap"
+    },
+    "AC-454": {
+      "status": "pass",
+      "testName": "@spec:AC-451 @spec:AC-452 @spec:AC-453 @spec:AC-454 @spec:AC-455 appointment intent follows current turn then compatible active context then persistent memory",
+      "method": "tap"
+    },
+    "AC-455": {
+      "status": "pass",
+      "testName": "@spec:AC-451 @spec:AC-452 @spec:AC-453 @spec:AC-454 @spec:AC-455 appointment intent follows current turn then compatible active context then persistent memory",
+      "method": "tap"
+    },
+    "AC-456": {
+      "status": "pass",
+      "testName": "@spec:AC-456 WhatsApp runtime logs patient-name resolution and appointment-intent source without name PII",
       "method": "tap"
     }
   },

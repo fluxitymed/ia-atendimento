@@ -144,6 +144,25 @@ class OpenAIWhatsAppResponseGenerator:
                 "missingRequiredFields": list(commercial_state.missing_required_fields),
             },
         )
+        patient_name_resolution = dict(commercial_state.patient_name_resolution)
+        if patient_name_resolution.get("status") == "ACCEPTED":
+            emit(
+                "patient_name_extraction_accepted",
+                {"source": patient_name_resolution.get("source"), "reason": patient_name_resolution.get("reason")},
+            )
+        elif patient_name_resolution.get("status") == "REJECTED":
+            emit(
+                "patient_name_extraction_rejected",
+                {"source": patient_name_resolution.get("source"), "reason": patient_name_resolution.get("reason")},
+            )
+        emit(
+            "appointment_intent_resolved",
+            {
+                "active": bool(commercial_state.appointment_intent_resolution.get("active")),
+                "source": commercial_state.appointment_intent_resolution.get("source"),
+                "reason": commercial_state.appointment_intent_resolution.get("reason"),
+            },
+        )
         retrieval_query = _contextual_retrieval_query(
             state.current_message,
             commercial_state.as_dict(),

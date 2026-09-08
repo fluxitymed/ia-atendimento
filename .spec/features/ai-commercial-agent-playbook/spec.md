@@ -274,6 +274,76 @@ Como paciente em uma conversa de WhatsApp, quero que a assistente use meu contex
 - **Quando** a correcao aparece no turno atual
 - **Entao** `correction_state.acknowledge_once=true`; em turnos seguintes a preferencia permanece, mas a correcao nao e verbalizada de novo.
 
+### US-107 — Memoria semantica e agendamento obedecem ao turno atual
+
+Como paciente em uma conversa persistente, quero que meus dados cadastrais e minha intencao atual sejam interpretados pelo contexto semantico correto, para que uma necessidade odontologica nao vire meu nome e um agendamento antigo nao seja reativado por uma mensagem neutra.
+
+#### AC-446 — Descricao de necessidade nao vira nome
+
+- **Dado** uma resposta como `dois dentes de cima`, `os dois da frente`, `implante dentario`, `dente de baixo`, `lado esquerdo`, `terca de manha` ou `Pituba`
+- **Quando** o playbook extrai memoria operacional e cadastral, inclusive quando existem outros dados cadastrais no historico
+- **Entao** `patient_name` permanece ausente e a descricao continua separada em necessidade, situacao, procedimento ou texto de descoberta quando aplicavel.
+
+#### AC-447 — Nome explicito e aceito com fonte forte
+
+- **Dado** o paciente informa `Meu nome e Fernando Andrade`, `Sou Fernando` ou `Pode colocar Fernando`
+- **Quando** o playbook extrai a memoria
+- **Entao** `patient_name` recebe somente o nome semanticamente apresentado e a resolucao registra uma fonte explicita sem expor o valor em logs.
+
+#### AC-448 — Resposta a pergunta de nome e contextual
+
+- **Dado** a pergunta anterior equivalente a `Qual seu nome completo?`
+- **Quando** a resposta imediata e um nome plausivel como `Fernando Andrade`
+- **Entao** `patient_name` e aceito; sem pergunta ativa de nome, uma frase nominal ambigua nao e suficiente.
+
+#### AC-449 — Nome validado nao e sobrescrito por extracao fraca
+
+- **Dado** um `patient_name` anteriormente informado com evidencia forte
+- **Quando** o paciente depois descreve `dois dentes de cima` ou outra necessidade
+- **Entao** o nome validado permanece e a descricao posterior nao o substitui.
+
+#### AC-450 — Memorias cadastral e de necessidade permanecem separadas
+
+- **Dado** `Meu nome e Fernando Andrade e quero saber sobre implante`
+- **Quando** o turno e avaliado
+- **Entao** `patient_name=Fernando Andrade`, `procedure_interest=implante` e nenhuma regiao anatomica ou necessidade e armazenada como nome.
+
+#### AC-451 — Turno neutro suprime intencao antiga de agendar
+
+- **Dado** historico antigo com proposta ou intencao de agendamento
+- **Quando** o turno atual e `OTHER` com `NEW_NEUTRAL_TURN`, sem topico ativo, CTA pendente ou pergunta pendente compativel
+- **Entao** `appointment_intent=false`, o estado de agendamento nao avanca e `next_best_action=RESPOND_ONLY`.
+
+#### AC-452 — Mensagens neutras nao resolvem CTA inexistente
+
+- **Dado** mensagens como `oi`, `obrigado`, `beleza`, `certo`, `bom dia`, `tenho outra duvida` ou `sim`
+- **Quando** nao existe CTA de agendamento ativo e semanticamente compativel
+- **Entao** memoria persistente e `previousAssistantAction=PROPOSE_APPOINTMENT` isolados nao ativam scheduling.
+
+#### AC-453 — Evidencia atual explicita ativa agendamento
+
+- **Dado** o paciente diz `quero marcar uma avaliacao`, `quero agendar`, `pode marcar pra mim` ou `qual horario voces tem`
+- **Quando** o turno atual e classificado
+- **Entao** `appointment_intent=true`, `next_best_action=SCHEDULE` e a fonte da decisao e o turno atual.
+
+#### AC-454 — Resposta afirmativa exige CTA ativo compativel
+
+- **Dado** a assistente pergunta `Quer que eu encaminhe para confirmar um horario?`
+- **Quando** o paciente responde `sim`
+- **Entao** a intencao de agendar e ativada pela continuidade conversacional; a mesma resposta sem CTA ativo nao ativa scheduling.
+
+#### AC-455 — Mudanca de assunto prevalece sobre memoria persistente
+
+- **Dado** uma conversa anterior de agendamento
+- **Quando** o paciente inicia assunto diferente no turno atual
+- **Entao** `CURRENT_TURN_INTENT` prevalece sobre contexto ativo e memoria persistente, sem scheduling residual.
+
+#### AC-456 — Resolucao e observavel sem PII
+
+- **Dado** uma mensagem processada pelo runtime WhatsApp
+- **Quando** nome e intencao de agendamento sao resolvidos
+- **Entao** os logs distinguem nome aceito ou rejeitado e a fonte de `appointment_intent`, registrando apenas motivo/fonte e nunca o nome completo.
+
 ## Fora de escopo
 
 - Criar respostas fixas por procedimento ou por clinica especifica.

@@ -581,10 +581,10 @@
       "codigo": "VERIFY_OBSOLETO",
       "feature": "ai-customer-service",
       "ref": "—",
-      "ocorrencias": 41,
+      "ocorrencias": 42,
       "primeiraVez": "2026-08-20T01:55:42.223Z",
-      "ultimaVez": "2026-09-07T20:55:07.194Z",
-      "gitRev": "b3d127a"
+      "ultimaVez": "2026-09-07T22:57:45.353Z",
+      "gitRev": "cb110a7"
     },
     "ID_DUPLICADO::ai-customer-service::US-001": {
       "codigo": "ID_DUPLICADO",
@@ -1625,10 +1625,10 @@
       "codigo": "VERIFY_OBSOLETO",
       "feature": "ai-agent-runtime",
       "ref": "—",
-      "ocorrencias": 33,
+      "ocorrencias": 34,
       "primeiraVez": "2026-08-20T18:53:21.874Z",
-      "ultimaVez": "2026-09-07T20:55:07.194Z",
-      "gitRev": "b3d127a"
+      "ultimaVez": "2026-09-07T22:57:45.353Z",
+      "gitRev": "cb110a7"
     },
     "ARQUIVO_ORFAO::—::src/ai_agent_runtime/integrations/__init__.py": {
       "codigo": "ARQUIVO_ORFAO",
@@ -1994,28 +1994,28 @@
       "codigo": "VERIFY_OBSOLETO",
       "feature": "ai-runtime-integrations",
       "ref": "—",
-      "ocorrencias": 38,
+      "ocorrencias": 39,
       "primeiraVez": "2026-08-20T19:42:35.889Z",
-      "ultimaVez": "2026-09-07T20:55:07.194Z",
-      "gitRev": "b3d127a"
+      "ultimaVez": "2026-09-07T22:57:45.353Z",
+      "gitRev": "cb110a7"
     },
     "VERIFY_OBSOLETO::ai-agent-evaluation::—": {
       "codigo": "VERIFY_OBSOLETO",
       "feature": "ai-agent-evaluation",
       "ref": "—",
-      "ocorrencias": 24,
+      "ocorrencias": 25,
       "primeiraVez": "2026-08-20T20:13:47.439Z",
-      "ultimaVez": "2026-09-07T16:57:11.318Z",
-      "gitRev": "e1d2a48"
+      "ultimaVez": "2026-09-07T22:57:45.353Z",
+      "gitRev": "cb110a7"
     },
     "VERIFY_OBSOLETO::ai-agent-live-sandbox::—": {
       "codigo": "VERIFY_OBSOLETO",
       "feature": "ai-agent-live-sandbox",
       "ref": "—",
-      "ocorrencias": 31,
+      "ocorrencias": 32,
       "primeiraVez": "2026-08-21T01:19:42.607Z",
-      "ultimaVez": "2026-09-07T16:57:11.318Z",
-      "gitRev": "e1d2a48"
+      "ultimaVez": "2026-09-07T22:57:45.353Z",
+      "gitRev": "cb110a7"
     },
     "Q_ABERTA::ai-whatsapp-channel::Q-006": {
       "codigo": "Q_ABERTA",
@@ -2273,19 +2273,19 @@
       "codigo": "VERIFY_OBSOLETO",
       "feature": "ai-whatsapp-channel",
       "ref": "—",
-      "ocorrencias": 25,
+      "ocorrencias": 26,
       "primeiraVez": "2026-08-29T19:09:51.239Z",
-      "ultimaVez": "2026-09-07T20:55:07.194Z",
-      "gitRev": "b3d127a"
+      "ultimaVez": "2026-09-07T22:57:45.353Z",
+      "gitRev": "cb110a7"
     },
     "VERIFY_OBSOLETO::ai-whatsapp-evolution-provider::—": {
       "codigo": "VERIFY_OBSOLETO",
       "feature": "ai-whatsapp-evolution-provider",
       "ref": "—",
-      "ocorrencias": 28,
+      "ocorrencias": 29,
       "primeiraVez": "2026-08-30T19:36:34.384Z",
-      "ultimaVez": "2026-09-07T20:55:07.194Z",
-      "gitRev": "b3d127a"
+      "ultimaVez": "2026-09-07T22:57:45.353Z",
+      "gitRev": "cb110a7"
     },
     "VERIFY_OBSOLETO::ai-whatsapp-zapi-provider::—": {
       "codigo": "VERIFY_OBSOLETO",
@@ -2759,10 +2759,10 @@
       "codigo": "VERIFY_OBSOLETO",
       "feature": "ai-organization-runtime-config",
       "ref": "—",
-      "ocorrencias": 1,
+      "ocorrencias": 2,
       "primeiraVez": "2026-09-07T20:55:07.194Z",
-      "ultimaVez": "2026-09-07T20:55:07.194Z",
-      "gitRev": "b3d127a"
+      "ultimaVez": "2026-09-07T22:57:45.353Z",
+      "gitRev": "cb110a7"
     }
   }
 }

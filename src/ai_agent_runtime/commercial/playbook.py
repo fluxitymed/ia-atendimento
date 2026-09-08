@@ -140,6 +140,8 @@ class CommercialState:
     context_age_seconds: int | None = None
     cta_policy: str = "CTA_ALLOWED_WHEN_NATURAL"
     commercial_pressure_level: CommercialPressureLevel = CommercialPressureLevel.LOW
+    patient_name_resolution: dict[str, Any] = field(default_factory=dict)
+    appointment_intent_resolution: dict[str, Any] = field(default_factory=dict)
 
     def as_dict(self) -> dict[str, Any]:
         return {
@@ -175,6 +177,8 @@ class CommercialState:
             "context_age_seconds": self.context_age_seconds,
             "cta_policy": self.cta_policy,
             "commercial_pressure_level": self.commercial_pressure_level.value,
+            "patient_name_resolution": dict(self.patient_name_resolution),
+            "appointment_intent_resolution": dict(self.appointment_intent_resolution),
         }
 
 
@@ -223,7 +227,11 @@ class CommercialPlaybook:
             channel_contact_external_id=channel_contact_external_id,
             previous_assistant_question=previous_assistant_question,
         )
-        registration_memory = _registration_memory(messages, current_message=current_message)
+        registration_memory, patient_name_resolution = _registration_memory(
+            messages,
+            current_message=current_message,
+            previous_assistant_question=previous_assistant_question,
+        )
         persistent_memory.update(registration_memory)
         context_age_seconds = _context_age_seconds(current_message_at, previous_assistant_message_at)
         current_turn_intent = _current_turn_intent(
@@ -246,8 +254,20 @@ class CommercialPlaybook:
             context_continuity=context_continuity,
         )
         active_topic = summary.get("procedure_interest")
+        appointment_intent_resolution = _resolve_appointment_intent(
+            current,
+            previous_assistant_question=previous_assistant_question,
+            historical_appointment_intent=bool(persistent_memory.get("appointment_intent")),
+            scheduling_context_active=scheduling_context_active,
+            scheduling_status=scheduling_status,
+            registration_data_present=bool(registration_memory),
+        )
         operational_memory = dict(persistent_memory)
         operational_memory.update(registration_memory)
+        if appointment_intent_resolution["active"]:
+            operational_memory["appointment_intent"] = "true"
+        else:
+            operational_memory.pop("appointment_intent", None)
         missing_required_fields = _missing_required_registration_fields(registration_memory)
         registration_complete = not missing_required_fields and bool(registration_memory)
         correction_state = _correction_state(inbound_texts, current_message=current_message)
@@ -255,6 +275,7 @@ class CommercialPlaybook:
             operational_memory,
             scheduling_context_active=scheduling_context_active,
             scheduling_status=scheduling_status,
+            appointment_intent_active=bool(appointment_intent_resolution["active"]),
         )
         discovery_depth = _discovery_depth(summary)
         discovery_question_count = _estimate_discovery_question_count(inbound_texts, previous_assistant_question)
@@ -298,7 +319,7 @@ class CommercialPlaybook:
         ) and not _appointment_intent_detected(current, current_message=current, previous_assistant_question=previous_assistant_question):
             stage = SalesStage.OPENING
             next_action = NextBestAction.RESPOND_ONLY
-        elif scheduling_context_active or active_scheduling:
+        elif appointment_intent_resolution["active"] and (scheduling_context_active or active_scheduling):
             stage = SalesStage.SCHEDULING
             next_action = NextBestAction.SCHEDULE
         elif objection != ObjectionState.NONE and summary.get("fear_topics"):
@@ -357,12 +378,14 @@ class CommercialPlaybook:
             active_context={
                 "active_topic": active_topic,
                 "pending_question": previous_assistant_question if context_continuity == ContextContinuity.STRONG_CONTINUATION else "",
-                "pending_cta": _previous_question_is_appointment_cta(previous_assistant_question),
+                "pending_cta": appointment_intent_resolution["source"] == "ACTIVE_APPOINTMENT_CTA",
                 "context_is_stale": context_continuity == ContextContinuity.NEW_NEUTRAL_TURN and context_age_seconds is not None and context_age_seconds >= 1800,
             },
             context_age_seconds=context_age_seconds,
             cta_policy=_cta_policy(current_turn_intent, context_continuity, next_action),
             commercial_pressure_level=_commercial_pressure_level(current_turn_intent, next_action),
+            patient_name_resolution=patient_name_resolution,
+            appointment_intent_resolution=appointment_intent_resolution,
         )
 
     def prompt_sections(
@@ -605,9 +628,6 @@ def _operational_memory(
     cep = re.search(r"\b\d{5}-?\d{3}\b", " ".join([*inbound_texts, current_message]))
     if cep:
         memory["cep"] = cep.group(0)
-    name = re.search(r"\b(?:meu nome e|me chamo|sou)\s+([a-z]+(?:\s+[a-z]+){0,3})\b", text)
-    if name and name.group(1) not in {"homem", "mulher", "atendido", "atendida"}:
-        memory["patient_name"] = name.group(1).title()
     location = _first_match(text, {
         "Brotas": ("brotas", "matatu"),
         "Pituba": ("pituba", "hospital da bahia"),
@@ -620,14 +640,19 @@ def _operational_memory(
     time = _preferred_time(text)
     if time:
         memory["preferred_time"] = time
-    if _appointment_intent_detected(text, current_message=current_message, previous_assistant_question=previous_assistant_question):
+    if any(_appointment_intent_detected(item, current_message=item, previous_assistant_question="") for item in inbound_texts):
         memory["appointment_intent"] = "true"
     if any(_contains_term(text, term) for term in ("endereco", "endereço", "rua", "avenida", "av.", "numero", "bairro")):
         memory["address"] = "informado"
     return memory
 
 
-def _registration_memory(messages: list[dict[str, Any]], *, current_message: str) -> dict[str, str]:
+def _registration_memory(
+    messages: list[dict[str, Any]],
+    *,
+    current_message: str,
+    previous_assistant_question: str = "",
+) -> tuple[dict[str, str], dict[str, Any]]:
     inbound_texts = [str(item.get("text") or "") for item in messages if item.get("direction") == "inbound" and item.get("text")]
     texts = [*inbound_texts]
     if not texts or texts[-1] != current_message:
@@ -646,12 +671,16 @@ def _registration_memory(messages: list[dict[str, Any]], *, current_message: str
     cep = _extract_cep(joined, rg=rg, cpf=cpf)
     if cep:
         memory["cep"] = cep
-    name = _extract_patient_name(texts, email=email.group(0) if email else None)
+    name, name_resolution = _extract_patient_name(
+        texts,
+        current_message=current_message,
+        previous_assistant_question=previous_assistant_question,
+    )
     if name:
         memory["patient_name"] = name
     address = _extract_address(texts, memory)
     memory.update(address)
-    return memory
+    return memory, name_resolution
 
 
 def _extract_cpf(text: str) -> str | None:
@@ -688,30 +717,119 @@ def _extract_rg(text: str) -> str | None:
     return None
 
 
-def _extract_patient_name(texts: list[str], *, email: str | None) -> str | None:
-    joined = " ".join(texts)
-    labelled = re.search(r"\b(?:nome completo|nome|meu nome e|me chamo|sou)\s*[:\-]?\s+([A-Za-zÀ-ÿ]+(?:\s+[A-Za-zÀ-ÿ]+){1,4})", joined, re.IGNORECASE)
-    if labelled:
-        return _title_preserving_patient_text(labelled.group(1))
-    registration_anchor = bool(email) or bool(re.search(r"\b(?:cpf|rg|cep|endereco|endereço|rua|avenida|av\.?|travessa)\b|\d{5,}", joined, re.IGNORECASE))
-    if not registration_anchor:
-        return None
-    for text in texts:
-        for part in re.split(r"[,;\n]", text):
-            candidate = part.strip()
-            if not candidate or (email and email in candidate):
+def _extract_patient_name(
+    texts: list[str],
+    *,
+    current_message: str,
+    previous_assistant_question: str,
+) -> tuple[str | None, dict[str, Any]]:
+    accepted: tuple[str, str] | None = None
+    rejected = False
+    for index, text in enumerate(texts):
+        explicit = re.search(
+            r"\b(?:meu nome (?:e|é)|me chamo|sou|pode (?:me )?chamar de|pode colocar)\s+([^,;.!?\n]+)",
+            text,
+            re.IGNORECASE,
+        )
+        if explicit:
+            candidate = _trim_patient_name_candidate(explicit.group(1))
+            if _is_plausible_patient_name(candidate):
+                source = "CURRENT_TURN_EXPLICIT" if index == len(texts) - 1 else "HISTORICAL_EXPLICIT"
+                accepted = (_title_preserving_patient_text(candidate), source)
+            else:
+                rejected = True
+
+    current = texts[-1] if texts else current_message
+    if _previous_question_requests_name(previous_assistant_question):
+        candidate = _first_registration_candidate(current)
+        if _is_plausible_patient_name(candidate):
+            accepted = (_title_preserving_patient_text(candidate), "ACTIVE_NAME_QUESTION")
+        elif candidate:
+            rejected = True
+
+    if accepted is None and _previous_question_requests_registration(previous_assistant_question):
+        candidate = _first_registration_candidate(current)
+        if _registration_anchor_in_same_text(current) and _is_plausible_patient_name(candidate):
+            accepted = (_title_preserving_patient_text(candidate), "ACTIVE_REGISTRATION_REQUEST")
+        elif candidate:
+            rejected = True
+
+    if accepted is None:
+        for text in reversed(texts):
+            if not _registration_anchor_in_same_text(text):
                 continue
-            if re.search(r"\d|@", candidate):
-                continue
-            normalized = _normalize(candidate)
-            if any(term in normalized for term in ("rua", "avenida", "travessa", "bairro", "cep", "cpf", "rg", "email", "endereco")):
-                continue
-            if any(term in normalized for term in ("quero", "fazer", "cadastro", "agendar", "marcar", "avaliacao", "consulta")):
-                continue
-            words = re.findall(r"[A-Za-zÀ-ÿ]+", candidate)
-            if 2 <= len(words) <= 5:
-                return _title_preserving_patient_text(" ".join(words))
-    return None
+            candidate = _first_registration_candidate(text)
+            if _is_plausible_patient_name(candidate):
+                accepted = (_title_preserving_patient_text(candidate), "HISTORICAL_REGISTRATION_BLOCK")
+                break
+            if candidate:
+                rejected = True
+
+    if accepted:
+        return accepted[0], {"status": "ACCEPTED", "source": accepted[1], "reason": "STRONG_SEMANTIC_EVIDENCE"}
+    return None, {
+        "status": "REJECTED" if rejected or any(_looks_like_weak_name_candidate(item) for item in texts) else "ABSENT",
+        "source": "NONE",
+        "reason": "AMBIGUOUS_OR_NON_NAME_TEXT" if rejected or texts else "NO_CANDIDATE",
+    }
+
+
+def _trim_patient_name_candidate(value: str) -> str:
+    words = re.findall(r"[A-Za-zÀ-ÿ]+", str(value or ""))
+    stop_words = {"e", "quero", "gostaria", "preciso", "tenho", "para", "porque", "sobre", "mas"}
+    trimmed: list[str] = []
+    for word in words:
+        if _normalize(word) in stop_words:
+            break
+        trimmed.append(word)
+        if len(trimmed) == 5:
+            break
+    return " ".join(trimmed)
+
+
+def _first_registration_candidate(text: str) -> str:
+    first = re.split(r"[,;\n]", str(text or ""), maxsplit=1)[0]
+    if "@" in first or re.search(r"\d", first):
+        return ""
+    return _trim_patient_name_candidate(first)
+
+
+def _registration_anchor_in_same_text(text: str) -> bool:
+    return bool(
+        re.search(r"\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b", text, re.IGNORECASE)
+        or re.search(r"\b(?:cpf|rg|cep|endereco|endereço|rua|avenida|av\.?|travessa)\b|\d{5,}", text, re.IGNORECASE)
+    )
+
+
+def _previous_question_requests_name(text: str) -> bool:
+    normalized = _normalize(text)
+    return any(phrase in normalized for phrase in ("qual seu nome", "qual e seu nome", "qual é seu nome", "nome completo", "como voce se chama", "como você se chama"))
+
+
+def _previous_question_requests_registration(text: str) -> bool:
+    normalized = _normalize(text)
+    return any(term in normalized for term in ("cadastro", "cpf", "rg", "cep", "e-mail", "email", "endereco", "endereço"))
+
+
+def _looks_like_weak_name_candidate(text: str) -> bool:
+    words = re.findall(r"[A-Za-zÀ-ÿ]+", str(text or ""))
+    return 1 <= len(words) <= 6
+
+
+def _is_plausible_patient_name(candidate: str) -> bool:
+    words = re.findall(r"[A-Za-zÀ-ÿ]+", str(candidate or ""))
+    if not 1 <= len(words) <= 5:
+        return False
+    normalized_words = {_normalize(word) for word in words}
+    blocked = {
+        "dente", "dentes", "cima", "baixo", "frente", "lado", "esquerdo", "direito", "boca", "rosto", "testa",
+        "implante", "implantes", "dentario", "dentária", "protese", "prótese", "lente", "lentes", "botox", "procedimento",
+        "dor", "sangramento", "inchaco", "inchaço", "medo", "pituba", "matatu", "brotas", "rua", "avenida", "bairro",
+        "hoje", "amanha", "amanhã", "segunda", "terca", "terça", "quarta", "quinta", "sexta", "sabado", "sábado", "domingo",
+        "manha", "manhã", "tarde", "noite", "horario", "horário", "avaliacao", "avaliação", "consulta", "cadastro",
+        "quero", "gostaria", "preciso", "obrigado", "obrigada", "sim", "nao", "não", "homem", "mulher", "atendido", "atendida",
+    }
+    return not bool(normalized_words & blocked)
 
 
 def _extract_address(texts: list[str], existing: dict[str, str]) -> dict[str, str]:
@@ -762,14 +880,46 @@ def _title_preserving_patient_text(value: str) -> str:
 def _appointment_intent_detected(text: str, *, current_message: str, previous_assistant_question: str) -> bool:
     current = _normalize(current_message)
     previous = _normalize(previous_assistant_question)
-    explicit = ("quero marcar", "quero agendar", "pode agendar", "pode marcar", "vamos marcar", "vamos agendar", "marcar horario", "agendar horario", "solicitar horario")
-    if any(term in text for term in explicit):
+    explicit = ("quero marcar", "quero agendar", "pode agendar", "pode marcar", "vamos marcar", "vamos agendar", "marcar horario", "agendar horario", "solicitar horario", "quero uma avaliacao", "quero uma avaliação", "qual horario voces tem", "qual horário vocês têm")
+    if any(term in current for term in explicit):
         return True
-    if any(term in text for term in ("marcar", "agendar")) and any(term in text for term in ("horario", "avaliacao", "consulta")):
+    if any(term in current for term in ("marcar", "agendar")) and any(term in current for term in ("horario", "avaliacao", "consulta")):
         return True
     affirmative = current in {"sim", "quero", "vamos", "pode", "claro", "quero sim", "pode sim", "vamos sim"}
-    appointment_cta = previous and any(term in previous for term in ("quer que eu veja um horario", "solicitar horario", "quer agendar", "quer marcar", "horario para sua avaliacao", "horario para avaliacao"))
+    appointment_cta = _previous_question_is_appointment_cta(previous)
     return bool(affirmative and appointment_cta)
+
+
+def _resolve_appointment_intent(
+    current: str,
+    *,
+    previous_assistant_question: str,
+    historical_appointment_intent: bool,
+    scheduling_context_active: bool,
+    scheduling_status: str | None,
+    registration_data_present: bool,
+) -> dict[str, Any]:
+    if _appointment_intent_detected(current, current_message=current, previous_assistant_question=""):
+        return {"active": True, "source": "CURRENT_TURN_EXPLICIT", "reason": "CURRENT_TURN_SCHEDULING_EVIDENCE"}
+    if _appointment_intent_detected(current, current_message=current, previous_assistant_question=previous_assistant_question):
+        return {"active": True, "source": "ACTIVE_APPOINTMENT_CTA", "reason": "SEMANTICALLY_COMPATIBLE_AFFIRMATION"}
+    current_has_scheduling_data = bool(_preferred_date(current) or _preferred_time(current))
+    previous_requests_scheduling_data = any(
+        term in _normalize(previous_assistant_question)
+        for term in ("qual dia", "qual horario", "qual horário", "qual periodo", "qual período", "qual unidade", "voce prefere", "você prefere")
+    )
+    status_active = _normalize(str(scheduling_status or "")).upper() in {
+        "BOOKING_IN_PROGRESS", "SLOT_AVAILABLE", "CHECKING_AVAILABILITY", "COLLECTING_REQUIRED_DATA", "COLLECTING_SCHEDULING_PREFERENCES"
+    }
+    if registration_data_present and historical_appointment_intent and _previous_question_requests_registration(previous_assistant_question):
+        return {"active": True, "source": "ACTIVE_SCHEDULING_CONTEXT", "reason": "CURRENT_REGISTRATION_DATA_COMPATIBLE_WITH_SCHEDULING"}
+    if current_has_scheduling_data and (historical_appointment_intent or scheduling_context_active or status_active or previous_requests_scheduling_data):
+        return {"active": True, "source": "ACTIVE_SCHEDULING_CONTEXT", "reason": "CURRENT_TURN_COMPATIBLE_WITH_SCHEDULING"}
+    return {
+        "active": False,
+        "source": "NONE_CURRENT_TURN",
+        "reason": "PERSISTENT_MEMORY_SUPPRESSED" if historical_appointment_intent else "NO_SCHEDULING_EVIDENCE",
+    }
 
 
 def _normalized_phone(value: str | None) -> str | None:
@@ -824,11 +974,12 @@ def _scheduling_state(
     *,
     scheduling_context_active: bool,
     scheduling_status: str | None,
+    appointment_intent_active: bool,
 ) -> str:
     status = _normalize(str(scheduling_status or "")).upper()
     if status == "BOOKED":
         return "BOOKED"
-    if status in {"BOOKING_IN_PROGRESS", "SLOT_AVAILABLE", "CHECKING_AVAILABILITY", "COLLECTING_REQUIRED_DATA"}:
+    if appointment_intent_active and status in {"BOOKING_IN_PROGRESS", "SLOT_AVAILABLE", "CHECKING_AVAILABILITY", "COLLECTING_REQUIRED_DATA"}:
         return status
     if operational_memory.get("appointment_intent") and operational_memory.get("preferred_date") and operational_memory.get("preferred_time"):
         return "CHECKING_AVAILABILITY" if scheduling_context_active else "APPOINTMENT_INTENT"
@@ -1102,6 +1253,8 @@ def _previous_question_is_appointment_cta(previous_assistant_question: str) -> b
             "horario para sua avaliacao",
             "horario para avaliacao",
             "solicitar horario",
+            "encaminhe para confirmar um horario",
+            "encaminhar para confirmar um horario",
         )
     )
 

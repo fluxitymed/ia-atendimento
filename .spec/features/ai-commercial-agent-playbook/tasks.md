@@ -35,3 +35,8 @@
 - Refs: US-089, AC-318, AC-319, AC-320, AC-321, AC-322, AC-323, AC-324, AC-325, AC-326, AC-327, AC-328, AC-329
 - Arquivos: .spec/features/ai-commercial-agent-playbook/spec.md, .spec/features/ai-commercial-agent-playbook/tasks.md, src/ai_agent_runtime/commercial/playbook.py, src/ai_agent_runtime/graph.py, src/ai_agent_runtime/whatsapp/adapter.py, test/ai-commercial-agent-playbook/commercial-playbook.test.js
 - Notas: Centralizar politica global sem hardcode de clinica: nao expor lacunas internas, nao forcar decisao tecnica, preservar memoria operacional e impedir confirmacao prematura de agendamento.
+
+## T-074 — Corrigir extracao semantica de nome e reativacao residual de scheduling [concluida]
+- Refs: US-107, AC-446, AC-447, AC-448, AC-449, AC-450, AC-451, AC-452, AC-453, AC-454, AC-455, AC-456
+- Arquivos: .spec/features/ai-commercial-agent-playbook/spec.md, .spec/features/ai-commercial-agent-playbook/tasks.md, src/ai_agent_runtime/commercial/playbook.py, src/ai_agent_runtime/whatsapp/zapi_server.py, test/ai-commercial-agent-playbook/commercial-playbook.test.js, test/ai-whatsapp-zapi-provider/zapi-runtime.test.js
+- Notas: Reproduzir os dois bugs de producao, exigir evidencia semantica forte para `patient_name`, resolver `appointment_intent` pela hierarquia turno atual > contexto ativo > memoria persistente e emitir observabilidade sem PII.
