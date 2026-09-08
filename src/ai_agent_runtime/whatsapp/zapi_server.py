@@ -14,6 +14,13 @@ from urllib import error, parse, request
 from ai_agent_runtime.commercial import CommercialPlaybook, OrganizationCommercialConfig, organization_config_from_context
 from ai_agent_runtime.graph import AgentRuntimeGraph
 from ai_agent_runtime.integrations.config import IntegrationConfig
+from ai_agent_runtime.integrations.crm_conversations import (
+    CrmConfigurationError,
+    CrmConversationMonitor,
+    CrmConversationRepository,
+    CrmOrganizationResolver,
+    UnknownCrmInstanceError,
+)
 from ai_agent_runtime.integrations.openai_provider import OpenAIResponsesProvider
 from ai_agent_runtime.organization_config import (
     EnvironmentCredentialProvider,
@@ -777,6 +784,20 @@ def build_default_adapter(config: ZApiWhatsAppConfig) -> WhatsAppChannelAdapter:
     organization_id = _runtime_organization_id(config.organization_id)
     resolver = OrganizationResolver(zapi_instance_organization_map_from_env(config.instance_id, organization_id))
     integrations = IntegrationConfig.from_env()
+    crm_monitor = None
+    if integrations.crm_ai_monitoring_enabled:
+        crm_resolver = CrmOrganizationResolver.from_config(integrations)
+        if not crm_resolver.has_mappings:
+            raise CrmConfigurationError("CRM Z-API instance mapping is required when monitoring is enabled")
+        if config.instance_id:
+            try:
+                crm_resolver.resolve(instance_id=config.instance_id)
+            except UnknownCrmInstanceError as exc:
+                raise CrmConfigurationError("Configured Z-API instance is not mapped to a CRM organization") from exc
+        crm_monitor = CrmConversationMonitor(
+            repository=CrmConversationRepository.from_config(integrations),
+            organization_resolver=crm_resolver,
+        )
     organization_config_repository = _organization_config_repository(integrations)
     organization_config_fallback_repository = LegacyEnvironmentOrganizationConfigRepository(organization_id)
     credential_provider = EnvironmentCredentialProvider.from_env()
@@ -822,6 +843,7 @@ def build_default_adapter(config: ZApiWhatsAppConfig) -> WhatsAppChannelAdapter:
         reject_out_of_order=True,
         inbound_enabled=_ai_inbound_enabled(),
         stage_logger=stage_logger,
+        crm_monitor=crm_monitor,
     )
     if not _ai_inbound_enabled():
         return adapter

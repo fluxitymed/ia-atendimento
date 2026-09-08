@@ -102,6 +102,10 @@ class MessageBatchingWhatsAppChannelAdapter:
             raise
         if raw_event.get("fromSelf"):
             return self.adapter.process_event(raw_event)
+        # The monitored adapter must establish CRM context before media can
+        # hand off or send a retry response. Bypass batching for those turns.
+        if self.adapter.crm_monitor is not None and inbound.type != WhatsAppMessageType.TEXT:
+            return self.adapter.process_event(raw_event)
         if inbound.type == WhatsAppMessageType.AUDIO:
             materialized = self._materialize_audio_for_batch(inbound)
             if isinstance(materialized, ChannelRecord):
@@ -283,7 +287,9 @@ def _duplicate_record(raw_event: dict[str, Any], provider_message_key: str) -> C
 
 def _logical_event(raw_events: list[dict[str, Any]], inbound: list[InboundMessage]) -> dict[str, Any]:
     first = dict(raw_events[0])
-    texts = [message.operational_text() for message in inbound if message.operational_text()]
+    # Keep all arrays index-aligned with provider_ids so the CRM monitor can
+    # insert/idempotency-check every physical provider message independently.
+    texts = [message.operational_text() for message in inbound]
     provider_ids = [message.provider_message_id for message in inbound]
     provider_keys = [message.metadata.get("providerMessageKey") or _provider_message_key(raw) for raw, message in zip(raw_events, inbound)]
     timestamps = [message.timestamp for message in inbound]

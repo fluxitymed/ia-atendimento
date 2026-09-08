@@ -321,12 +321,14 @@ def _extract_contact_identity(message: dict[str, Any]) -> dict[str, Any]:
 
     aliases = _unique(aliases_by_field.values())
     canonical = _preferred_contact_id(aliases)
+    canonical_phone = next((alias for alias in aliases if _is_phone_number(alias)), None)
     if not canonical and message.get("chatName"):
         canonical = str(message.get("chatName"))
         aliases = _unique([*aliases, canonical])
         aliases_by_field.setdefault("chatName", canonical)
     return {
         "canonicalContactExternalId": canonical,
+        "canonicalPhoneNumber": canonical_phone,
         "contactAliases": aliases,
         "contactAliasSourceFields": aliases_by_field,
     }
@@ -366,6 +368,10 @@ def _preferred_contact_id(aliases: list[str]) -> str:
         if "@lid" not in alias.lower() and any(char.isdigit() for char in alias):
             return alias
     return aliases[0] if aliases else ""
+
+
+def _is_phone_number(value: str) -> bool:
+    return value.isdigit() and len(value) >= 7
 
 
 def _unique(values: Any) -> list[str]:

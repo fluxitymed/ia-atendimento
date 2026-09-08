@@ -1,0 +1,112 @@
+{
+  "feature": "ai-crm-conversation-runtime",
+  "timestamp": "2026-09-08T13:11:09.778Z",
+  "gitRev": "b4714db",
+  "command": "node --test --test-reporter=tap",
+  "reporter": "tap",
+  "exitCode": 0,
+  "testsParsed": 241,
+  "results": {
+    "AC-457": {
+      "status": "pass",
+      "testName": "@spec:AC-457 inbound creates or finds conversations scoped by CRM organization, WhatsApp channel, and external conversation id",
+      "method": "tap"
+    },
+    "AC-458": {
+      "status": "pass",
+      "testName": "@spec:AC-458 inbound customer messages are persisted and advance conversation timestamps",
+      "method": "tap"
+    },
+    "AC-459": {
+      "status": "pass",
+      "testName": "@spec:AC-459 duplicate inbound webhooks persist one message and event and start automation once",
+      "method": "tap"
+    },
+    "AC-460": {
+      "status": "pass",
+      "testName": "@spec:AC-460 a new inbound message records an auditable MESSAGE_RECEIVED event in its CRM conversation",
+      "method": "tap"
+    },
+    "AC-461": {
+      "status": "pass",
+      "testName": "@spec:AC-461 @spec:AC-465 an AI CRM mode is freshly read for every inbound and overrides a stale local handoff",
+      "method": "tap"
+    },
+    "AC-462": {
+      "status": "pass",
+      "testName": "@spec:AC-462 @spec:AC-463 a human CRM mode persists the inbound but suppresses LLM and outbound without creating takeover events",
+      "method": "tap"
+    },
+    "AC-463": {
+      "status": "pass",
+      "testName": "@spec:AC-462 @spec:AC-463 a human CRM mode persists the inbound but suppresses LLM and outbound without creating takeover events",
+      "method": "tap"
+    },
+    "AC-464": {
+      "status": "pass",
+      "testName": "@spec:AC-464 CRM unknown-instance and read/write failures fail closed while the Z-API webhook acknowledges 200 without secret diagnostics",
+      "method": "tap"
+    },
+    "AC-465": {
+      "status": "pass",
+      "testName": "@spec:AC-461 @spec:AC-465 an AI CRM mode is freshly read for every inbound and overrides a stale local handoff",
+      "method": "tap"
+    },
+    "AC-466": {
+      "status": "pass",
+      "testName": "@spec:AC-466 AI_RESPONSE_STARTED is recorded before the runtime and @spec:AC-471 a CRM handoff blocks subsequent inbound until CRM returns ai",
+      "method": "tap"
+    },
+    "AC-467": {
+      "status": "pass",
+      "testName": "@spec:AC-467 generated AI output is persisted as pending external delivery before the injectable outbound sender runs",
+      "method": "tap"
+    },
+    "AC-468": {
+      "status": "pass",
+      "testName": "@spec:AC-468 accepted outbound delivery marks the message sent, advances the conversation, and records completion",
+      "method": "tap"
+    },
+    "AC-469": {
+      "status": "pass",
+      "testName": "@spec:AC-469 failed outbound delivery stores exactly the contracted sanitized metadata keys",
+      "method": "tap"
+    },
+    "AC-470": {
+      "status": "pass",
+      "testName": "@spec:AC-470 mandatory handoff persists the actual reason, AI origin, handoff status, timestamp, and human mode",
+      "method": "tap"
+    },
+    "AC-471": {
+      "status": "pass",
+      "testName": "@spec:AC-466 AI_RESPONSE_STARTED is recorded before the runtime and @spec:AC-471 a CRM handoff blocks subsequent inbound until CRM returns ai",
+      "method": "tap"
+    },
+    "AC-472": {
+      "status": "pass",
+      "testName": "@spec:AC-472 observing a CRM takeover never creates HUMAN_TAKEOVER or AI_TAKEOVER events",
+      "method": "tap"
+    },
+    "AC-473": {
+      "status": "pass",
+      "testName": "@spec:AC-473 CRM organization resolution uses only an explicit Z-API instance mapping",
+      "method": "tap"
+    },
+    "AC-474": {
+      "status": "pass",
+      "testName": "@spec:AC-474 CRM repository construction uses only dedicated backend CRM Supabase credentials",
+      "method": "tap"
+    },
+    "AC-475": {
+      "status": "pass",
+      "testName": "@spec:AC-475 PostgREST transport exposes a typed 409 status without retaining response secrets",
+      "method": "tap"
+    },
+    "AC-476": {
+      "status": "pass",
+      "testName": "@spec:AC-476 monitored media bypasses batching and cannot hand off or send outbound before CRM inbound persistence",
+      "method": "tap"
+    }
+  },
+  "principles": {}
+}

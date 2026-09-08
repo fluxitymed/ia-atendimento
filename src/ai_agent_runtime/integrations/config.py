@@ -30,6 +30,10 @@ class IntegrationConfig:
     openai_stt_model: str = "gpt-4o-mini-transcribe"
     supabase_url: str | None = None
     supabase_service_role_key: str | None = None
+    crm_supabase_url: str | None = None
+    crm_supabase_service_role_key: str | None = None
+    crm_ai_monitoring_enabled: bool = False
+    crm_zapi_instance_organization_map_json: str | None = None
     langsmith_api_key: str | None = None
     langsmith_endpoint: str = "https://api.smith.langchain.com"
     langsmith_project: str = "ai-atendimento-sandbox"
@@ -55,6 +59,10 @@ class IntegrationConfig:
             openai_stt_model=environ.get("OPENAI_STT_MODEL", cls.openai_stt_model),
             supabase_url=environ.get("SUPABASE_URL"),
             supabase_service_role_key=environ.get("SUPABASE_SERVICE_ROLE_KEY"),
+            crm_supabase_url=environ.get("CRM_SUPABASE_URL"),
+            crm_supabase_service_role_key=environ.get("CRM_SUPABASE_SERVICE_ROLE_KEY"),
+            crm_ai_monitoring_enabled=environ.get("CRM_AI_MONITORING_ENABLED", "").lower() == "true",
+            crm_zapi_instance_organization_map_json=environ.get("CRM_ZAPI_INSTANCE_ORGANIZATION_MAP_JSON"),
             langsmith_api_key=environ.get("LANGSMITH_API_KEY"),
             langsmith_endpoint=environ.get("LANGSMITH_ENDPOINT", cls.langsmith_endpoint),
             langsmith_project=environ.get("LANGSMITH_PROJECT", cls.langsmith_project),

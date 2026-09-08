@@ -1,10 +1,12 @@
 from __future__ import annotations
 
 from dataclasses import replace
+from datetime import datetime, timezone
 from typing import Any
 from uuid import NAMESPACE_URL, uuid5
 
 from ai_agent_runtime.graph import AgentRuntimeGraph
+from ai_agent_runtime.integrations.crm_conversations import CrmConversationMonitor, sanitize_crm_error
 from ai_agent_runtime.state import AgentDecision, AgentState
 
 from .channel import (
@@ -25,6 +27,12 @@ DEFAULT_ACK_MESSAGE = "Certo, vou seguir com seu atendimento."
 
 
 class WhatsAppRuntimeError(RuntimeError):
+    pass
+
+
+class CrmMonitoringBlocked(RuntimeError):
+    """Internal sentinel: the webhook must acknowledge without automation."""
+
     pass
 
 
@@ -54,6 +62,7 @@ class WhatsAppChannelAdapter:
         reject_out_of_order: bool = False,
         inbound_enabled: bool = True,
         stage_logger: Any | None = None,
+        crm_monitor: CrmConversationMonitor | None = None,
     ):
         self.provider = provider
         self.store = store
@@ -65,6 +74,7 @@ class WhatsAppChannelAdapter:
         self.reject_out_of_order = reject_out_of_order
         self.inbound_enabled = inbound_enabled
         self.stage_logger = stage_logger
+        self.crm_monitor = crm_monitor
         self.runtime_calls = 0
         self._runtime_invocation_sequence = 0
 
@@ -103,7 +113,30 @@ class WhatsAppChannelAdapter:
                 metrics={"aiInboundDisabled": True, "suppressOutbound": True, "runtimeCalls": 0},
             )
             return self.store.record(record)
-        if self.store.is_handoff_active(inbound.conversation_id):
+        if self.crm_monitor is not None:
+            crm_state = self._prepare_crm_inbound(inbound)
+            if crm_state is None:
+                return self._crm_blocked_record(inbound)
+            if crm_state["duplicate"]:
+                self._log("crm_duplicate_suppressed", {"providerMessageId": inbound.provider_message_id})
+                return self.store.record(
+                    ChannelRecord(
+                        inbound=inbound,
+                        decision=ChannelDecision.DUPLICATE_SUPPRESSED,
+                        metrics={"duplicate": True, "crmDuplicate": True, "suppressOutbound": True, "runtimeCalls": 0},
+                    )
+                )
+            if str(crm_state["mode"] or "").lower() != "ai":
+                self._log("crm_automation_suppressed", {"conversationId": crm_state["conversation_id"], "mode": str(crm_state["mode"] or "UNKNOWN")})
+                return self.store.record(
+                    ChannelRecord(
+                        inbound=self._with_crm_context(inbound, crm_state),
+                        decision=ChannelDecision.CRM_AUTOMATION_SUPPRESSED,
+                        metrics={"crmMode": crm_state["mode"], "suppressOutbound": True, "runtimeCalls": 0},
+                    )
+                )
+            inbound = self._with_crm_context(inbound, crm_state)
+        elif self.store.is_handoff_active(inbound.conversation_id):
             return self._handoff(
                 inbound,
                 reason="ACTIVE_HUMAN_HANDOFF",
@@ -115,6 +148,54 @@ class WhatsAppChannelAdapter:
         if inbound.type == WhatsAppMessageType.TEXT:
             return self._run_text(inbound, inbound.operational_text(), transcript=None, extracted_text=None)
         return self._run_media(inbound)
+
+    def _prepare_crm_inbound(self, inbound: InboundMessage) -> dict[str, Any] | None:
+        try:
+            message_type = inbound.type.value.lower()
+            content = inbound.operational_text() or f"[{message_type}]"
+            return self.crm_monitor.prepare_inbound(
+                instance_id=str(inbound.metadata.get("providerAccountId") or ""),
+                external_conversation_id=inbound.contact_external_id,
+                external_message_id=inbound.provider_message_id,
+                content=content,
+                occurred_at=_crm_iso_timestamp(inbound.timestamp),
+                message_type=message_type,
+                phone_number=_canonical_whatsapp_phone(inbound),
+                batch_messages=_crm_batch_constituents(inbound),
+            )
+        except Exception as exc:
+            safe_error = sanitize_crm_error(exc)
+            self._log("crm_monitoring_blocked", {"code": safe_error["code"], "type": safe_error["type"], "message": safe_error["message"]})
+            return None
+
+    def _with_crm_context(self, inbound: InboundMessage, crm_state: dict[str, Any]) -> InboundMessage:
+        return replace(
+            inbound,
+            metadata={
+                **inbound.metadata,
+                "crmOrganizationId": crm_state["organization_id"],
+                "crmConversationId": crm_state["conversation_id"],
+                "crmOccurredAt": _crm_iso_timestamp(inbound.timestamp),
+            },
+        )
+
+    def _crm_blocked_record(
+        self,
+        inbound: InboundMessage,
+        *,
+        transcript: str | None = None,
+        extracted_text: str | None = None,
+    ) -> ChannelRecord:
+        self._log("outbound_suppressed", {"conversationId": inbound.conversation_id, "suppressOutbound": True, "reason": "CRM_MONITORING_BLOCKED"})
+        return self.store.record(
+            ChannelRecord(
+                inbound=inbound,
+                decision=ChannelDecision.CRM_MONITORING_BLOCKED,
+                transcript=transcript,
+                extracted_text=extracted_text,
+                metrics={"crmMonitoringBlocked": True, "suppressOutbound": True, "runtimeCalls": 0},
+            )
+        )
 
     def normalize_event(self, raw_event: dict[str, Any]) -> InboundMessage:
         provider_account_id = str(raw_event["providerAccountId"])
@@ -252,6 +333,18 @@ class WhatsAppChannelAdapter:
             messages=[{"direction": "inbound", "text": item.operational_text(), "type": item.type.value, "metadata": dict(item.metadata)} for item in history],
             context=runtime_context,
         )
+        if self.crm_monitor is not None:
+            try:
+                self.crm_monitor.repository.record_event(
+                    organization_id=str(inbound.metadata["crmOrganizationId"]),
+                    conversation_id=str(inbound.metadata["crmConversationId"]),
+                    event_type="AI_RESPONSE_STARTED",
+                    occurred_at=str(inbound.metadata["crmOccurredAt"]),
+                )
+            except Exception as exc:
+                safe_error = sanitize_crm_error(exc)
+                self._log("crm_monitoring_blocked", {"code": safe_error["code"], "type": safe_error["type"], "message": safe_error["message"]})
+                return self._crm_blocked_record(inbound, transcript=transcript, extracted_text=extracted_text)
         self.runtime_calls += 1
         self._log("runtime_invocation_id", {"runtimeInvocationId": runtime_invocation_id, "providerMessageId": inbound.provider_message_id})
         try:
@@ -278,7 +371,10 @@ class WhatsAppChannelAdapter:
             outbound_metadata["answeredFacts"] = dict(result.context["answeredFacts"])
         elif last_outbound and isinstance(last_outbound.metadata.get("answeredFacts"), dict):
             outbound_metadata["answeredFacts"] = dict(last_outbound.metadata["answeredFacts"])
-        outbound = self._send_text(inbound, response_text, metadata=outbound_metadata)
+        try:
+            outbound = self._send_text(inbound, response_text, metadata=outbound_metadata)
+        except CrmMonitoringBlocked:
+            return self._crm_blocked_record(inbound, transcript=transcript, extracted_text=extracted_text)
         record = ChannelRecord(
             inbound=inbound,
             decision=ChannelDecision.PROCESSED,
@@ -299,6 +395,19 @@ class WhatsAppChannelAdapter:
         extracted_text: str | None,
         state: AgentState | None = None,
     ) -> ChannelRecord:
+        if self.crm_monitor is not None:
+            try:
+                self.crm_monitor.request_handoff(
+                    organization_id=str(inbound.metadata["crmOrganizationId"]),
+                    conversation_id=str(inbound.metadata["crmConversationId"]),
+                    reason=reason,
+                    occurred_at=str(inbound.metadata["crmOccurredAt"]),
+                    origin="ai",
+                )
+            except Exception as exc:
+                safe_error = sanitize_crm_error(exc)
+                self._log("crm_monitoring_blocked", {"code": safe_error["code"], "type": safe_error["type"], "message": safe_error["message"]})
+                return self._crm_blocked_record(inbound, transcript=transcript, extracted_text=extracted_text)
         handoff_context = {
             "reason": reason,
             "conversationId": inbound.conversation_id,
@@ -331,12 +440,38 @@ class WhatsAppChannelAdapter:
         return self.store.record(record)
 
     def _send_text(self, inbound: InboundMessage, text: str, *, metadata: dict[str, Any] | None = None) -> OutboundMessage:
-        sent = self.provider.send_text(
-            organization_id=inbound.organization_id,
-            contact_external_id=inbound.contact_external_id,
-            text=text,
-            conversation_id=inbound.conversation_id,
-        )
+        if self.crm_monitor is not None:
+            try:
+                delivery = self.crm_monitor.deliver_ai_response(
+                    organization_id=str(inbound.metadata["crmOrganizationId"]),
+                    conversation_id=str(inbound.metadata["crmConversationId"]),
+                    content=text,
+                    occurred_at=str(inbound.metadata["crmOccurredAt"]),
+                    provider="zapi",
+                    send_outbound=lambda content: _crm_provider_delivery(
+                        self.provider.send_text(
+                            organization_id=inbound.organization_id,
+                            contact_external_id=inbound.contact_external_id,
+                            text=content,
+                            conversation_id=inbound.conversation_id,
+                        )
+                    ),
+                )
+            except Exception as exc:
+                safe_error = sanitize_crm_error(exc)
+                self._log("crm_monitoring_blocked", {"code": safe_error["code"], "type": safe_error["type"], "message": safe_error["message"]})
+                raise CrmMonitoringBlocked from exc
+            if delivery.get("delivery_status") != "sent":
+                self._log("outbound_delivery_failed", {"conversationId": inbound.conversation_id, "provider": "zapi"})
+                raise WhatsAppRuntimeError("OUTBOUND_DELIVERY_FAILED")
+            sent = {"providerMessageId": delivery.get("external_message_id")}
+        else:
+            sent = self.provider.send_text(
+                organization_id=inbound.organization_id,
+                contact_external_id=inbound.contact_external_id,
+                text=text,
+                conversation_id=inbound.conversation_id,
+            )
         self._log("outbound_sent", {"providerMessageId": sent.get("providerMessageId"), "conversationId": inbound.conversation_id})
         return OutboundMessage(
             id=str(uuid5(NAMESPACE_URL, f"whatsapp:out:{inbound.provider_message_id}:{text}")),
@@ -367,6 +502,40 @@ def _provider_message_key(raw_event: dict[str, Any]) -> str:
     return f"{raw_event.get('providerAccountId')}:{raw_event.get('providerMessageId')}"
 
 
+def _canonical_whatsapp_phone(inbound: InboundMessage) -> str | None:
+    if "canonicalPhoneNumber" in inbound.metadata:
+        candidate = str(inbound.metadata.get("canonicalPhoneNumber") or "")
+    else:
+        candidate = str(inbound.contact_external_id or "")
+    digits = "".join(character for character in candidate if character.isdigit())
+    return digits if len(digits) >= 7 else None
+
+
+def _crm_batch_constituents(inbound: InboundMessage) -> list[dict[str, str]] | None:
+    """Expand a logical batch into CRM-idempotent provider messages."""
+    metadata = inbound.metadata
+    provider_ids = metadata.get("batchProviderMessageIds")
+    if not isinstance(provider_ids, list) or not provider_ids:
+        return None
+    timestamps = metadata.get("batchTimestamps") if isinstance(metadata.get("batchTimestamps"), list) else []
+    texts = metadata.get("batchTexts") if isinstance(metadata.get("batchTexts"), list) else []
+    types = metadata.get("batchMessageTypes") if isinstance(metadata.get("batchMessageTypes"), list) else []
+    constituents = []
+    for index, provider_id in enumerate(provider_ids):
+        message_type = str(types[index] if index < len(types) else inbound.type.value).lower()
+        content = str(texts[index] if index < len(texts) and texts[index] else f"[{message_type}]")
+        timestamp = str(timestamps[index] if index < len(timestamps) else inbound.timestamp)
+        constituents.append(
+            {
+                "external_message_id": str(provider_id),
+                "content": content,
+                "occurred_at": _crm_iso_timestamp(timestamp),
+                "message_type": message_type,
+            }
+        )
+    return constituents
+
+
 def _sanitize_details(details: dict[str, Any]) -> dict[str, Any]:
     sanitized = {}
     for key, value in details.items():
@@ -385,6 +554,32 @@ def _sanitize_error(text: str) -> str:
     if "token" in lowered or "secret" in lowered or "api key" in lowered or "authorization" in lowered:
         return "runtime error"
     return text
+
+
+def _crm_iso_timestamp(value: Any) -> str:
+    text = str(value or "").strip()
+    try:
+        if text.isdigit():
+            numeric = int(text)
+            # Z-API commonly sends epoch seconds; accept milliseconds too.
+            if numeric >= 10**11:
+                numeric /= 1000
+            return datetime.fromtimestamp(numeric, tz=timezone.utc).isoformat()
+        if text:
+            parsed = datetime.fromisoformat(text.replace("Z", "+00:00"))
+            if parsed.tzinfo is None:
+                parsed = parsed.replace(tzinfo=timezone.utc)
+            return parsed.astimezone(timezone.utc).isoformat()
+    except (OverflowError, OSError, ValueError):
+        pass
+    return datetime.now(timezone.utc).isoformat()
+
+
+def _crm_provider_delivery(sent: dict[str, Any]) -> dict[str, Any]:
+    return {
+        "external_message_id": sent.get("providerMessageId"),
+        "sent_at": datetime.now(timezone.utc).isoformat(),
+    }
 
 
 def _contact_identifier_types(values: list[str]) -> list[str]:

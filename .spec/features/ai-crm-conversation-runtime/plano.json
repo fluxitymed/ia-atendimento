@@ -1,0 +1,163 @@
+{
+  "runId": "IA - ATENDIMENTO-ai-crm-conversation-runtime-mtrysudw",
+  "feature": "ai-crm-conversation-runtime",
+  "agent": "codex",
+  "modo": "sequencial",
+  "paralelizar": null,
+  "modeloForcado": "gpt-5.6-terra",
+  "esforcoForcado": "high",
+  "geradoEm": "2026-09-08 01:02",
+  "branchTrabalho": "spec/ai-crm-conversation-runtime",
+  "baseDir": ".spec/features/ai-crm-conversation-runtime",
+  "specDir": ".spec",
+  "repoName": "IA - ATENDIMENTO",
+  "logsDir": "../onp-worktrees/IA - ATENDIMENTO-ai-crm-conversation-runtime-logs",
+  "ondas": [],
+  "faixas": [],
+  "sequenciais": [
+    {
+      "id": "T-075",
+      "titulo": "Especificar contrato CRM e arquitetura",
+      "modelo": "gpt-5.6-terra",
+      "esforco": "high",
+      "arquivos": [
+        ".spec/features/ai-crm-conversation-runtime/spec.md",
+        ".spec/features/ai-crm-conversation-runtime/tasks.md",
+        ".spec/features/ai-crm-conversation-runtime/design.md"
+      ],
+      "refs": [
+        "US-108",
+        "US-109",
+        "US-110",
+        "US-111",
+        "US-112",
+        "AC-457",
+        "AC-458",
+        "AC-459",
+        "AC-460",
+        "AC-461",
+        "AC-462",
+        "AC-463",
+        "AC-464",
+        "AC-465",
+        "AC-466",
+        "AC-467",
+        "AC-468",
+        "AC-469",
+        "AC-470",
+        "AC-471",
+        "AC-472",
+        "AC-473",
+        "AC-474",
+        "AC-475",
+        "AC-476"
+      ]
+    },
+    {
+      "id": "T-076",
+      "titulo": "Criar testes do repositorio CRM",
+      "modelo": "gpt-5.6-terra",
+      "esforco": "high",
+      "arquivos": [
+        "test/ai-crm-conversation-runtime/crm-conversation-runtime.test.js"
+      ],
+      "refs": [
+        "US-108",
+        "US-110",
+        "US-111",
+        "US-112",
+        "AC-457",
+        "AC-458",
+        "AC-459",
+        "AC-460",
+        "AC-467",
+        "AC-468",
+        "AC-469",
+        "AC-470",
+        "AC-472",
+        "AC-473",
+        "AC-474",
+        "AC-475"
+      ]
+    },
+    {
+      "id": "T-077",
+      "titulo": "Implementar repositorio e monitor CRM",
+      "modelo": "gpt-5.6-terra",
+      "esforco": "high",
+      "arquivos": [
+        "src/ai_agent_runtime/integrations/crm_conversations.py",
+        "src/ai_agent_runtime/integrations/config.py",
+        "src/ai_agent_runtime/integrations/__init__.py",
+        ".env.example"
+      ],
+      "refs": [
+        "US-108",
+        "US-110",
+        "US-111",
+        "US-112",
+        "AC-457",
+        "AC-458",
+        "AC-459",
+        "AC-460",
+        "AC-467",
+        "AC-468",
+        "AC-469",
+        "AC-470",
+        "AC-472",
+        "AC-473",
+        "AC-474",
+        "AC-475"
+      ]
+    },
+    {
+      "id": "T-078",
+      "titulo": "Integrar gate e lifecycle ao adapter Z-API",
+      "modelo": "gpt-5.6-terra",
+      "esforco": "high",
+      "arquivos": [
+        "src/ai_agent_runtime/whatsapp/adapter.py",
+        "src/ai_agent_runtime/whatsapp/channel.py",
+        "src/ai_agent_runtime/whatsapp/zapi_server.py",
+        "test/ai-whatsapp-zapi-provider/zapi-runtime.test.js"
+      ],
+      "refs": [
+        "US-109",
+        "US-110",
+        "US-111",
+        "AC-461",
+        "AC-462",
+        "AC-463",
+        "AC-464",
+        "AC-465",
+        "AC-466",
+        "AC-467",
+        "AC-468",
+        "AC-469",
+        "AC-470",
+        "AC-471",
+        "AC-472"
+      ]
+    },
+    {
+      "id": "T-079",
+      "titulo": "Verificar regressoes e fechar gate",
+      "modelo": "gpt-5.6-terra",
+      "esforco": "high",
+      "arquivos": [
+        "test/ai-crm-conversation-runtime/crm-conversation-runtime.test.js",
+        "test/ai-whatsapp-zapi-provider",
+        "test/ai-customer-service",
+        ".spec/verification/ai-crm-conversation-runtime.json"
+      ],
+      "refs": [
+        "US-112",
+        "AC-476"
+      ]
+    }
+  ],
+  "concluidas": [],
+  "avisos": [
+    "T-075 está [em-andamento] — entrou no plano; se já houver trabalho local, commite antes de executar"
+  ]
+}
