@@ -20,6 +20,9 @@ from .channel import (
     WhatsAppProvider,
 )
 from .media import MediaDecision, MediaProcessor
+from .latency import TurnLatency, active_turn, observe
+import json
+from hashlib import sha256
 
 
 DEFAULT_HANDOFF_MESSAGE = "Vou encaminhar isso para nossa equipe para conseguirem te orientar corretamente."
@@ -78,7 +81,36 @@ class WhatsAppChannelAdapter:
         self.runtime_calls = 0
         self._runtime_invocation_sequence = 0
 
-    def process_event(self, raw_event: dict[str, Any]) -> ChannelRecord:
+    def process_event(self, raw_event: dict[str, Any], *, _reserved: bool = False) -> ChannelRecord:
+        # Validate tenant mapping before any durable claim; never trust payload org.
+        inbound = self.normalize_event(raw_event)
+        keys = list(inbound.metadata.get("batchProviderMessageKeys") or [inbound.metadata["providerMessageKey"]])
+        turn_key = sha256(json.dumps([inbound.organization_id, inbound.metadata.get("providerAccountId"), sorted(keys)]).encode()).hexdigest()
+        if not self.store.claim_turn(turn_key, keys, reserved=_reserved):
+            self._log("duplicate_detected", {"providerMessageId": inbound.provider_message_id, "conversationId": inbound.conversation_id})
+            return ChannelRecord(inbound=inbound, decision=ChannelDecision.DUPLICATE_SUPPRESSED, metrics={"duplicate": True})
+        runtime_id = str(uuid5(NAMESPACE_URL, "runtime:" + turn_key))
+        raw_event = {**raw_event, "metadata": {**dict(raw_event.get("metadata") or {}), "logicalTurnKey": turn_key, "runtimeInvocationId": runtime_id}}
+        trace = TurnLatency(self.stage_logger, {"organizationId": inbound.organization_id, "conversationId": inbound.conversation_id, "runtimeInvocationId": runtime_id, "providerMessageId": inbound.provider_message_id}, raw_event["metadata"])
+        token = active_turn.set(trace)
+        outcome = "FAILED_BEFORE_OUTBOUND"
+        try:
+            with self.store.conversation_lock(inbound.conversation_id):
+                observe("lock_acquired")
+                self._log("conversation_lock_acquired", {"conversationId": inbound.conversation_id})
+                record = self._process_event(raw_event)
+                outcome = record.decision.value
+                self.store.finish_turn(turn_key, outcome)
+                return record
+        except Exception:
+            outcome = "OUTBOUND_SENT_PERSISTENCE_FAILED" if trace.outbound_sent else ("OUTBOUND_UNKNOWN" if "outbound_started" in trace.points else "FAILED_BEFORE_OUTBOUND")
+            self.store.finish_turn(turn_key, outcome)
+            raise
+        finally:
+            trace.finish(outcome)
+            active_turn.reset(token)
+
+    def _process_event(self, raw_event: dict[str, Any]) -> ChannelRecord:
         self._log("webhook_received", {"providerAccountId": raw_event.get("providerAccountId"), "providerMessageId": raw_event.get("providerMessageId")})
         self._log("inbound_received", {"providerAccountId": raw_event.get("providerAccountId"), "providerMessageId": raw_event.get("providerMessageId"), "fromSelf": bool(raw_event.get("fromSelf"))})
         provider_message_key = _provider_message_key(raw_event)
@@ -309,7 +341,7 @@ class WhatsAppChannelAdapter:
         self._log("conversation_history_loaded", {"conversationId": inbound.conversation_id, "historyTurnCount": len(history)})
         self._log("history_turn_count", {"conversationId": inbound.conversation_id, "count": len(history)})
         self._runtime_invocation_sequence += 1
-        runtime_invocation_id = str(uuid5(NAMESPACE_URL, f"runtime:{inbound.organization_id}:{inbound.provider_message_id}:{self._runtime_invocation_sequence}"))
+        runtime_invocation_id = inbound.metadata.get("runtimeInvocationId") or str(uuid5(NAMESPACE_URL, f"runtime:{inbound.organization_id}:{inbound.provider_message_id}"))
         runtime_context = {
             "channel": self.channel_name,
             "mediaReference": _media_context(inbound),
@@ -440,6 +472,22 @@ class WhatsAppChannelAdapter:
         return self.store.record(record)
 
     def _send_text(self, inbound: InboundMessage, text: str, *, metadata: dict[str, Any] | None = None) -> OutboundMessage:
+        key = str(inbound.metadata.get("logicalTurnKey") or inbound.metadata.get("providerMessageKey") or inbound.id)
+        if not self.store.claim_outbound(key):
+            self._log("outbound_duplicate_suppressed", {"conversationId": inbound.conversation_id})
+            raise WhatsAppRuntimeError("OUTBOUND_ALREADY_ATTEMPTED")
+        observe("outbound_started")
+        try:
+            result = self._deliver_text(inbound, text, metadata=metadata)
+        except Exception:
+            observe("outbound_failed")
+            self.store.finish_outbound(key, "UNKNOWN")
+            self._log("outbound_outcome_unknown", {"conversationId": inbound.conversation_id, "providerMessageId": inbound.provider_message_id})
+            raise
+        self.store.finish_outbound(key, "SENT")
+        return result
+
+    def _deliver_text(self, inbound: InboundMessage, text: str, *, metadata: dict[str, Any] | None = None) -> OutboundMessage:
         if self.crm_monitor is not None:
             try:
                 delivery = self.crm_monitor.deliver_ai_response(
@@ -472,6 +520,9 @@ class WhatsAppChannelAdapter:
                 text=text,
                 conversation_id=inbound.conversation_id,
             )
+        if not sent.get("providerMessageId"):
+            raise WhatsAppRuntimeError("OUTBOUND_CONFIRMATION_MISSING")
+        observe("outbound_sent")
         self._log("outbound_sent", {"providerMessageId": sent.get("providerMessageId"), "conversationId": inbound.conversation_id})
         return OutboundMessage(
             id=str(uuid5(NAMESPACE_URL, f"whatsapp:out:{inbound.provider_message_id}:{text}")),

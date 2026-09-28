@@ -5,6 +5,12 @@ from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from enum import Enum
 import json
+import os
+import fcntl
+import threading
+from contextlib import contextmanager
+from functools import wraps
+from hashlib import sha256
 from pathlib import Path
 from typing import Any
 from uuid import NAMESPACE_URL, uuid5
@@ -100,8 +106,21 @@ class WhatsAppProvider(ABC):
         raise NotImplementedError
 
 
+def store_transaction(method):
+    @wraps(method)
+    def wrapped(self, *args, **kwargs):
+        with self.transaction():
+            return method(self, *args, **kwargs)
+    return wrapped
+
+
 class InMemoryWhatsAppStore:
     def __init__(self):
+        self._mutex = threading.RLock()
+        self._local = threading.local()
+        self._conversation_locks = {}
+        self.turns: dict[str, str] = {}
+        self.outbound_attempts: dict[str, str] = {}
         self.records_by_provider_message_id: dict[str, ChannelRecord] = {}
         self.reserved_provider_message_ids: set[str] = set()
         self.contact_aliases: dict[tuple[str, str], str] = {}
@@ -111,27 +130,77 @@ class InMemoryWhatsAppStore:
         self.last_order_by_conversation: dict[str, tuple[int, str]] = {}
         self.handoff_conversations: dict[str, dict[str, Any]] = {}
 
+    @contextmanager
+    def transaction(self):
+        with self._mutex:
+            yield
+
+    def _persist(self):
+        pass
+
+    @contextmanager
+    def conversation_lock(self, conversation_id):
+        with self._mutex:
+            lock = self._conversation_locks.setdefault(conversation_id, threading.RLock())
+        with lock:
+            yield
+
+    @store_transaction
+    def claim_turn(self, key, provider_keys, *, reserved=False):
+        if key in self.turns or any(self.has_processed(k) for k in provider_keys):
+            return False
+        if not reserved and any(self.has_seen_provider_message_key(k) for k in provider_keys):
+            return False
+        self.reserved_provider_message_ids.update(provider_keys)
+        self.turns[key] = "STARTED"
+        self._persist()
+        return True
+
+    @store_transaction
+    def finish_turn(self, key, outcome):
+        self.turns[key] = outcome
+        self._persist()
+
+    @store_transaction
+    def claim_outbound(self, key):
+        if key in self.outbound_attempts:
+            return False
+        self.outbound_attempts[key] = "ATTEMPTING"
+        self._persist()  # fail closed before any external side effect
+        return True
+
+    @store_transaction
+    def finish_outbound(self, key, outcome):
+        self.outbound_attempts[key] = outcome
+        self._persist()
+
+    @store_transaction
     def conversation_id_for(self, *, organization_id: str, channel: str, contact_external_id: str) -> str:
         key = (organization_id, channel, contact_external_id)
         if key not in self.conversation_ids:
             self.conversation_ids[key] = str(uuid5(NAMESPACE_URL, ":".join(key)))
         return self.conversation_ids[key]
 
+    @store_transaction
     def has_processed(self, provider_message_id: str) -> bool:
         return provider_message_id in self.records_by_provider_message_id
 
+    @store_transaction
     def has_seen_provider_message_key(self, provider_message_id: str) -> bool:
         return provider_message_id in self.records_by_provider_message_id or provider_message_id in self.reserved_provider_message_ids
 
+    @store_transaction
     def reserve_provider_message_key(self, provider_message_id: str) -> bool:
         if self.has_seen_provider_message_key(provider_message_id):
             return False
         self.reserved_provider_message_ids.add(provider_message_id)
         return True
 
+    @store_transaction
     def release_provider_message_key(self, provider_message_id: str) -> None:
         self.reserved_provider_message_ids.discard(provider_message_id)
 
+    @store_transaction
     def resolve_contact_alias(
         self,
         *,
@@ -158,6 +227,7 @@ class InMemoryWhatsAppStore:
                 persisted.append(candidate)
         return canonical, persisted
 
+    @store_transaction
     def record(self, record: ChannelRecord) -> ChannelRecord:
         provider_message_key = record.inbound.metadata.get("providerMessageKey") or record.inbound.provider_message_id
         self.records_by_provider_message_id[str(provider_message_key)] = record
@@ -180,21 +250,26 @@ class InMemoryWhatsAppStore:
             }
         return record
 
+    @store_transaction
     def history_for(self, conversation_id: str) -> list[InboundMessage]:
         return list(self.messages_by_conversation.get(conversation_id, ()))
 
+    @store_transaction
     def last_outbound_for(self, conversation_id: str) -> OutboundMessage | None:
         for outbound in reversed(self.outbound_messages):
             if outbound.conversation_id == conversation_id:
                 return outbound
         return None
 
+    @store_transaction
     def is_handoff_active(self, conversation_id: str) -> bool:
         return conversation_id in self.handoff_conversations
 
+    @store_transaction
     def release_handoff(self, conversation_id: str) -> None:
         self.handoff_conversations.pop(conversation_id, None)
 
+    @store_transaction
     def is_out_of_order(self, inbound: InboundMessage) -> bool:
         order_key = _message_order_key(inbound.timestamp)
         if order_key is None:
@@ -204,6 +279,7 @@ class InMemoryWhatsAppStore:
             return False
         return order_key < previous[0]
 
+    @store_transaction
     def metrics(self) -> dict[str, int]:
         inbound = list(self.records_by_provider_message_id.values())
         return {
@@ -222,9 +298,46 @@ class InMemoryWhatsAppStore:
 class JsonFileWhatsAppStore(InMemoryWhatsAppStore):
     def __init__(self, path: str | Path):
         self.path = Path(path)
+        self._loaded_once = False
         super().__init__()
-        self._load()
+        with self.transaction():
+            pass
 
+    @contextmanager
+    def transaction(self):
+        with self._mutex:
+            if getattr(self._local, "active", False):
+                yield
+                return
+            self.path.parent.mkdir(parents=True, exist_ok=True)
+            with self.path.with_suffix(self.path.suffix + ".lock").open("a+b") as lock:
+                fcntl.flock(lock, fcntl.LOCK_EX)
+                self._local.active = True
+                try:
+                    self._load()
+                    yield
+                finally:
+                    self._local.active = False
+                    fcntl.flock(lock, fcntl.LOCK_UN)
+
+    def _persist(self):
+        self._save()
+
+    @contextmanager
+    def conversation_lock(self, conversation_id):
+        # Separate lock inode: network work never holds the store transaction.
+        folder = self.path.parent / (self.path.name + ".conversations")
+        folder.mkdir(parents=True, exist_ok=True)
+        name = sha256(conversation_id.encode()).hexdigest()
+        with super().conversation_lock(conversation_id):
+            with (folder / name).open("a+b") as lock:
+                fcntl.flock(lock, fcntl.LOCK_EX)
+                try:
+                    yield
+                finally:
+                    fcntl.flock(lock, fcntl.LOCK_UN)
+
+    @store_transaction
     def conversation_id_for(self, *, organization_id: str, channel: str, contact_external_id: str) -> str:
         before = len(self.conversation_ids)
         conversation_id = super().conversation_id_for(
@@ -236,23 +349,27 @@ class JsonFileWhatsAppStore(InMemoryWhatsAppStore):
             self._save()
         return conversation_id
 
+    @store_transaction
     def record(self, record: ChannelRecord) -> ChannelRecord:
         saved = super().record(record)
         self._save()
         return saved
 
+    @store_transaction
     def reserve_provider_message_key(self, provider_message_id: str) -> bool:
         reserved = super().reserve_provider_message_key(provider_message_id)
         if reserved:
             self._save()
         return reserved
 
+    @store_transaction
     def release_provider_message_key(self, provider_message_id: str) -> None:
         before = len(self.reserved_provider_message_ids)
         super().release_provider_message_key(provider_message_id)
         if len(self.reserved_provider_message_ids) != before:
             self._save()
 
+    @store_transaction
     def resolve_contact_alias(
         self,
         *,
@@ -272,11 +389,18 @@ class JsonFileWhatsAppStore(InMemoryWhatsAppStore):
 
     def _load(self) -> None:
         if not self.path.exists():
+            if self._loaded_once:
+                raise RuntimeError("WHATSAPP_STORE_DISAPPEARED")
             return
         try:
-            payload = json.loads(self.path.read_text(encoding="utf-8") or "{}")
-        except (OSError, json.JSONDecodeError):
-            return
+            payload = json.loads(self.path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError) as exc:
+            raise RuntimeError("WHATSAPP_STORE_UNREADABLE") from exc
+        if not isinstance(payload, dict):
+            raise RuntimeError("WHATSAPP_STORE_INVALID")
+        self._loaded_once = True
+        self.turns = dict(payload.get("turns") or {})
+        self.outbound_attempts = dict(payload.get("outbound_attempts") or {})
         self.conversation_ids = {
             (str(item["organization_id"]), str(item["channel"]), str(item["contact_external_id"])): str(item["conversation_id"])
             for item in payload.get("conversation_ids", [])
@@ -324,6 +448,8 @@ class JsonFileWhatsAppStore(InMemoryWhatsAppStore):
     def _save(self) -> None:
         self.path.parent.mkdir(parents=True, exist_ok=True)
         payload = {
+            "turns": self.turns,
+            "outbound_attempts": self.outbound_attempts,
             "conversation_ids": [
                 {
                     "organization_id": organization_id,
@@ -358,8 +484,16 @@ class JsonFileWhatsAppStore(InMemoryWhatsAppStore):
             "handoff_conversations": self.handoff_conversations,
         }
         tmp_path = self.path.with_suffix(f"{self.path.suffix}.tmp")
-        tmp_path.write_text(json.dumps(payload, ensure_ascii=False, sort_keys=True, indent=2), encoding="utf-8")
+        with tmp_path.open("w", encoding="utf-8") as stream:
+            json.dump(payload, stream, ensure_ascii=False, sort_keys=True)
+            stream.flush()
+            os.fsync(stream.fileno())
         tmp_path.replace(self.path)
+        directory = os.open(self.path.parent, os.O_RDONLY)
+        try:
+            os.fsync(directory)
+        finally:
+            os.close(directory)
 
 
 def _media_to_dict(media: MediaReference | None) -> dict[str, Any] | None:

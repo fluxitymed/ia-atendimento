@@ -37,6 +37,9 @@ class StaticResponseGenerator:
         return f"{self.prefix} {turn}: {state.current_message}"
 
 
+from contextvars import ContextVar
+
+
 class AgentRuntimeGraph:
     def __init__(
         self,
@@ -45,11 +48,20 @@ class AgentRuntimeGraph:
         stage_logger: Callable[[str, dict[str, Any] | None], None] | None = None,
         commercial_playbook: CommercialPlaybook | None = None,
     ):
+        self._state_context = ContextVar("runtime_active_state", default=None)
         self.node_names = RUNTIME_NODE_NAMES
         self.langgraph_available = self._detect_langgraph()
         self.response_generator = response_generator
         self.stage_logger = stage_logger
         self.commercial_playbook = commercial_playbook or CommercialPlaybook()
+
+    @property
+    def _active_state(self):
+        return self._state_context.get()
+
+    @_active_state.setter
+    def _active_state(self, value):
+        self._state_context.set(value)
 
     @staticmethod
     def _detect_langgraph() -> bool:
@@ -63,6 +75,8 @@ class AgentRuntimeGraph:
         return self.node_names
 
     def emit(self, stage: str, details: dict[str, Any] | None = None) -> None:
+        from .whatsapp.latency import observe
+        observe(stage)
         self._append_runtime_event(stage, details)
         if self.stage_logger is not None:
             self.stage_logger(stage, details)
