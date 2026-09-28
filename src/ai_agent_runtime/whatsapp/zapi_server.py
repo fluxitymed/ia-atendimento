@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import json
+import os
+import fcntl
 import re
 import socket
 import time
@@ -42,6 +44,7 @@ from .batching import MessageBatchingConfig, MessageBatchingWhatsAppChannelAdapt
 from .channel import JsonFileWhatsAppStore
 from .media import MediaProcessor, OpenAISpeechToTextProvider
 from .providers import build_whatsapp_provider
+from .ingress import AsyncWhatsAppIngress
 from .zapi import ZApiWhatsAppConfig
 from .zapi_webhook import WEBHOOK_PATH, ZApiWebhookResponse, handle_zapi_webhook_post
 
@@ -927,10 +930,23 @@ class ZApiWebhookRequestHandler(BaseHTTPRequestHandler):
         self.wfile.write(response.body.encode("utf-8"))
 
 
+def _acquire_service_lock():
+    path = _zapi_store_path()
+    path.parent.mkdir(parents=True, exist_ok=True)
+    handle = path.with_suffix(path.suffix + ".service.lock").open("a+b")
+    try:
+        fcntl.flock(handle, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    except OSError:
+        handle.close()
+        raise RuntimeError("ZAPI_SERVICE_ALREADY_RUNNING_FOR_STORE") from None
+    return handle
+
+
 def run_server(host: str | None = None, port: int | None = None) -> None:
     config = ZApiWhatsAppConfig.from_env()
+    service_lock = _acquire_service_lock()
     ZApiWebhookRequestHandler.config = config
-    ZApiWebhookRequestHandler.adapter = build_default_adapter(config)
+    ZApiWebhookRequestHandler.adapter = AsyncWhatsAppIngress(build_default_adapter(config))
     selected_host = _server_host(host)
     selected_port = _server_port(port)
     server = ThreadingHTTPServer((selected_host, selected_port), ZApiWebhookRequestHandler)
@@ -948,7 +964,12 @@ def run_server(host: str | None = None, port: int | None = None) -> None:
             }
         )
     )
-    server.serve_forever()
+    try:
+        server.serve_forever()
+    finally:
+        server.server_close()
+        ZApiWebhookRequestHandler.adapter.close()
+        service_lock.close()
 
 
 def _server_host(host: str | None = None) -> str:
@@ -1930,9 +1951,14 @@ def _zapi_store_path() -> Path:
 def _build_zapi_store(path: str | Path | None = None) -> JsonFileWhatsAppStore:
     store_path = Path(path) if path is not None else _zapi_store_path()
     store_path.parent.mkdir(parents=True, exist_ok=True)
-    if not store_path.exists():
-        store_path.write_text("{}", encoding="utf-8")
-    return JsonFileWhatsAppStore(store_path)
+    store = JsonFileWhatsAppStore(store_path)
+    with store.transaction():
+        if not store_path.exists():
+            with store_path.open("x", encoding="utf-8") as stream:
+                stream.write("{}")
+                stream.flush()
+                os.fsync(stream.fileno())
+    return store
 
 
 def _runtime_organization_id(organization_id: str) -> str:

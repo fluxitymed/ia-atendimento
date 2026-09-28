@@ -11,6 +11,7 @@ from .adapter import WhatsAppChannelAdapter
 from dataclasses import replace
 
 from .channel import ChannelDecision, ChannelRecord, InboundMessage, WhatsAppMessageType
+from .latency import TurnLatency, active_turn, observe, stamp
 from .media import MediaDecision
 
 
@@ -62,6 +63,8 @@ class _PendingBatch:
     last_seen_ms: int = 0
     debounce_handle: ScheduledHandle | None = None
     max_wait_handle: ScheduledHandle | None = None
+    generation: int = 0
+    latency_started: dict = field(default_factory=stamp)
 
 
 class MessageBatchingWhatsAppChannelAdapter:
@@ -85,38 +88,57 @@ class MessageBatchingWhatsAppChannelAdapter:
     def runtime_calls(self) -> int:
         return self.adapter.runtime_calls
 
-    def process_event(self, raw_event: dict[str, Any]) -> ChannelRecord:
+    def process_event(self, raw_event: dict[str, Any], *, _reserved: bool = False) -> ChannelRecord:
         if not self.config.enabled:
-            return self.adapter.process_event(raw_event)
+            return self.adapter.process_event(raw_event, _reserved=_reserved)
+        self.adapter.organization_resolver.resolve(str(raw_event.get("providerAccountId") or ""))
+        raw_event = {**raw_event, "metadata": dict(raw_event.get("metadata") or {})}
+        raw_event["metadata"].setdefault("latencyPoints", {"webhook_ingress_received": stamp()})
         provider_message_key = _provider_message_key(raw_event)
         self.adapter._log("provider_message_idempotency_checked", {"providerMessageId": raw_event.get("providerMessageId"), "providerAccountId": raw_event.get("providerAccountId")})
-        if self.adapter.store.has_seen_provider_message_key(provider_message_key):
+        if not _reserved and not self.adapter.store.reserve_provider_message_key(provider_message_key):
             self.adapter._log("provider_message_duplicate_rejected", {"providerMessageId": raw_event.get("providerMessageId"), "providerAccountId": raw_event.get("providerAccountId")})
             self.adapter._log("duplicate_detected", {"providerMessageId": raw_event.get("providerMessageId"), "providerAccountId": raw_event.get("providerAccountId")})
             return _duplicate_record(raw_event, provider_message_key)
-        self.adapter.store.reserve_provider_message_key(provider_message_key)
         try:
             inbound = self.adapter.normalize_event(raw_event)
         except Exception:
             self.adapter.store.release_provider_message_key(provider_message_key)
             raise
         if raw_event.get("fromSelf"):
-            return self.adapter.process_event(raw_event)
+            return self.adapter.process_event(raw_event, _reserved=True)
         # The monitored adapter must establish CRM context before media can
         # hand off or send a retry response. Bypass batching for those turns.
         if self.adapter.crm_monitor is not None and inbound.type != WhatsAppMessageType.TEXT:
-            return self.adapter.process_event(raw_event)
+            return self.adapter.process_event(raw_event, _reserved=True)
         if inbound.type == WhatsAppMessageType.AUDIO:
-            materialized = self._materialize_audio_for_batch(inbound)
-            if isinstance(materialized, ChannelRecord):
-                return materialized
-            inbound = materialized
+            trace = TurnLatency(self.adapter.stage_logger, {
+                "organizationId": inbound.organization_id, "conversationId": inbound.conversation_id,
+                "runtimeInvocationId": str(uuid5(NAMESPACE_URL, "media:" + provider_message_key)),
+                "providerMessageId": inbound.provider_message_id,
+            }, inbound.metadata)
+            token = active_turn.set(trace)
+            try:
+                with self.adapter.store.conversation_lock(inbound.conversation_id):
+                    observe("lock_acquired")
+                    materialized = self._materialize_audio_for_batch(inbound)
+                if isinstance(materialized, ChannelRecord):
+                    trace.finish(materialized.decision.value)
+                    return materialized
+                inbound = materialized
+            except Exception:
+                trace.finish("OUTBOUND_UNKNOWN" if "outbound_started" in trace.points else "MEDIA_FAILED")
+                raise
+            finally:
+                for stage in list(trace.timers):
+                    trace.cancel(stage)
+                active_turn.reset(token)
         elif inbound.type.value != "TEXT":
-            return self.adapter.process_event(raw_event)
+            return self.adapter.process_event(raw_event, _reserved=True)
         if self.adapter.reject_out_of_order and self.adapter.store.is_out_of_order(inbound):
-            return self.adapter.process_event(raw_event)
+            return self.adapter.process_event(raw_event, _reserved=True)
         if self.adapter.store.is_handoff_active(inbound.conversation_id):
-            return self.adapter.process_event(raw_event)
+            return self.adapter.process_event(raw_event, _reserved=True)
         if _should_early_flush(inbound.operational_text()):
             self.adapter._log("message_batch_started", {"conversationId": inbound.conversation_id, "reason": "EARLY_FLUSH"})
             self.adapter._log("message_batch_flushed", {"conversationId": inbound.conversation_id, "reason": "EARLY_FLUSH"})
@@ -131,10 +153,6 @@ class MessageBatchingWhatsAppChannelAdapter:
                 batch = _PendingBatch(first_seen_ms=now_ms, last_seen_ms=now_ms)
                 self._pending[inbound.conversation_id] = batch
                 self.adapter._log("message_batch_started", {"conversationId": inbound.conversation_id})
-                batch.max_wait_handle = self.scheduler.call_later(
-                    self.config.max_wait_ms,
-                    lambda conversation_id=inbound.conversation_id: self.flush(conversation_id, reason="MAX_WAIT"),
-                )
             else:
                 batch.last_seen_ms = now_ms
                 if batch.debounce_handle is not None:
@@ -147,42 +165,39 @@ class MessageBatchingWhatsAppChannelAdapter:
             if inbound.metadata.get("sourceMessageType") == "AUDIO" or inbound.type == WhatsAppMessageType.AUDIO:
                 self.adapter._log("audio_added_to_batch", {"conversationId": inbound.conversation_id, "providerMessageId": inbound.provider_message_id})
             self.adapter._log("queued_inbound_count", {"conversationId": inbound.conversation_id, "count": len(batch.inbound)})
-            batch.debounce_handle = self.scheduler.call_later(
-                self.config.debounce_ms,
-                lambda conversation_id=inbound.conversation_id: self.flush(conversation_id, reason="DEBOUNCE"),
-            )
+            self._schedule(inbound.conversation_id, batch)
             return ChannelRecord(
                 inbound=inbound,
                 decision=ChannelDecision.BATCH_QUEUED,
                 metrics={"queued": True, "queuedInboundCount": len(batch.inbound)},
             )
 
-    def flush(self, conversation_id: str, *, reason: str = "MANUAL") -> ChannelRecord | None:
+    def flush(self, conversation_id: str, *, reason: str = "MANUAL", _batch=None, _generation=None) -> ChannelRecord | None:
         with self._lock:
+            current = self._pending.get(conversation_id)
+            if _batch is not None and (current is not _batch or current.generation != _generation):
+                return None
             if conversation_id in self._running:
-                batch = self._pending.get(conversation_id)
-                self.adapter._log("queued_inbound_count", {"conversationId": conversation_id, "count": len(batch.inbound) if batch else 0})
-                if batch:
-                    batch.debounce_handle = self.scheduler.call_later(
-                        self.config.debounce_ms,
-                        lambda conversation_id=conversation_id: self.flush(conversation_id, reason="DEBOUNCE"),
-                    )
+                # Completion will schedule the waiting batch. No polling timers.
+                if current:
+                    self._cancel(current)
                 return None
             batch = self._pending.pop(conversation_id, None)
             if batch is None or not batch.raw_events:
                 return None
             self._cancel(batch)
             self._running.add(conversation_id)
-        if reason == "MAX_WAIT":
-            self.adapter._log("message_batch_max_wait_reached", {"conversationId": conversation_id})
-        age_ms = max(self.scheduler.now_ms() - batch.first_seen_ms, 0)
-        self.adapter._log("message_batch_flushed", {"conversationId": conversation_id, "reason": reason})
-        self.adapter._log("message_batch_size", {"conversationId": conversation_id, "count": len(batch.inbound)})
-        self.adapter._log("message_batch_age_ms", {"conversationId": conversation_id, "ageMs": age_ms})
-        logical_event = _logical_event(batch.raw_events, batch.inbound)
-        self.adapter._log("logical_patient_turn_created", {"conversationId": conversation_id, "providerMessageIds": [item.provider_message_id for item in batch.inbound]})
         failed = False
         try:
+            if reason == "MAX_WAIT":
+                self.adapter._log("message_batch_max_wait_reached", {"conversationId": conversation_id})
+            age_ms = max(self.scheduler.now_ms() - batch.first_seen_ms, 0)
+            self.adapter._log("message_batch_flushed", {"conversationId": conversation_id, "reason": reason})
+            self.adapter._log("message_batch_size", {"conversationId": conversation_id, "count": len(batch.inbound)})
+            self.adapter._log("message_batch_age_ms", {"conversationId": conversation_id, "ageMs": age_ms})
+            logical_event = _logical_event(batch.raw_events, batch.inbound)
+            logical_event["metadata"]["latencyPoints"] = {**dict(logical_event["metadata"].get("latencyPoints") or {}), "batch_started": batch.latency_started, "batch_flushed": stamp()}
+            self.adapter._log("logical_patient_turn_created", {"conversationId": conversation_id, "providerMessageIds": [item.provider_message_id for item in batch.inbound]})
             record = self._process_logical_event(logical_event, conversation_id=conversation_id)
             self.flushed_records.append(record)
             return record
@@ -193,7 +208,6 @@ class MessageBatchingWhatsAppChannelAdapter:
                 {
                     "conversationId": conversation_id,
                     "errorType": exc.__class__.__name__,
-                    "error": _sanitize_batch_error(str(exc)),
                 },
             )
             return None
@@ -204,11 +218,10 @@ class MessageBatchingWhatsAppChannelAdapter:
                 if failed:
                     self.adapter._log("conversation_recovered_after_failure", {"conversationId": conversation_id})
                 if conversation_id in self._pending:
-                    self.scheduler.call_later(0, lambda conversation_id=conversation_id: self.flush(conversation_id, reason="LOCK_RELEASED"))
+                    self._schedule(conversation_id, self._pending[conversation_id], immediate=True)
 
     def _process_logical_event(self, raw_event: dict[str, Any], *, conversation_id: str) -> ChannelRecord:
-        self.adapter._log("conversation_lock_acquired", {"conversationId": conversation_id})
-        return self.adapter.process_event(raw_event)
+        return self.adapter.process_event(raw_event, _reserved=True)
 
     def _materialize_audio_for_batch(self, inbound: InboundMessage) -> InboundMessage | ChannelRecord:
         self.adapter._log("audio_inbound_detected", {"providerMessageId": inbound.provider_message_id, "conversationId": inbound.conversation_id})
@@ -252,6 +265,17 @@ class MessageBatchingWhatsAppChannelAdapter:
             "transcriptionModel": media_result.metadata.get("model"),
         }
         return replace(inbound, text=media_result.operational_text or "", metadata=metadata)
+
+    def _schedule(self, conversation_id, batch, *, immediate=False):
+        self._cancel(batch)
+        batch.generation += 1
+        generation = batch.generation
+        deadline = min(batch.last_seen_ms + self.config.debounce_ms, batch.first_seen_ms + self.config.max_wait_ms)
+        reason = "MAX_WAIT" if deadline == batch.first_seen_ms + self.config.max_wait_ms else "DEBOUNCE"
+        batch.debounce_handle = self.scheduler.call_later(
+            0 if immediate else max(0, deadline - self.scheduler.now_ms()),
+            lambda: self.flush(conversation_id, reason=reason, _batch=batch, _generation=generation),
+        )
 
     def _cancel(self, batch: _PendingBatch) -> None:
         for handle in (batch.debounce_handle, batch.max_wait_handle):

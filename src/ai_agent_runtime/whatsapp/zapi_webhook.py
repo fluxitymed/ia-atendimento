@@ -8,6 +8,8 @@ from typing import Any
 from .adapter import WhatsAppChannelAdapter
 from .channel import ChannelRecord
 from .adapter import WhatsAppRuntimeError
+from .ingress import IngressBusy
+from .latency import stamp
 from .zapi import ZApiWhatsAppConfig, redact_zapi_secret
 
 
@@ -67,6 +69,7 @@ def handle_zapi_webhook_post(
     adapter: WhatsAppChannelAdapter,
     stage_logger: Any | None = None,
 ) -> tuple[ZApiWebhookResponse, list[ChannelRecord]]:
+    received_at = stamp()
     _log_webhook_ingress(raw_body, headers, stage_logger)
     validate_zapi_webhook(headers, config)
     try:
@@ -77,6 +80,7 @@ def handle_zapi_webhook_post(
 
     records: list[ChannelRecord] = []
     for event in events:
+        event.setdefault("metadata", {})["latencyPoints"] = {"webhook_ingress_received": received_at}
         if event.get("type") == "AUDIO":
             _log_stage(
                 stage_logger,
@@ -106,6 +110,8 @@ def handle_zapi_webhook_post(
             )
         try:
             records.append(adapter.process_event(event))
+        except IngressBusy:
+            return ZApiWebhookResponse(status_code=503, body="INGRESS_BUSY", headers={"Content-Type": "text/plain", "Retry-After": "5"}), records
         except ValueError as exc:
             message = redact_zapi_secret(str(exc), config.instance_token, config.client_token)
             if message == "UNKNOWN_PROVIDER_ACCOUNT":
