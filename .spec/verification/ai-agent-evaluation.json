@@ -1,11 +1,11 @@
 {
   "feature": "ai-agent-evaluation",
-  "timestamp": "2026-09-07T23:13:04.435Z",
-  "gitRev": "cb110a7",
+  "timestamp": "2026-09-28T13:48:04.468Z",
+  "gitRev": "08cf0a3",
   "command": "node --test --test-reporter=tap",
   "reporter": "tap",
   "exitCode": 0,
-  "testsParsed": 215,
+  "testsParsed": 266,
   "results": {
     "AC-067": {
       "status": "pass",

@@ -1,11 +1,11 @@
 {
   "feature": "ai-crm-conversation-runtime",
-  "timestamp": "2026-09-08T13:11:09.778Z",
-  "gitRev": "b4714db",
+  "timestamp": "2026-09-28T13:48:29.945Z",
+  "gitRev": "08cf0a3",
   "command": "node --test --test-reporter=tap",
   "reporter": "tap",
   "exitCode": 0,
-  "testsParsed": 241,
+  "testsParsed": 266,
   "results": {
     "AC-457": {
       "status": "pass",

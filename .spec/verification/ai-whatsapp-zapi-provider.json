@@ -1,11 +1,11 @@
 {
   "feature": "ai-whatsapp-zapi-provider",
-  "timestamp": "2026-09-07T22:57:36.009Z",
-  "gitRev": "cb110a7",
+  "timestamp": "2026-09-28T13:49:08.835Z",
+  "gitRev": "08cf0a3",
   "command": "node --test --test-reporter=tap",
   "reporter": "tap",
   "exitCode": 0,
-  "testsParsed": 215,
+  "testsParsed": 266,
   "results": {
     "AC-177": {
       "status": "pass",
@@ -875,6 +875,46 @@
     "AC-420": {
       "status": "pass",
       "testName": "@spec:AC-197 @spec:AC-420 Z-API feature does not alter CRM, RAG, Calendar, or grounding contracts",
+      "method": "tap"
+    },
+    "AC-477": {
+      "status": "pass",
+      "testName": "@spec:AC-477 concurrent_duplicate",
+      "method": "tap"
+    },
+    "AC-478": {
+      "status": "pass",
+      "testName": "@spec:AC-478 stale_timer",
+      "method": "tap"
+    },
+    "AC-479": {
+      "status": "pass",
+      "testName": "@spec:AC-478 @spec:AC-479 during_flush",
+      "method": "tap"
+    },
+    "AC-480": {
+      "status": "pass",
+      "testName": "@spec:AC-477 @spec:AC-480 restart_and_retry",
+      "method": "tap"
+    },
+    "AC-481": {
+      "status": "pass",
+      "testName": "@spec:AC-481 fast_ingress",
+      "method": "tap"
+    },
+    "AC-482": {
+      "status": "pass",
+      "testName": "@spec:AC-482 latency",
+      "method": "tap"
+    },
+    "AC-483": {
+      "status": "pass",
+      "testName": "@spec:AC-483 callbacks_aliases",
+      "method": "tap"
+    },
+    "AC-484": {
+      "status": "pass",
+      "testName": "@spec:AC-484 corrupt_store",
       "method": "tap"
     }
   },

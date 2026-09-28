@@ -581,10 +581,10 @@
       "codigo": "VERIFY_OBSOLETO",
       "feature": "ai-customer-service",
       "ref": "—",
-      "ocorrencias": 42,
+      "ocorrencias": 46,
       "primeiraVez": "2026-08-20T01:55:42.223Z",
-      "ultimaVez": "2026-09-07T22:57:45.353Z",
-      "gitRev": "cb110a7"
+      "ultimaVez": "2026-09-28T13:43:24.042Z",
+      "gitRev": "08cf0a3"
     },
     "ID_DUPLICADO::ai-customer-service::US-001": {
       "codigo": "ID_DUPLICADO",
@@ -1625,10 +1625,10 @@
       "codigo": "VERIFY_OBSOLETO",
       "feature": "ai-agent-runtime",
       "ref": "—",
-      "ocorrencias": 34,
+      "ocorrencias": 38,
       "primeiraVez": "2026-08-20T18:53:21.874Z",
-      "ultimaVez": "2026-09-07T22:57:45.353Z",
-      "gitRev": "cb110a7"
+      "ultimaVez": "2026-09-28T13:43:24.042Z",
+      "gitRev": "08cf0a3"
     },
     "ARQUIVO_ORFAO::—::src/ai_agent_runtime/integrations/__init__.py": {
       "codigo": "ARQUIVO_ORFAO",
@@ -1994,28 +1994,28 @@
       "codigo": "VERIFY_OBSOLETO",
       "feature": "ai-runtime-integrations",
       "ref": "—",
-      "ocorrencias": 39,
+      "ocorrencias": 43,
       "primeiraVez": "2026-08-20T19:42:35.889Z",
-      "ultimaVez": "2026-09-07T22:57:45.353Z",
-      "gitRev": "cb110a7"
+      "ultimaVez": "2026-09-28T13:43:24.042Z",
+      "gitRev": "08cf0a3"
     },
     "VERIFY_OBSOLETO::ai-agent-evaluation::—": {
       "codigo": "VERIFY_OBSOLETO",
       "feature": "ai-agent-evaluation",
       "ref": "—",
-      "ocorrencias": 25,
+      "ocorrencias": 29,
       "primeiraVez": "2026-08-20T20:13:47.439Z",
-      "ultimaVez": "2026-09-07T22:57:45.353Z",
-      "gitRev": "cb110a7"
+      "ultimaVez": "2026-09-28T13:43:24.042Z",
+      "gitRev": "08cf0a3"
     },
     "VERIFY_OBSOLETO::ai-agent-live-sandbox::—": {
       "codigo": "VERIFY_OBSOLETO",
       "feature": "ai-agent-live-sandbox",
       "ref": "—",
-      "ocorrencias": 32,
+      "ocorrencias": 36,
       "primeiraVez": "2026-08-21T01:19:42.607Z",
-      "ultimaVez": "2026-09-07T22:57:45.353Z",
-      "gitRev": "cb110a7"
+      "ultimaVez": "2026-09-28T13:43:24.042Z",
+      "gitRev": "08cf0a3"
     },
     "Q_ABERTA::ai-whatsapp-channel::Q-006": {
       "codigo": "Q_ABERTA",
@@ -2273,28 +2273,28 @@
       "codigo": "VERIFY_OBSOLETO",
       "feature": "ai-whatsapp-channel",
       "ref": "—",
-      "ocorrencias": 26,
+      "ocorrencias": 30,
       "primeiraVez": "2026-08-29T19:09:51.239Z",
-      "ultimaVez": "2026-09-07T22:57:45.353Z",
-      "gitRev": "cb110a7"
+      "ultimaVez": "2026-09-28T13:43:24.042Z",
+      "gitRev": "08cf0a3"
     },
     "VERIFY_OBSOLETO::ai-whatsapp-evolution-provider::—": {
       "codigo": "VERIFY_OBSOLETO",
       "feature": "ai-whatsapp-evolution-provider",
       "ref": "—",
-      "ocorrencias": 29,
+      "ocorrencias": 33,
       "primeiraVez": "2026-08-30T19:36:34.384Z",
-      "ultimaVez": "2026-09-07T22:57:45.353Z",
-      "gitRev": "cb110a7"
+      "ultimaVez": "2026-09-28T13:43:24.042Z",
+      "gitRev": "08cf0a3"
     },
     "VERIFY_OBSOLETO::ai-whatsapp-zapi-provider::—": {
       "codigo": "VERIFY_OBSOLETO",
       "feature": "ai-whatsapp-zapi-provider",
       "ref": "—",
-      "ocorrencias": 4,
+      "ocorrencias": 8,
       "primeiraVez": "2026-08-31T21:19:09.166Z",
-      "ultimaVez": "2026-09-07T16:57:11.319Z",
-      "gitRev": "e1d2a48"
+      "ultimaVez": "2026-09-28T13:43:24.042Z",
+      "gitRev": "08cf0a3"
     },
     "TASK_CONCLUIDA_SEM_PROVA::ai-whatsapp-zapi-provider::T-052": {
       "codigo": "TASK_CONCLUIDA_SEM_PROVA",
@@ -2399,10 +2399,10 @@
       "codigo": "VERIFY_OBSOLETO",
       "feature": "ai-commercial-agent-playbook",
       "ref": "—",
-      "ocorrencias": 9,
+      "ocorrencias": 13,
       "primeiraVez": "2026-09-02T01:51:51.040Z",
-      "ultimaVez": "2026-09-07T20:55:07.194Z",
-      "gitRev": "b3d127a"
+      "ultimaVez": "2026-09-28T13:43:24.042Z",
+      "gitRev": "08cf0a3"
     },
     "TASK_CONCLUIDA_SEM_PROVA::ai-whatsapp-zapi-provider::T-061": {
       "codigo": "TASK_CONCLUIDA_SEM_PROVA",
@@ -2759,10 +2759,487 @@
       "codigo": "VERIFY_OBSOLETO",
       "feature": "ai-organization-runtime-config",
       "ref": "—",
-      "ocorrencias": 2,
+      "ocorrencias": 6,
       "primeiraVez": "2026-09-07T20:55:07.194Z",
-      "ultimaVez": "2026-09-07T22:57:45.353Z",
-      "gitRev": "cb110a7"
+      "ultimaVez": "2026-09-28T13:43:24.042Z",
+      "gitRev": "08cf0a3"
+    },
+    "ARQUIVO_INEXISTENTE::ai-crm-conversation-runtime::T-076": {
+      "codigo": "ARQUIVO_INEXISTENTE",
+      "feature": "ai-crm-conversation-runtime",
+      "ref": "T-076",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-08T01:02:17.255Z",
+      "ultimaVez": "2026-09-08T01:02:17.258Z",
+      "gitRev": "b4714db"
+    },
+    "ARQUIVO_INEXISTENTE::ai-crm-conversation-runtime::T-077": {
+      "codigo": "ARQUIVO_INEXISTENTE",
+      "feature": "ai-crm-conversation-runtime",
+      "ref": "T-077",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-08T01:02:17.258Z",
+      "ultimaVez": "2026-09-08T01:02:17.258Z",
+      "gitRev": "b4714db"
+    },
+    "ARQUIVO_INEXISTENTE::ai-crm-conversation-runtime::T-079": {
+      "codigo": "ARQUIVO_INEXISTENTE",
+      "feature": "ai-crm-conversation-runtime",
+      "ref": "T-079",
+      "ocorrencias": 3,
+      "primeiraVez": "2026-09-08T01:02:17.258Z",
+      "ultimaVez": "2026-09-08T01:24:55.068Z",
+      "gitRev": "b4714db"
+    },
+    "AC_SEM_TESTE::ai-crm-conversation-runtime::AC-457": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-crm-conversation-runtime",
+      "ref": "AC-457",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-08T01:02:17.258Z",
+      "ultimaVez": "2026-09-08T01:02:17.258Z",
+      "gitRev": "b4714db"
+    },
+    "AC_SEM_TESTE::ai-crm-conversation-runtime::AC-458": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-crm-conversation-runtime",
+      "ref": "AC-458",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-08T01:02:17.258Z",
+      "ultimaVez": "2026-09-08T01:02:17.258Z",
+      "gitRev": "b4714db"
+    },
+    "AC_SEM_TESTE::ai-crm-conversation-runtime::AC-459": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-crm-conversation-runtime",
+      "ref": "AC-459",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-08T01:02:17.258Z",
+      "ultimaVez": "2026-09-08T01:02:17.258Z",
+      "gitRev": "b4714db"
+    },
+    "AC_SEM_TESTE::ai-crm-conversation-runtime::AC-460": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-crm-conversation-runtime",
+      "ref": "AC-460",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-08T01:02:17.258Z",
+      "ultimaVez": "2026-09-08T01:02:17.258Z",
+      "gitRev": "b4714db"
+    },
+    "AC_SEM_TESTE::ai-crm-conversation-runtime::AC-461": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-crm-conversation-runtime",
+      "ref": "AC-461",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-08T01:02:17.258Z",
+      "ultimaVez": "2026-09-08T01:02:17.258Z",
+      "gitRev": "b4714db"
+    },
+    "AC_SEM_TESTE::ai-crm-conversation-runtime::AC-462": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-crm-conversation-runtime",
+      "ref": "AC-462",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-08T01:02:17.258Z",
+      "ultimaVez": "2026-09-08T01:02:17.258Z",
+      "gitRev": "b4714db"
+    },
+    "AC_SEM_TESTE::ai-crm-conversation-runtime::AC-463": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-crm-conversation-runtime",
+      "ref": "AC-463",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-08T01:02:17.258Z",
+      "ultimaVez": "2026-09-08T01:02:17.258Z",
+      "gitRev": "b4714db"
+    },
+    "AC_SEM_TESTE::ai-crm-conversation-runtime::AC-464": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-crm-conversation-runtime",
+      "ref": "AC-464",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-08T01:02:17.258Z",
+      "ultimaVez": "2026-09-08T01:02:17.258Z",
+      "gitRev": "b4714db"
+    },
+    "AC_SEM_TESTE::ai-crm-conversation-runtime::AC-465": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-crm-conversation-runtime",
+      "ref": "AC-465",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-08T01:02:17.258Z",
+      "ultimaVez": "2026-09-08T01:02:17.258Z",
+      "gitRev": "b4714db"
+    },
+    "AC_SEM_TESTE::ai-crm-conversation-runtime::AC-466": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-crm-conversation-runtime",
+      "ref": "AC-466",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-08T01:02:17.258Z",
+      "ultimaVez": "2026-09-08T01:02:17.258Z",
+      "gitRev": "b4714db"
+    },
+    "AC_SEM_TESTE::ai-crm-conversation-runtime::AC-467": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-crm-conversation-runtime",
+      "ref": "AC-467",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-08T01:02:17.258Z",
+      "ultimaVez": "2026-09-08T01:02:17.258Z",
+      "gitRev": "b4714db"
+    },
+    "AC_SEM_TESTE::ai-crm-conversation-runtime::AC-468": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-crm-conversation-runtime",
+      "ref": "AC-468",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-08T01:02:17.258Z",
+      "ultimaVez": "2026-09-08T01:02:17.258Z",
+      "gitRev": "b4714db"
+    },
+    "AC_SEM_TESTE::ai-crm-conversation-runtime::AC-469": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-crm-conversation-runtime",
+      "ref": "AC-469",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-08T01:02:17.258Z",
+      "ultimaVez": "2026-09-08T01:02:17.258Z",
+      "gitRev": "b4714db"
+    },
+    "AC_SEM_TESTE::ai-crm-conversation-runtime::AC-470": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-crm-conversation-runtime",
+      "ref": "AC-470",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-08T01:02:17.258Z",
+      "ultimaVez": "2026-09-08T01:02:17.258Z",
+      "gitRev": "b4714db"
+    },
+    "AC_SEM_TESTE::ai-crm-conversation-runtime::AC-471": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-crm-conversation-runtime",
+      "ref": "AC-471",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-08T01:02:17.258Z",
+      "ultimaVez": "2026-09-08T01:02:17.258Z",
+      "gitRev": "b4714db"
+    },
+    "AC_SEM_TESTE::ai-crm-conversation-runtime::AC-472": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-crm-conversation-runtime",
+      "ref": "AC-472",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-08T01:02:17.258Z",
+      "ultimaVez": "2026-09-08T01:02:17.258Z",
+      "gitRev": "b4714db"
+    },
+    "AC_SEM_TESTE::ai-crm-conversation-runtime::AC-473": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-crm-conversation-runtime",
+      "ref": "AC-473",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-08T01:02:17.258Z",
+      "ultimaVez": "2026-09-08T01:02:17.258Z",
+      "gitRev": "b4714db"
+    },
+    "AC_SEM_TESTE::ai-crm-conversation-runtime::AC-474": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-crm-conversation-runtime",
+      "ref": "AC-474",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-08T01:02:17.258Z",
+      "ultimaVez": "2026-09-08T01:02:17.258Z",
+      "gitRev": "b4714db"
+    },
+    "AC_SEM_TESTE::ai-crm-conversation-runtime::AC-475": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-crm-conversation-runtime",
+      "ref": "AC-475",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-08T01:02:17.258Z",
+      "ultimaVez": "2026-09-08T01:02:17.258Z",
+      "gitRev": "b4714db"
+    },
+    "AC_SEM_TESTE::ai-crm-conversation-runtime::AC-476": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-crm-conversation-runtime",
+      "ref": "AC-476",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-08T01:02:17.258Z",
+      "ultimaVez": "2026-09-08T01:02:17.258Z",
+      "gitRev": "b4714db"
+    },
+    "AC_SEM_PROVA::ai-crm-conversation-runtime::AC-457": {
+      "codigo": "AC_SEM_PROVA",
+      "feature": "ai-crm-conversation-runtime",
+      "ref": "AC-457",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-08T01:24:55.068Z",
+      "ultimaVez": "2026-09-08T01:24:55.068Z",
+      "gitRev": "b4714db"
+    },
+    "AC_SEM_PROVA::ai-crm-conversation-runtime::AC-458": {
+      "codigo": "AC_SEM_PROVA",
+      "feature": "ai-crm-conversation-runtime",
+      "ref": "AC-458",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-08T01:24:55.068Z",
+      "ultimaVez": "2026-09-08T01:24:55.068Z",
+      "gitRev": "b4714db"
+    },
+    "AC_SEM_PROVA::ai-crm-conversation-runtime::AC-459": {
+      "codigo": "AC_SEM_PROVA",
+      "feature": "ai-crm-conversation-runtime",
+      "ref": "AC-459",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-08T01:24:55.068Z",
+      "ultimaVez": "2026-09-08T01:24:55.068Z",
+      "gitRev": "b4714db"
+    },
+    "AC_SEM_PROVA::ai-crm-conversation-runtime::AC-460": {
+      "codigo": "AC_SEM_PROVA",
+      "feature": "ai-crm-conversation-runtime",
+      "ref": "AC-460",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-08T01:24:55.068Z",
+      "ultimaVez": "2026-09-08T01:24:55.068Z",
+      "gitRev": "b4714db"
+    },
+    "AC_SEM_PROVA::ai-crm-conversation-runtime::AC-461": {
+      "codigo": "AC_SEM_PROVA",
+      "feature": "ai-crm-conversation-runtime",
+      "ref": "AC-461",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-08T01:24:55.068Z",
+      "ultimaVez": "2026-09-08T01:24:55.068Z",
+      "gitRev": "b4714db"
+    },
+    "AC_SEM_PROVA::ai-crm-conversation-runtime::AC-462": {
+      "codigo": "AC_SEM_PROVA",
+      "feature": "ai-crm-conversation-runtime",
+      "ref": "AC-462",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-08T01:24:55.068Z",
+      "ultimaVez": "2026-09-08T01:24:55.068Z",
+      "gitRev": "b4714db"
+    },
+    "AC_SEM_PROVA::ai-crm-conversation-runtime::AC-463": {
+      "codigo": "AC_SEM_PROVA",
+      "feature": "ai-crm-conversation-runtime",
+      "ref": "AC-463",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-08T01:24:55.068Z",
+      "ultimaVez": "2026-09-08T01:24:55.068Z",
+      "gitRev": "b4714db"
+    },
+    "AC_SEM_PROVA::ai-crm-conversation-runtime::AC-464": {
+      "codigo": "AC_SEM_PROVA",
+      "feature": "ai-crm-conversation-runtime",
+      "ref": "AC-464",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-08T01:24:55.068Z",
+      "ultimaVez": "2026-09-08T01:24:55.068Z",
+      "gitRev": "b4714db"
+    },
+    "AC_SEM_PROVA::ai-crm-conversation-runtime::AC-465": {
+      "codigo": "AC_SEM_PROVA",
+      "feature": "ai-crm-conversation-runtime",
+      "ref": "AC-465",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-08T01:24:55.068Z",
+      "ultimaVez": "2026-09-08T01:24:55.068Z",
+      "gitRev": "b4714db"
+    },
+    "AC_SEM_PROVA::ai-crm-conversation-runtime::AC-466": {
+      "codigo": "AC_SEM_PROVA",
+      "feature": "ai-crm-conversation-runtime",
+      "ref": "AC-466",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-08T01:24:55.068Z",
+      "ultimaVez": "2026-09-08T01:24:55.068Z",
+      "gitRev": "b4714db"
+    },
+    "AC_SEM_PROVA::ai-crm-conversation-runtime::AC-467": {
+      "codigo": "AC_SEM_PROVA",
+      "feature": "ai-crm-conversation-runtime",
+      "ref": "AC-467",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-08T01:24:55.068Z",
+      "ultimaVez": "2026-09-08T01:24:55.068Z",
+      "gitRev": "b4714db"
+    },
+    "AC_SEM_PROVA::ai-crm-conversation-runtime::AC-468": {
+      "codigo": "AC_SEM_PROVA",
+      "feature": "ai-crm-conversation-runtime",
+      "ref": "AC-468",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-08T01:24:55.068Z",
+      "ultimaVez": "2026-09-08T01:24:55.068Z",
+      "gitRev": "b4714db"
+    },
+    "AC_SEM_PROVA::ai-crm-conversation-runtime::AC-469": {
+      "codigo": "AC_SEM_PROVA",
+      "feature": "ai-crm-conversation-runtime",
+      "ref": "AC-469",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-08T01:24:55.068Z",
+      "ultimaVez": "2026-09-08T01:24:55.068Z",
+      "gitRev": "b4714db"
+    },
+    "AC_SEM_PROVA::ai-crm-conversation-runtime::AC-470": {
+      "codigo": "AC_SEM_PROVA",
+      "feature": "ai-crm-conversation-runtime",
+      "ref": "AC-470",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-08T01:24:55.068Z",
+      "ultimaVez": "2026-09-08T01:24:55.068Z",
+      "gitRev": "b4714db"
+    },
+    "AC_SEM_PROVA::ai-crm-conversation-runtime::AC-471": {
+      "codigo": "AC_SEM_PROVA",
+      "feature": "ai-crm-conversation-runtime",
+      "ref": "AC-471",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-08T01:24:55.068Z",
+      "ultimaVez": "2026-09-08T01:24:55.068Z",
+      "gitRev": "b4714db"
+    },
+    "AC_SEM_PROVA::ai-crm-conversation-runtime::AC-472": {
+      "codigo": "AC_SEM_PROVA",
+      "feature": "ai-crm-conversation-runtime",
+      "ref": "AC-472",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-08T01:24:55.068Z",
+      "ultimaVez": "2026-09-08T01:24:55.068Z",
+      "gitRev": "b4714db"
+    },
+    "AC_SEM_PROVA::ai-crm-conversation-runtime::AC-473": {
+      "codigo": "AC_SEM_PROVA",
+      "feature": "ai-crm-conversation-runtime",
+      "ref": "AC-473",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-08T01:24:55.068Z",
+      "ultimaVez": "2026-09-08T01:24:55.068Z",
+      "gitRev": "b4714db"
+    },
+    "AC_SEM_PROVA::ai-crm-conversation-runtime::AC-474": {
+      "codigo": "AC_SEM_PROVA",
+      "feature": "ai-crm-conversation-runtime",
+      "ref": "AC-474",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-08T01:24:55.068Z",
+      "ultimaVez": "2026-09-08T01:24:55.068Z",
+      "gitRev": "b4714db"
+    },
+    "AC_SEM_PROVA::ai-crm-conversation-runtime::AC-475": {
+      "codigo": "AC_SEM_PROVA",
+      "feature": "ai-crm-conversation-runtime",
+      "ref": "AC-475",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-08T01:24:55.068Z",
+      "ultimaVez": "2026-09-08T01:24:55.068Z",
+      "gitRev": "b4714db"
+    },
+    "AC_SEM_PROVA::ai-crm-conversation-runtime::AC-476": {
+      "codigo": "AC_SEM_PROVA",
+      "feature": "ai-crm-conversation-runtime",
+      "ref": "AC-476",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-08T01:24:55.068Z",
+      "ultimaVez": "2026-09-08T01:24:55.068Z",
+      "gitRev": "b4714db"
+    },
+    "VERIFY_OBSOLETO::ai-crm-conversation-runtime::—": {
+      "codigo": "VERIFY_OBSOLETO",
+      "feature": "ai-crm-conversation-runtime",
+      "ref": "—",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-28T13:43:24.042Z",
+      "ultimaVez": "2026-09-28T13:43:24.042Z",
+      "gitRev": "08cf0a3"
+    },
+    "AC_SEM_TESTE::ai-whatsapp-zapi-provider::AC-477": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-whatsapp-zapi-provider",
+      "ref": "AC-477",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-28T13:43:24.042Z",
+      "ultimaVez": "2026-09-28T13:43:24.042Z",
+      "gitRev": "08cf0a3"
+    },
+    "AC_SEM_TESTE::ai-whatsapp-zapi-provider::AC-478": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-whatsapp-zapi-provider",
+      "ref": "AC-478",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-28T13:43:24.042Z",
+      "ultimaVez": "2026-09-28T13:43:24.042Z",
+      "gitRev": "08cf0a3"
+    },
+    "AC_SEM_TESTE::ai-whatsapp-zapi-provider::AC-479": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-whatsapp-zapi-provider",
+      "ref": "AC-479",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-28T13:43:24.042Z",
+      "ultimaVez": "2026-09-28T13:43:24.042Z",
+      "gitRev": "08cf0a3"
+    },
+    "AC_SEM_TESTE::ai-whatsapp-zapi-provider::AC-480": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-whatsapp-zapi-provider",
+      "ref": "AC-480",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-28T13:43:24.042Z",
+      "ultimaVez": "2026-09-28T13:43:24.042Z",
+      "gitRev": "08cf0a3"
+    },
+    "AC_SEM_TESTE::ai-whatsapp-zapi-provider::AC-481": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-whatsapp-zapi-provider",
+      "ref": "AC-481",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-28T13:43:24.042Z",
+      "ultimaVez": "2026-09-28T13:43:24.042Z",
+      "gitRev": "08cf0a3"
+    },
+    "AC_SEM_TESTE::ai-whatsapp-zapi-provider::AC-482": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-whatsapp-zapi-provider",
+      "ref": "AC-482",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-28T13:43:24.042Z",
+      "ultimaVez": "2026-09-28T13:43:24.042Z",
+      "gitRev": "08cf0a3"
+    },
+    "AC_SEM_TESTE::ai-whatsapp-zapi-provider::AC-483": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-whatsapp-zapi-provider",
+      "ref": "AC-483",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-28T13:43:24.042Z",
+      "ultimaVez": "2026-09-28T13:43:24.042Z",
+      "gitRev": "08cf0a3"
+    },
+    "AC_SEM_TESTE::ai-whatsapp-zapi-provider::AC-484": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-whatsapp-zapi-provider",
+      "ref": "AC-484",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-28T13:43:24.042Z",
+      "ultimaVez": "2026-09-28T13:43:24.042Z",
+      "gitRev": "08cf0a3"
+    },
+    "ARQUIVO_ORFAO::—::src/ai_agent_runtime/crm_dispatch.py": {
+      "codigo": "ARQUIVO_ORFAO",
+      "feature": "—",
+      "ref": "src/ai_agent_runtime/crm_dispatch.py",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-09-28T13:43:24.042Z",
+      "ultimaVez": "2026-09-28T13:43:24.042Z",
+      "gitRev": "08cf0a3"
     }
   }
 }
