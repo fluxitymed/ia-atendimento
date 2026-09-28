@@ -100,3 +100,13 @@ AI_LOCATIONS
 5. Configure na Z-API a URL publica HTTPS do Render para `POST /webhooks/zapi/whatsapp`.
 6. Verifique `GET /health`.
 7. Envie uma mensagem para a instancia Z-API e confirme logs `zapi_webhook_ingress_received`, `organization_resolved`, `conversation_resolved`, `runtime_started`, `response_generated` e `outbound_sent`.
+
+## Confiabilidade e latencia
+
+A revisao de setembro de 2026 exige um unico servidor/destino ativo sobre o disco persistente. O processo adquire `.service.lock` junto ao store e recusa outro servidor no mesmo arquivo. `WEB_CONCURRENCY` nao controla este ThreadingHTTPServer. Nao iniciar um segundo destino com outro disco.
+
+O HTTP aceita trabalho depois da reserva duravel e processa chamadas remotas fora da thread HTTP. Saturacao retorna 503 com Retry-After. Claims de turnos e intencoes outbound nao expiram nem sao reprocessados automaticamente apos restart; falha ambigua pode exigir reconciliacao manual, sem apagar o store.
+
+Acompanhar `turn_latency_summary`, `slow_retrieval`, `slow_model_call`, `slow_outbound`, `slow_turn`, `outbound_outcome_unknown`, `ingress_processing_failed` e `webhook_capacity_exceeded`. As metricas distinguem fila/batch, lock, retrieval, modelo e outbound sem incluir conteudo do paciente.
+
+Detalhes de causas, limites, testes e operacao: [relatorio de confiabilidade](reliability-report.md).

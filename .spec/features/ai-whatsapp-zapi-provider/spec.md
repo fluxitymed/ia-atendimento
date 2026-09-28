@@ -1347,3 +1347,65 @@ Como operador do sandbox comercial, quero rodar o servidor Z-API em um Render We
 ## Perguntas em aberto
 
 Nenhuma.
+
+## Confiabilidade operacional — setembro 2026
+
+### US-113 — Turno automatico no maximo uma vez e latencia observavel
+
+Como operador, quero impedir respostas duplicadas e localizar atrasos por estagio, preservando comportamento textual, RAG, grounding, handoff e credenciais multi-tenant.
+
+#### AC-477 — Reserva concorrente e durável
+
+- **Dado** callbacks repetidos e concorrentes, incluindo dois processos no mesmo store
+- **Quando** o mesmo providerMessageId e processado
+- **Entao** somente um claim persistido permite runtime e outbound, inclusive apos reload
+
+#### AC-478 — Timers pertencem ao lote
+
+- **Dado** DEBOUNCE, MAX_WAIT e callbacks cancelados em corrida
+- **Quando** um lote e destacado para flush
+- **Entao** um unico flush ocorre e callbacks antigos nao removem o lote seguinte
+
+#### AC-479 — Serializacao sem bloquear outras conversas
+
+- **Dado** mensagens novas durante flush e caminhos sem batching
+- **Quando** o processamento concorre
+- **Entao** a mesma conversa e serializada e conversas distintas progridem independentemente
+
+#### AC-480 — Envio ambiguo nao e repetido
+
+- **Dado** falha antes do envio, durante envio ou apos sucesso antes do record
+- **Quando** um callback e repetido ou o processo reinicia
+- **Entao** claim terminal impede nova geracao e a intencao outbound persistida impede reenvio automatico
+
+#### AC-481 — HTTP aceita antes de trabalho remoto
+
+- **Dado** callbacks de texto, audio ou early flush
+- **Quando** o servidor HTTP aceita trabalho dentro da capacidade
+- **Entao** responde sem esperar runtime ou STT; saturacao retorna 503 sem consumir claim e duplicatas aceitas nao reenfileiram
+
+#### AC-482 — Latencia correlacionada e privada
+
+- **Dado** relogio controlado e estagios retrieval, modelo e outbound
+- **Quando** o turno termina ou excede limiar
+- **Entao** timestamps, oito latencias e turn_latency_summary sao emitidos sem conteudo/PII; slow_retrieval, slow_model_call, slow_outbound e slow_turn avisam inclusive durante chamada bloqueada
+
+#### AC-483 — Callbacks e identidade preservados
+
+- **Dado** fromMe, status, aliases phone/LID e organizacoes distintas
+- **Quando** webhooks sao recebidos
+- **Entao** callbacks proprios/status nao invocam runtime e aliases mantem isolamento por organizacao
+
+#### AC-484 — Persistencia falha fechada
+
+- **Dado** store corrompido ou escrita interrompida
+- **Quando** o processo abre ou atualiza o store
+- **Entao** nao aceita historico vazio silencioso e nenhum outbound acontece sem intencao duravel
+
+### Suposicoes desta revisao
+
+Nenhuma garantia de entrega exatamente uma vez e assumida: timeout outbound e terminal ambiguo e exige reconciliacao operacional. O escopo duravel e um disco persistente compartilhado pelos processos; hosts com discos independentes precisam de um coordenador compartilhado antes de habilitar dois destinos. Mesmo texto com IDs diferentes nao prova duplicidade.
+
+### Perguntas desta revisao
+
+Nenhuma decisao de produto pendente. A atribuicao dos incidentes A/B/C depende de logs de producao, indisponiveis nesta revisao local.

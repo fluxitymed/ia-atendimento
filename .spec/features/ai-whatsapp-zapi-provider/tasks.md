@@ -155,3 +155,17 @@
 - Refs: US-092, US-106, AC-344, AC-345, AC-346, AC-347, AC-348, AC-349, AC-350, AC-436, AC-437, AC-438, AC-439, AC-440, AC-441, AC-442, AC-443, AC-444, AC-445
 - Arquivos: .spec/features/ai-whatsapp-zapi-provider/spec.md, .spec/features/ai-whatsapp-zapi-provider/tasks.md, src/ai_agent_runtime/sandbox_ids.py, src/ai_agent_runtime/sandbox/dataset.py, src/ai_agent_runtime/sandbox/supabase_smoke.py, src/ai_agent_runtime/whatsapp/zapi_server.py, test/ai-agent-live-sandbox/live-sandbox.test.js, test/ai-whatsapp-zapi-provider/zapi-runtime.test.js
 - Notas: Nova fonte `Briefing_Assistente_Comercial_Dr_Leonardo_Carvalho.pdf` substitui a fonte anterior; v3 fica current/PUBLISHED, v1/v2 ficam SUPERSEDED, sala Pituba passa a 4022 e regras Carvalho de agenda/handoff ficam escopadas. Publicacao live via pipeline Supabase/OpenAI embeddings retornou `LIVE_VERIFIED`, com 5 document_versions v3 current/PUBLISHED, 10 versoes antigas superseded/non-current, 5 chunks current da Carvalho e isolamento cross-org validado.
+
+## T-080 — Corrigir claims duraveis, serializacao e envio ambiguo [concluida]
+- Refs: US-113, AC-477, AC-479, AC-480, AC-483, AC-484
+- Arquivos: src/ai_agent_runtime/whatsapp/channel.py, src/ai_agent_runtime/whatsapp/adapter.py, src/ai_agent_runtime/graph.py, test/ai-whatsapp-zapi-provider/zapi-reliability.test.js, test/ai-whatsapp-zapi-provider/reliability_cases.py, .spec/features/ai-whatsapp-zapi-provider/reliability-design.md
+
+## T-081 — Corrigir timers e desacoplar aceite HTTP [concluida]
+- Refs: US-113, AC-478, AC-481
+- Arquivos: src/ai_agent_runtime/whatsapp/batching.py, src/ai_agent_runtime/whatsapp/zapi_webhook.py, src/ai_agent_runtime/whatsapp/ingress.py, test/ai-whatsapp-zapi-provider/zapi-reliability.test.js, test/ai-whatsapp-zapi-provider/reliability_cases.py, .spec/features/ai-whatsapp-zapi-provider/reliability-design.md
+
+## T-082 — Instrumentar latencias e verificar regressao [concluida]
+- Refs: US-113, AC-482
+- Arquivos: src/ai_agent_runtime/whatsapp/latency.py, src/ai_agent_runtime/whatsapp/zapi_server.py, src/ai_agent_runtime/crm_dispatch.py, test/ai-crm-dispatch/crm-dispatch.test.js, test/ai-whatsapp-zapi-provider/zapi-reliability.test.js, test/ai-whatsapp-zapi-provider/reliability_cases.py, .spec/features/ai-whatsapp-zapi-provider/reliability-design.md
+
+- Notas da T-082: `crm_dispatch.py` e consumidor existente do graph compartilhado; foi inspecionado e coberto pela regressao existente de dispatch, sem alteracao funcional. Seu mapeamento de auditoria estava ausente antes desta revisao. Plano gerado e apenas referencia; execucao manual nesta sessao, sem iniciar o executor/modelos sugeridos.
