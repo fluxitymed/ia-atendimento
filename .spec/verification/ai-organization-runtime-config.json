@@ -1,11 +1,11 @@
 {
   "feature": "ai-organization-runtime-config",
-  "timestamp": "2026-09-28T13:48:42.703Z",
-  "gitRev": "08cf0a3",
+  "timestamp": "2026-09-30T00:21:50.725Z",
+  "gitRev": "0e966eb",
   "command": "node --test --test-reporter=tap",
   "reporter": "tap",
   "exitCode": 0,
-  "testsParsed": 266,
+  "testsParsed": 275,
   "results": {
     "AC-421": {
       "status": "pass",
@@ -80,6 +80,51 @@
     "AC-435": {
       "status": "pass",
       "testName": "@spec:AC-434 @spec:AC-435 env example and docs preserve legacy fallback and OpenAI project setup",
+      "method": "tap"
+    },
+    "AC-485": {
+      "status": "pass",
+      "testName": "@spec:AC-485 @spec:AC-486 @spec:AC-491 explicit source controls precedence and never masks inactive/config/network errors",
+      "method": "tap"
+    },
+    "AC-486": {
+      "status": "pass",
+      "testName": "@spec:AC-485 @spec:AC-486 @spec:AC-491 explicit source controls precedence and never masks inactive/config/network errors",
+      "method": "tap"
+    },
+    "AC-487": {
+      "status": "pass",
+      "testName": "@spec:AC-487 @spec:AC-490 @spec:AC-492 Vault provider scopes refs to each organization and rejects ambiguity or missing secrets",
+      "method": "tap"
+    },
+    "AC-488": {
+      "status": "pass",
+      "testName": "@spec:AC-487 @spec:AC-488 Supabase graph chooses Vault over global OpenAI and ZAPI envs",
+      "method": "tap"
+    },
+    "AC-489": {
+      "status": "pass",
+      "testName": "@spec:AC-488 @spec:AC-489 @spec:AC-490 three concurrent CRM dispatches keep config and graph memory isolated without env changes",
+      "method": "tap"
+    },
+    "AC-490": {
+      "status": "pass",
+      "testName": "@spec:AC-487 @spec:AC-490 @spec:AC-492 Vault provider scopes refs to each organization and rejects ambiguity or missing secrets",
+      "method": "tap"
+    },
+    "AC-491": {
+      "status": "pass",
+      "testName": "@spec:AC-485 @spec:AC-486 @spec:AC-491 explicit source controls precedence and never masks inactive/config/network errors",
+      "method": "tap"
+    },
+    "AC-492": {
+      "status": "pass",
+      "testName": "@spec:AC-487 @spec:AC-490 @spec:AC-492 Vault provider scopes refs to each organization and rejects ambiguity or missing secrets",
+      "method": "tap"
+    },
+    "AC-493": {
+      "status": "pass",
+      "testName": "@spec:AC-487 @spec:AC-492 @spec:AC-493 migration restricts Vault RPC to service_role and keeps old adapter source untouched",
       "method": "tap"
     }
   },

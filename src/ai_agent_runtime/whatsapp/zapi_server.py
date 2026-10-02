@@ -7,6 +7,7 @@ import re
 import socket
 import time
 from dataclasses import replace
+from datetime import datetime, timezone
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from os import environ
 from pathlib import Path
@@ -634,6 +635,22 @@ class OpenAIWhatsAppResponseGenerator:
         )
 
 
+def _current_document_version(row: dict[str, Any], now: datetime) -> bool:
+    for field, past_boundary in (("effective_from", True), ("effective_until", False)):
+        raw = row.get(field)
+        if raw is None:
+            continue
+        if not isinstance(raw, str):
+            return False
+        try:
+            boundary = datetime.fromisoformat(raw.replace("Z", "+00:00"))
+        except ValueError:
+            return False
+        if boundary.tzinfo is None or (boundary > now if past_boundary else boundary < now):
+            return False
+    return True
+
+
 class ZApiRuntimeRetrieval:
     def __init__(self, *, supabase_url: str, service_role_key: str):
         self.supabase_url = supabase_url
@@ -665,19 +682,21 @@ class ZApiRuntimeRetrieval:
 
     def _published_processed_version_ids(self, organization_id: str) -> set[str]:
         params = {
-            "select": "id,status,processing_valid,organization_id",
+            "select": "id,status,processing_valid,organization_id,effective_from,effective_until",
             "organization_id": f"eq.{organization_id}",
             "status": "eq.PUBLISHED",
             "processing_valid": "is.true",
             "limit": "100",
         }
         rows = self._get_json("document_versions", params, endpoint="rest/v1/document_versions")
+        now = datetime.now(timezone.utc)
         return {
             str(row.get("id"))
             for row in rows
             if row.get("organization_id") == organization_id
             and row.get("status") == "PUBLISHED"
             and row.get("processing_valid") is True
+            and _current_document_version(row, now)
             and row.get("id")
         }
 
@@ -743,7 +762,7 @@ class ZApiRuntimeRetrieval:
         versions = self._get_json(
             "document_versions",
             {
-                "select": "id,document_id,organization_id,status,processing_valid,knowledge_mode,closed_world_completeness_approved",
+                "select": "id,document_id,organization_id,status,processing_valid,knowledge_mode,closed_world_completeness_approved,effective_from,effective_until",
                 "organization_id": f"eq.{organization_id}",
                 "document_id": f"in.({','.join(sorted(document_ids))})",
                 "status": "eq.PUBLISHED",
@@ -754,6 +773,7 @@ class ZApiRuntimeRetrieval:
             },
             endpoint="rest/v1/document_versions",
         )
+        now = datetime.now(timezone.utc)
         return {
             str(row.get("id"))
             for row in versions
@@ -761,6 +781,7 @@ class ZApiRuntimeRetrieval:
             and row.get("document_id") in document_ids
             and row.get("status") == "PUBLISHED"
             and row.get("processing_valid") is True
+            and _current_document_version(row, now)
             and row.get("knowledge_mode") == "CLOSED_WORLD"
             and row.get("closed_world_completeness_approved") is True
             and row.get("id")

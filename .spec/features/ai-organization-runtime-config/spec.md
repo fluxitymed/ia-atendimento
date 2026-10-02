@@ -140,15 +140,83 @@ Como responsavel pelo MVP em producao, quero ativar multi-tenancy sem regredir o
 - Criar ou automatizar OpenAI Projects no painel da OpenAI.
 - Implementar CRM.
 - Alterar RAG, grounding, politica medica, calendar, batching, audio ou handoff alem da injecao minima de configuracao/credencial.
-- Migrar secrets para um vault externo definitivo.
+- Migrar secrets dos adapters legados para um vault externo definitivo; o
+  endpoint CRM deste cutover usa o Supabase Vault na mesma base da IA.
 - Calcular preco real de tokens por modelo nesta etapa.
 - Duplicar documentos ou conhecimento da organizacao Carvalho.
+
+## Cutover do endpoint CRM multi-tenant
+
+O endpoint autenticado `/internal/crm/whatsapp-dispatch` usa `organizationId`
+como autoridade de tenant. O contrato v2 valida tambem `providerConnectionId`,
+`conversationId`, `logicalTurnId`, `constituentMessageIds` e `modeVersion`.
+O canal Z-API legado e suas regras de resolucao de instancia permanecem fora
+deste cutover.
+
+### US-114 — Runtime CRM sem configuracao por cliente em env
+
+Como operador multi-tenant, quero cadastrar configuracao e credencial de um
+novo cliente no Supabase/Vault, para atende-lo sem editar o deploy da IA.
+
+#### AC-485 — Fonte de configuracao explicita e fail closed
+
+- **Dado** `ORGANIZATION_CONFIG_SOURCE=supabase|env|hybrid`
+- **Quando** o endpoint CRM carrega uma organizacao
+- **Entao** `supabase` usa apenas Supabase, `env` usa apenas o mapa legado e `hybrid` consulta Supabase primeiro e usa env apenas para linha ausente; erro de transporte, organizacao inativa ou config inativa/incompleta nunca acionam fallback
+
+#### AC-486 — Configuracao institucional vem da propria organizacao
+
+- **Dado** linhas ativas em `organizations` e `organization_ai_configs`
+- **Quando** o dispatch CRM e processado
+- **Entao** identidade, regras comerciais e status da propria organizacao entram no grafo; ausencia de linha ou `assistant_name` obrigatorio rejeita sem usar tenant default
+
+#### AC-487 — Credencial OpenAI isolada por Vault
+
+- **Dado** uma linha ativa `organization_credentials` para `OPENAI` com `credential_ref=vault:<uuid>`
+- **Quando** o grafo pede OpenAI para seu `organizationId`
+- **Entao** apenas o secret do Vault vinculado a essa linha e entregue ao provider; ausencia, referencia cruzada, linha duplicada ou indisponibilidade rejeita sem env global no modo `supabase`
+
+#### AC-488 — Contrato CRM e logs seguros
+
+- **Dado** um evento v2 autenticado pelo service token
+- **Quando** o runtime valida e processa o dispatch
+- **Entao** IDs obrigatorios e versao do turno sao validados, o tenant nao muda com telefone/historico/ZAPI env, e logs de fonte/config/credencial/rejeicao incluem somente metadados seguros
+
+#### AC-489 — RAG e estado isolados em tres tenants
+
+- **Dado** A, B e C com configuracoes, refs e bases de conhecimento distintas
+- **Quando** tres dispatches concorrem no mesmo processo
+- **Entao** cada busca RAG e grafo usa apenas seu `organizationId`, sua memoria de conversa e sua credencial, preservando filtros de versao publicada, vigente e processada-validamente
+
+#### AC-490 — Novo cliente sem env ou deploy por cliente
+
+- **Dado** A ja atendido com Supabase/Vault
+- **Quando** B e cadastrado nas tabelas e no Vault sem mudar env/codigo
+- **Entao** um novo dispatch de B e atendido com sua propria configuracao e credencial
+
+#### AC-491 — Legacy e hybrid sao opt-in
+
+- **Dado** JSON/env legado e configuracao Supabase
+- **Quando** `ORGANIZATION_CONFIG_SOURCE` e `env` ou `hybrid`
+- **Entao** `env` preserva comportamento de desenvolvimento/rollback, enquanto `hybrid` so usa env para config ausente e nunca para substituir secret Vault ausente ou falho da organizacao ja cadastrada
+
+#### AC-492 — Secret nao fica em tabela publica nem em log
+
+- **Dado** a funcao de leitura de credencial OpenAI
+- **Quando** e chamada pelo runtime
+- **Entao** somente `service_role` pode executa-la, ela filtra `organization_id`, provider, status e ref Vault, e nenhum valor de secret aparece em linha publica ou evento de log
+
+#### AC-493 — Regressoes comerciais e v1 permanecem
+
+- **Dado** o endpoint CRM v1 e o adapter Z-API legado
+- **Quando** suas suites rodam apos o cutover
+- **Entao** os contratos anteriores continuam validos sem mudar prompts, regras comerciais ou outbound
 
 ## Suposições
 
 | ID | Suposição | Status | Resolução |
 |---|---|---|---|
-| ASM-040 | O Render continuara recebendo secrets por variaveis de ambiente no curto prazo. | confirmada | A feature usa `credential_ref` para apontar para nomes de env vars, sem persistir valor dos secrets. |
+| ASM-040 | O Render continuara recebendo secrets por variaveis de ambiente no curto prazo para adapters legados. | confirmada | O endpoint CRM em modo `supabase` usa `credential_ref` do banco e Supabase Vault; o fluxo Z-API legado preserva seu mecanismo ate cutover separado. |
 | ASM-041 | O MVP Carvalho deve continuar usando fallback global ate o cadastro completo estar disponivel. | confirmada | Backward compatibility e requisito explicito desta feature. |
 | ASM-042 | `estimated_cost_usd` pode ser nulo ate haver tabela de precos oficial por modelo. | confirmada | A feature registra tokens reais quando retornados e nao inventa custo. |
 
@@ -156,4 +224,4 @@ Como responsavel pelo MVP em producao, quero ativar multi-tenancy sem regredir o
 
 | ID | Pergunta | Status | Resposta |
 |---|---|---|---|
-| Q-008 | Qual vault externo definitivo sera usado para secrets em producao multi-cliente? | respondida | Fora do escopo desta etapa; por ora secrets ficam em env vars seguras por `credential_ref`. |
+| Q-008 | Qual vault externo definitivo sera usado para secrets em producao multi-cliente? | respondida | Para o endpoint CRM deste cutover, usar Supabase Vault com funcao restrita a `service_role`; a migracao dos adapters legados continua fora do escopo. |

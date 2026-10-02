@@ -4,7 +4,8 @@ from __future__ import annotations
 
 import hmac
 import json
-from dataclasses import asdict
+import logging
+from dataclasses import asdict, replace
 from datetime import datetime
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from os import environ
@@ -19,6 +20,7 @@ from ai_agent_runtime.organization_config import (
     EnvironmentOrganizationConfigRepository,
     OrganizationRuntimeConfig,
     SupabaseOrganizationTransport,
+    SupabaseVaultCredentialProvider,
     organization_runtime_config_from_mapping,
 )
 from ai_agent_runtime.state import AgentDecision, AgentState
@@ -33,6 +35,13 @@ _EVENT_FIELDS = {
     "providerConnectionId", "contactId", "inboundMessageId", "mode",
     "modeVersion", "message",
 }
+_V2_EVENT_FIELDS = _EVENT_FIELDS | {
+    "logicalTurnId", "constituentMessageIds", "latestInboundCreatedAt",
+}
+
+
+def _safe_crm_log(event: str, fields: dict[str, Any]) -> None:
+    logging.getLogger("ai_agent_runtime.crm_dispatch").info("%s %s", event, json.dumps(fields, sort_keys=True))
 
 
 def _uuid(value: Any) -> bool:
@@ -54,9 +63,12 @@ def _timestamp(value: Any) -> bool:
 
 
 def validate_dispatch_event(event: Any) -> dict[str, Any]:
-    if not isinstance(event, dict) or set(event) not in (_EVENT_FIELDS, _EVENT_FIELDS | {"history"}):
+    if not isinstance(event, dict):
         raise ValueError("INVALID_REQUEST")
-    if event["version"] != "1" or event["mode"] != "AI" or not isinstance(event["modeVersion"], int) or \
+    fields = _EVENT_FIELDS if event.get("version") == "1" else _V2_EVENT_FIELDS
+    if set(event) not in (fields, fields | {"history"}):
+        raise ValueError("INVALID_REQUEST")
+    if event["version"] not in {"1", "2"} or event["mode"] != "AI" or not isinstance(event["modeVersion"], int) or \
             isinstance(event["modeVersion"], bool) or event["modeVersion"] < 0 or \
             any(not _uuid(event[key]) for key in (
                 "correlationId", "organizationId", "conversationId", "providerConnectionId", "inboundMessageId"
@@ -68,6 +80,14 @@ def validate_dispatch_event(event: Any) -> dict[str, Any]:
             not message["text"].strip() or len(message["text"]) > 4096 or "\x00" in message["text"] or \
             not _timestamp(message["timestamp"]):
         raise ValueError("INVALID_REQUEST")
+    if event["version"] == "2":
+        members = event["constituentMessageIds"]
+        if not _uuid(event["logicalTurnId"]) or not isinstance(members, list) or \
+                not members or any(not _uuid(item) for item in members) or \
+                len(set(members)) != len(members) or members[0] != event["inboundMessageId"] or \
+                not _timestamp(event["latestInboundCreatedAt"]) or \
+                event["latestInboundCreatedAt"] != message["timestamp"]:
+            raise ValueError("INVALID_REQUEST")
     history = event.get("history", [])
     if not isinstance(history, list) or len(history) > MAX_HISTORY:
         raise ValueError("INVALID_REQUEST")
@@ -83,35 +103,49 @@ def validate_dispatch_event(event: Any) -> dict[str, Any]:
 class StrictCrmOrganizationConfigRepository:
     """No legacy/default tenant fallback on the CRM dispatch path."""
 
-    def __init__(self, *, environment_json: str | None = None, transport=None):
+    def __init__(self, *, environment_json: str | None = None, transport=None, source: str = "supabase"):
         self.environment = EnvironmentOrganizationConfigRepository(environment_json)
         self.transport = transport
+        if source not in {"supabase", "env", "hybrid"}:
+            raise ValueError("INVALID_ORGANIZATION_CONFIG_SOURCE")
+        self.source = source
 
     @classmethod
     def from_environment(cls) -> "StrictCrmOrganizationConfigRepository":
         url, key = environ.get("SUPABASE_URL"), environ.get("SUPABASE_SERVICE_ROLE_KEY")
         transport = SupabaseOrganizationTransport(supabase_url=url, service_role_key=key) if url and key else None
-        return cls(environment_json=environ.get("ORGANIZATION_RUNTIME_CONFIG_JSON"), transport=transport)
+        return cls(environment_json=environ.get("ORGANIZATION_RUNTIME_CONFIG_JSON"), transport=transport,
+                   source=environ.get("ORGANIZATION_CONFIG_SOURCE", "supabase"))
 
     def get_by_organization_id(self, organization_id: str) -> OrganizationRuntimeConfig | None:
+        if self.source == "env":
+            config = self.environment.get_by_organization_id(organization_id)
+            return replace(config, source="env") if config else None
         if self.transport is None:
-            return self.environment.get_by_organization_id(organization_id)
+            raise RuntimeError("ORGANIZATION_CONFIG_TRANSPORT_UNAVAILABLE")
         organizations = self.transport.get("organizations", {
             "select": "id,name,status", "id": f"eq.{organization_id}", "limit": "1",
         })
+        if not organizations and self.source == "hybrid":
+            config = self.environment.get_by_organization_id(organization_id)
+            return replace(config, source="env") if config else None
         if len(organizations) != 1 or organizations[0].get("id") != organization_id or \
                 organizations[0].get("status") not in {"active", "ACTIVE"}:
             return None
         configs = self.transport.get("organization_ai_configs", {
             "select": "*", "organization_id": f"eq.{organization_id}", "limit": "1",
         })
-        if len(configs) != 1 or configs[0].get("organization_id") != organization_id:
+        if len(configs) != 1 or configs[0].get("organization_id") != organization_id or \
+                configs[0].get("status") not in {"active", "ACTIVE"} or \
+                not isinstance(configs[0].get("assistant_name"), str) or \
+                not configs[0]["assistant_name"].strip():
             return None
         row = {**organizations[0], **configs[0], "status": organizations[0]["status"]}
-        return organization_runtime_config_from_mapping(organization_id, row)
+        config = organization_runtime_config_from_mapping(organization_id, row)
+        return replace(config, source="supabase")
 
 
-def _default_graph(config: OrganizationRuntimeConfig) -> AgentRuntimeGraph:
+def _default_graph(config: OrganizationRuntimeConfig, *, logger) -> AgentRuntimeGraph:
     # Reuse the existing commercial generator, without constructing a WhatsApp provider.
     integrations = IntegrationConfig(
         openai_api_key="organization-scoped-openai-key",
@@ -124,25 +158,67 @@ def _default_graph(config: OrganizationRuntimeConfig) -> AgentRuntimeGraph:
             supabase_url=environ["SUPABASE_URL"],
             service_role_key=environ["SUPABASE_SERVICE_ROLE_KEY"],
         )
+    if config.source == "supabase":
+        credential_provider = SupabaseVaultCredentialProvider(transport=SupabaseOrganizationTransport(
+            supabase_url=environ.get("SUPABASE_URL", ""),
+            service_role_key=environ.get("SUPABASE_SERVICE_ROLE_KEY", ""),
+        ))
+        preloaded_credential = credential_provider.get_credential(config.organization_id, "OPENAI")
+        if preloaded_credential is None:
+            raise RuntimeError("ORGANIZATION_CREDENTIAL_NOT_FOUND")
+        logger("organization_credential_resolved", {
+            "organizationId": config.organization_id, "source": "supabase",
+            "credentialRef": preloaded_credential.credential_ref,
+        })
+    else:
+        credential_provider = EnvironmentCredentialProvider(environ.get("ORGANIZATION_CREDENTIALS_JSON"))
+        preloaded_credential = None
+
+    class LoggingCredentialProvider:
+        def get_credential(self, organization_id: str, provider: str):
+            if preloaded_credential is not None:
+                credential = preloaded_credential if organization_id == config.organization_id and \
+                    provider.upper() == "OPENAI" else None
+            else:
+                credential = credential_provider.get_credential(organization_id, provider)
+            if credential and preloaded_credential is None:
+                logger("organization_credential_resolved", {
+                    "organizationId": organization_id, "source": config.source,
+                    "credentialRef": credential.credential_ref,
+                })
+            return credential
+
     generator = OpenAIWhatsAppResponseGenerator(
         OpenAIResponsesProvider(integrations),
         retrieval=retrieval,
         organization_config=config.to_commercial_config(),
-        credential_provider=EnvironmentCredentialProvider(environ.get("ORGANIZATION_CREDENTIALS_JSON")),
+        credential_provider=LoggingCredentialProvider(),
     )
     return AgentRuntimeGraph(response_generator=generator)
 
 
 class CrmDispatchProcessor:
-    def __init__(self, *, config_repository=None, graph_factory=None):
+    def __init__(self, *, config_repository=None, graph_factory=None, logger=None):
         self.config_repository = config_repository or StrictCrmOrganizationConfigRepository.from_environment()
-        self.graph_factory = graph_factory or _default_graph
+        self.graph_factory = graph_factory
+        self.logger = logger or _safe_crm_log
 
     def process(self, event: dict[str, Any]) -> dict[str, Any]:
         event = validate_dispatch_event(event)
-        config = self.config_repository.get_by_organization_id(event["organizationId"])
+        try:
+            config = self.config_repository.get_by_organization_id(event["organizationId"])
+        except Exception:
+            self.logger("organization_runtime_rejected", {"organizationId": event["organizationId"],
+                         "reason": "CONFIG_LOOKUP_FAILED"})
+            raise
         if not config or config.organization_id != event["organizationId"] or not config.is_active():
+            self.logger("organization_runtime_rejected", {"organizationId": event["organizationId"],
+                         "reason": "CONFIG_UNAVAILABLE"})
             raise RuntimeError("RUNTIME_UNAVAILABLE")
+        self.logger("organization_config_source_resolved", {"organizationId": config.organization_id,
+                    "source": config.source})
+        self.logger("organization_runtime_config_loaded", {"organizationId": config.organization_id,
+                    "source": config.source, "configStatus": config.status})
         history = [{
             "direction": "inbound" if item["role"] == "contact" else "outbound",
             "senderType": item["role"], "text": item["text"], "timestamp": item["timestamp"],
@@ -153,7 +229,13 @@ class CrmDispatchProcessor:
             context={"currentMessageAt": event["message"]["timestamp"],
                      "organizationConfig": asdict(config.to_commercial_config())},
         )
-        outcome = self.graph_factory(config).run(state)
+        try:
+            graph = self.graph_factory(config) if self.graph_factory else _default_graph(config, logger=self.logger)
+            outcome = graph.run(state)
+        except Exception:
+            self.logger("organization_runtime_rejected", {"organizationId": config.organization_id,
+                         "reason": "EXECUTION_FAILED"})
+            raise
         base = {key: event[key] for key in (
             "version", "correlationId", "organizationId", "conversationId", "inboundMessageId", "modeVersion"
         )}

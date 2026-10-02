@@ -40,6 +40,7 @@ class OrganizationRuntimeConfig:
     business_hours: str | None = None
     locations: tuple[str, ...] = ()
     status: str = "active"
+    source: str = "unknown"
 
     def is_active(self) -> bool:
         return self.status in ACTIVE_ORGANIZATION_STATUSES
@@ -249,6 +250,37 @@ class EnvironmentCredentialProvider:
             credential_ref=credential_ref,
             secret=secret,
             metadata=dict(metadata),
+        )
+
+
+class SupabaseVaultCredentialProvider:
+    """Resolve a tenant-scoped Vault ref through a service-role-only RPC."""
+
+    def __init__(self, *, transport: "SupabaseOrganizationTransport"):
+        self.transport = transport
+
+    def get_credential(self, organization_id: str, provider: str) -> OrganizationCredential | None:
+        if provider.upper() != OPENAI_PROVIDER:
+            return None
+        rows = self.transport.request_json(
+            "POST", "rpc/resolve_organization_openai_credential",
+            payload={"p_organization_id": organization_id},
+        )
+        if not isinstance(rows, list) or len(rows) > 1:
+            raise OrganizationCredentialError("ORGANIZATION_CREDENTIAL_AMBIGUOUS")
+        if not rows:
+            return None
+        row = rows[0]
+        row_organization_id = row.get("organization_id") if isinstance(row, dict) else None
+        credential_ref = row.get("credential_ref") if isinstance(row, dict) else None
+        secret = row.get("secret") if isinstance(row, dict) else None
+        if row_organization_id != organization_id or not isinstance(credential_ref, str) or not re.fullmatch(
+            r"vault:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}", credential_ref
+        ) or not isinstance(secret, str) or not secret:
+            raise OrganizationCredentialError("ORGANIZATION_CREDENTIAL_INVALID")
+        return OrganizationCredential(
+            organization_id=organization_id, provider=OPENAI_PROVIDER,
+            credential_ref=credential_ref, secret=secret,
         )
 
 

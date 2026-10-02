@@ -56,6 +56,32 @@ print(json.dumps({'status':status,'body':body}))`);
   assert.equal(out.body.metadata && Object.keys(out.body.metadata).length, 0);
 });
 
+test('current CRM dispatch accepts one or two members with one v2 schema and retains historical v1 read compatibility', () => {
+  const out = runPython(`${fixture}
+turn = '77777777-7777-4777-8777-777777777777'
+second = '88888888-8888-4888-8888-888888888888'
+base = {**event, 'version':'2', 'logicalTurnId':turn,
+        'constituentMessageIds':[M],
+        'latestInboundCreatedAt':event['message']['timestamp']}
+single = invoke(base)
+multiple = invoke({**base, 'constituentMessageIds':[M,second]})
+legacy = invoke()
+invalid = [invoke({**base, 'constituentMessageIds':[]}),
+           invoke({**base, 'constituentMessageIds':[second,M]}),
+           invoke({**base, 'latestInboundCreatedAt':'2026-09-18T11:00:00Z'}),
+           invoke({**base, 'logicalTurnId':'invalid'}),
+           invoke({**event, 'logicalTurnId':turn})]
+print(json.dumps({'single':single, 'multiple':multiple, 'legacy':legacy,
+                  'invalid':[status for status,_ in invalid]}))`);
+  assert.equal(out.single[0], 200);
+  assert.equal(out.multiple[0], 200);
+  assert.equal(out.single[1].version, '2');
+  assert.equal(out.multiple[1].version, '2');
+  assert.equal(out.legacy[0], 200);
+  assert.equal(out.legacy[1].version, '1');
+  assert.deepEqual(out.invalid, [400, 400, 400, 400, 400]);
+});
+
 test('service authentication, schema and unknown/inactive tenant fail closed', () => {
   const out = runPython(`${fixture}
 cases = [
@@ -100,7 +126,7 @@ class Transport:
         if query.get('id') == 'eq.' + A and table == 'organizations':
             return [{'id':A,'status':'active','name':'Tenant A'}]
         if query.get('organization_id') == 'eq.' + A and table == 'organization_ai_configs':
-            return [{'organization_id':A,'assistant_name':'Test'}]
+            return [{'organization_id':A,'status':'active','assistant_name':'Test'}]
         return []
 transport=Transport()
 repo=StrictCrmOrganizationConfigRepository(transport=transport)
