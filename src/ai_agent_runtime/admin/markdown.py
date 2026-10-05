@@ -158,3 +158,18 @@ def read_sources(path: Path) -> list[Source]:
             raise KnowledgeError("INVALID_UTF8") from None
         sources.append(Source(item.name, digest(raw), chunk_markdown(text)))
     return sources
+
+
+def source_from_text(logical_name: str, content: str) -> Source:
+    """The HTTP adapter shares the exact parser/identity used by the CLI."""
+    if not isinstance(logical_name, str) or not re.fullmatch(r"[\w][\w .-]{0,155}", logical_name, re.UNICODE):
+        raise KnowledgeError("INVALID_LOGICAL_NAME")
+    if logical_name.endswith(".md") or not isinstance(content, str):
+        raise KnowledgeError("INVALID_MARKDOWN_FILE")
+    try:
+        raw = content.encode("utf-8", "strict")
+    except UnicodeError:
+        raise KnowledgeError("INVALID_UTF8") from None
+    if len(raw) > MAX_BYTES:
+        raise KnowledgeError("SOURCE_TOO_LARGE")
+    return Source(logical_name + ".md", digest(raw), chunk_markdown(content.removeprefix("\ufeff")))
