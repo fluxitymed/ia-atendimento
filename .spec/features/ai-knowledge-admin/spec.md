@@ -1,7 +1,7 @@
 # Ingestor administrativo de conhecimento
 
 > feature: ai-knowledge-admin
-> status: implementada
+> status: auditada
 
 ## Contexto
 

@@ -1,0 +1,77 @@
+{
+  "feature": "ai-knowledge-admin",
+  "timestamp": "2026-10-05T18:05:15.478Z",
+  "gitRev": "7461bb7",
+  "command": "node --test --test-reporter=tap",
+  "reporter": "tap",
+  "exitCode": 0,
+  "testsParsed": 292,
+  "results": {
+    "AC-500": {
+      "status": "pass",
+      "testName": "@spec:AC-500 PostgreSQL admin seven_sources",
+      "method": "tap"
+    },
+    "AC-501": {
+      "status": "pass",
+      "testName": "@spec:AC-501 PostgreSQL admin idempotency",
+      "method": "tap"
+    },
+    "AC-502": {
+      "status": "pass",
+      "testName": "@spec:AC-502 PostgreSQL admin one_update",
+      "method": "tap"
+    },
+    "AC-503": {
+      "status": "pass",
+      "testName": "@spec:AC-503 PostgreSQL admin isolation",
+      "method": "tap"
+    },
+    "AC-504": {
+      "status": "pass",
+      "testName": "@spec:AC-504 PostgreSQL admin organization",
+      "method": "tap"
+    },
+    "AC-505": {
+      "status": "pass",
+      "testName": "@spec:AC-505 PostgreSQL admin lifecycle",
+      "method": "tap"
+    },
+    "AC-506": {
+      "status": "pass",
+      "testName": "@spec:AC-506 PostgreSQL admin atomicity",
+      "method": "tap"
+    },
+    "AC-507": {
+      "status": "pass",
+      "testName": "@spec:AC-507 PostgreSQL admin chunking",
+      "method": "tap"
+    },
+    "AC-508": {
+      "status": "pass",
+      "testName": "@spec:AC-508 PostgreSQL admin safe_reports",
+      "method": "tap"
+    },
+    "AC-509": {
+      "status": "pass",
+      "testName": "@spec:AC-509 PostgreSQL admin invalid_sources",
+      "method": "tap"
+    },
+    "AC-510": {
+      "status": "pass",
+      "testName": "@spec:AC-510 PostgreSQL admin dry_run",
+      "method": "tap"
+    },
+    "AC-511": {
+      "status": "pass",
+      "testName": "@spec:AC-511 PostgreSQL admin validation",
+      "method": "tap"
+    },
+    "AC-512": {
+      "status": "pass",
+      "testName": "@spec:AC-512 PostgreSQL admin smoke_rollback",
+      "method": "tap"
+    }
+  },
+  "principles": {}
+}

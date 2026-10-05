@@ -581,10 +581,10 @@
       "codigo": "VERIFY_OBSOLETO",
       "feature": "ai-customer-service",
       "ref": "—",
-      "ocorrencias": 48,
+      "ocorrencias": 50,
       "primeiraVez": "2026-08-20T01:55:42.223Z",
-      "ultimaVez": "2026-10-02T17:47:22.917Z",
-      "gitRev": "3d3c290"
+      "ultimaVez": "2026-10-05T18:05:17.522Z",
+      "gitRev": "7461bb7"
     },
     "ID_DUPLICADO::ai-customer-service::US-001": {
       "codigo": "ID_DUPLICADO",
@@ -1625,10 +1625,10 @@
       "codigo": "VERIFY_OBSOLETO",
       "feature": "ai-agent-runtime",
       "ref": "—",
-      "ocorrencias": 40,
+      "ocorrencias": 42,
       "primeiraVez": "2026-08-20T18:53:21.874Z",
-      "ultimaVez": "2026-10-02T17:47:22.917Z",
-      "gitRev": "3d3c290"
+      "ultimaVez": "2026-10-05T18:05:17.522Z",
+      "gitRev": "7461bb7"
     },
     "ARQUIVO_ORFAO::—::src/ai_agent_runtime/integrations/__init__.py": {
       "codigo": "ARQUIVO_ORFAO",
@@ -1994,28 +1994,28 @@
       "codigo": "VERIFY_OBSOLETO",
       "feature": "ai-runtime-integrations",
       "ref": "—",
-      "ocorrencias": 45,
+      "ocorrencias": 47,
       "primeiraVez": "2026-08-20T19:42:35.889Z",
-      "ultimaVez": "2026-10-02T17:47:22.917Z",
-      "gitRev": "3d3c290"
+      "ultimaVez": "2026-10-05T18:05:17.522Z",
+      "gitRev": "7461bb7"
     },
     "VERIFY_OBSOLETO::ai-agent-evaluation::—": {
       "codigo": "VERIFY_OBSOLETO",
       "feature": "ai-agent-evaluation",
       "ref": "—",
-      "ocorrencias": 31,
+      "ocorrencias": 33,
       "primeiraVez": "2026-08-20T20:13:47.439Z",
-      "ultimaVez": "2026-10-02T17:47:22.917Z",
-      "gitRev": "3d3c290"
+      "ultimaVez": "2026-10-05T18:05:17.522Z",
+      "gitRev": "7461bb7"
     },
     "VERIFY_OBSOLETO::ai-agent-live-sandbox::—": {
       "codigo": "VERIFY_OBSOLETO",
       "feature": "ai-agent-live-sandbox",
       "ref": "—",
-      "ocorrencias": 38,
+      "ocorrencias": 40,
       "primeiraVez": "2026-08-21T01:19:42.607Z",
-      "ultimaVez": "2026-10-02T17:47:22.917Z",
-      "gitRev": "3d3c290"
+      "ultimaVez": "2026-10-05T18:05:17.522Z",
+      "gitRev": "7461bb7"
     },
     "Q_ABERTA::ai-whatsapp-channel::Q-006": {
       "codigo": "Q_ABERTA",
@@ -2273,28 +2273,28 @@
       "codigo": "VERIFY_OBSOLETO",
       "feature": "ai-whatsapp-channel",
       "ref": "—",
-      "ocorrencias": 32,
+      "ocorrencias": 34,
       "primeiraVez": "2026-08-29T19:09:51.239Z",
-      "ultimaVez": "2026-10-02T17:47:22.917Z",
-      "gitRev": "3d3c290"
+      "ultimaVez": "2026-10-05T18:05:17.522Z",
+      "gitRev": "7461bb7"
     },
     "VERIFY_OBSOLETO::ai-whatsapp-evolution-provider::—": {
       "codigo": "VERIFY_OBSOLETO",
       "feature": "ai-whatsapp-evolution-provider",
       "ref": "—",
-      "ocorrencias": 35,
+      "ocorrencias": 37,
       "primeiraVez": "2026-08-30T19:36:34.384Z",
-      "ultimaVez": "2026-10-02T17:47:22.917Z",
-      "gitRev": "3d3c290"
+      "ultimaVez": "2026-10-05T18:05:17.522Z",
+      "gitRev": "7461bb7"
     },
     "VERIFY_OBSOLETO::ai-whatsapp-zapi-provider::—": {
       "codigo": "VERIFY_OBSOLETO",
       "feature": "ai-whatsapp-zapi-provider",
       "ref": "—",
-      "ocorrencias": 10,
+      "ocorrencias": 12,
       "primeiraVez": "2026-08-31T21:19:09.166Z",
-      "ultimaVez": "2026-10-02T17:47:22.917Z",
-      "gitRev": "3d3c290"
+      "ultimaVez": "2026-10-05T18:05:17.522Z",
+      "gitRev": "7461bb7"
     },
     "TASK_CONCLUIDA_SEM_PROVA::ai-whatsapp-zapi-provider::T-052": {
       "codigo": "TASK_CONCLUIDA_SEM_PROVA",
@@ -2399,10 +2399,10 @@
       "codigo": "VERIFY_OBSOLETO",
       "feature": "ai-commercial-agent-playbook",
       "ref": "—",
-      "ocorrencias": 15,
+      "ocorrencias": 17,
       "primeiraVez": "2026-09-02T01:51:51.040Z",
-      "ultimaVez": "2026-10-02T17:47:22.917Z",
-      "gitRev": "3d3c290"
+      "ultimaVez": "2026-10-05T18:05:17.522Z",
+      "gitRev": "7461bb7"
     },
     "TASK_CONCLUIDA_SEM_PROVA::ai-whatsapp-zapi-provider::T-061": {
       "codigo": "TASK_CONCLUIDA_SEM_PROVA",
@@ -2759,10 +2759,10 @@
       "codigo": "VERIFY_OBSOLETO",
       "feature": "ai-organization-runtime-config",
       "ref": "—",
-      "ocorrencias": 7,
+      "ocorrencias": 9,
       "primeiraVez": "2026-09-07T20:55:07.194Z",
-      "ultimaVez": "2026-10-02T17:47:22.917Z",
-      "gitRev": "3d3c290"
+      "ultimaVez": "2026-10-05T18:05:17.522Z",
+      "gitRev": "7461bb7"
     },
     "ARQUIVO_INEXISTENTE::ai-crm-conversation-runtime::T-076": {
       "codigo": "ARQUIVO_INEXISTENTE",
@@ -3155,10 +3155,10 @@
       "codigo": "VERIFY_OBSOLETO",
       "feature": "ai-crm-conversation-runtime",
       "ref": "—",
-      "ocorrencias": 3,
+      "ocorrencias": 5,
       "primeiraVez": "2026-09-28T13:43:24.042Z",
-      "ultimaVez": "2026-10-02T17:47:22.917Z",
-      "gitRev": "3d3c290"
+      "ultimaVez": "2026-10-05T18:05:17.522Z",
+      "gitRev": "7461bb7"
     },
     "AC_SEM_TESTE::ai-whatsapp-zapi-provider::AC-477": {
       "codigo": "AC_SEM_TESTE",
@@ -3285,6 +3285,150 @@
       "primeiraVez": "2026-10-02T17:50:10.658Z",
       "ultimaVez": "2026-10-02T17:50:10.659Z",
       "gitRev": "3d3c290"
+    },
+    "VERIFY_OBSOLETO::ai-hartmann-knowledge-readiness::—": {
+      "codigo": "VERIFY_OBSOLETO",
+      "feature": "ai-hartmann-knowledge-readiness",
+      "ref": "—",
+      "ocorrencias": 2,
+      "primeiraVez": "2026-10-05T17:56:13.944Z",
+      "ultimaVez": "2026-10-05T18:05:17.522Z",
+      "gitRev": "7461bb7"
+    },
+    "ARQUIVO_INEXISTENTE::ai-knowledge-admin::T-093": {
+      "codigo": "ARQUIVO_INEXISTENTE",
+      "feature": "ai-knowledge-admin",
+      "ref": "T-093",
+      "ocorrencias": 3,
+      "primeiraVez": "2026-10-05T17:56:13.944Z",
+      "ultimaVez": "2026-10-05T17:56:13.944Z",
+      "gitRev": "7461bb7"
+    },
+    "ARQUIVO_INEXISTENTE::ai-knowledge-admin::T-094": {
+      "codigo": "ARQUIVO_INEXISTENTE",
+      "feature": "ai-knowledge-admin",
+      "ref": "T-094",
+      "ocorrencias": 3,
+      "primeiraVez": "2026-10-05T17:56:13.944Z",
+      "ultimaVez": "2026-10-05T18:05:17.522Z",
+      "gitRev": "7461bb7"
+    },
+    "AC_SEM_TESTE::ai-knowledge-admin::AC-500": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-knowledge-admin",
+      "ref": "AC-500",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-10-05T17:56:13.944Z",
+      "ultimaVez": "2026-10-05T17:56:13.944Z",
+      "gitRev": "7461bb7"
+    },
+    "AC_SEM_TESTE::ai-knowledge-admin::AC-501": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-knowledge-admin",
+      "ref": "AC-501",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-10-05T17:56:13.944Z",
+      "ultimaVez": "2026-10-05T17:56:13.944Z",
+      "gitRev": "7461bb7"
+    },
+    "AC_SEM_TESTE::ai-knowledge-admin::AC-502": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-knowledge-admin",
+      "ref": "AC-502",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-10-05T17:56:13.944Z",
+      "ultimaVez": "2026-10-05T17:56:13.944Z",
+      "gitRev": "7461bb7"
+    },
+    "AC_SEM_TESTE::ai-knowledge-admin::AC-503": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-knowledge-admin",
+      "ref": "AC-503",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-10-05T17:56:13.944Z",
+      "ultimaVez": "2026-10-05T17:56:13.944Z",
+      "gitRev": "7461bb7"
+    },
+    "AC_SEM_TESTE::ai-knowledge-admin::AC-504": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-knowledge-admin",
+      "ref": "AC-504",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-10-05T17:56:13.944Z",
+      "ultimaVez": "2026-10-05T17:56:13.944Z",
+      "gitRev": "7461bb7"
+    },
+    "AC_SEM_TESTE::ai-knowledge-admin::AC-505": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-knowledge-admin",
+      "ref": "AC-505",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-10-05T17:56:13.944Z",
+      "ultimaVez": "2026-10-05T17:56:13.944Z",
+      "gitRev": "7461bb7"
+    },
+    "AC_SEM_TESTE::ai-knowledge-admin::AC-506": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-knowledge-admin",
+      "ref": "AC-506",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-10-05T17:56:13.944Z",
+      "ultimaVez": "2026-10-05T17:56:13.944Z",
+      "gitRev": "7461bb7"
+    },
+    "AC_SEM_TESTE::ai-knowledge-admin::AC-507": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-knowledge-admin",
+      "ref": "AC-507",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-10-05T17:56:13.944Z",
+      "ultimaVez": "2026-10-05T17:56:13.944Z",
+      "gitRev": "7461bb7"
+    },
+    "AC_SEM_TESTE::ai-knowledge-admin::AC-508": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-knowledge-admin",
+      "ref": "AC-508",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-10-05T17:56:13.944Z",
+      "ultimaVez": "2026-10-05T17:56:13.944Z",
+      "gitRev": "7461bb7"
+    },
+    "AC_SEM_TESTE::ai-knowledge-admin::AC-509": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-knowledge-admin",
+      "ref": "AC-509",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-10-05T17:56:13.944Z",
+      "ultimaVez": "2026-10-05T17:56:13.944Z",
+      "gitRev": "7461bb7"
+    },
+    "AC_SEM_TESTE::ai-knowledge-admin::AC-510": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-knowledge-admin",
+      "ref": "AC-510",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-10-05T17:56:13.944Z",
+      "ultimaVez": "2026-10-05T17:56:13.944Z",
+      "gitRev": "7461bb7"
+    },
+    "AC_SEM_TESTE::ai-knowledge-admin::AC-511": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-knowledge-admin",
+      "ref": "AC-511",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-10-05T17:56:13.944Z",
+      "ultimaVez": "2026-10-05T17:56:13.944Z",
+      "gitRev": "7461bb7"
+    },
+    "AC_SEM_TESTE::ai-knowledge-admin::AC-512": {
+      "codigo": "AC_SEM_TESTE",
+      "feature": "ai-knowledge-admin",
+      "ref": "AC-512",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-10-05T17:56:13.944Z",
+      "ultimaVez": "2026-10-05T17:56:13.944Z",
+      "gitRev": "7461bb7"
     }
   }
 }

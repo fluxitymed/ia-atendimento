@@ -1,11 +1,11 @@
 {
   "feature": "ai-commercial-agent-playbook",
-  "timestamp": "2026-10-02T17:59:31.279Z",
-  "gitRev": "3d3c290",
+  "timestamp": "2026-10-05T18:07:04.541Z",
+  "gitRev": "7461bb7",
   "command": "node --test --test-reporter=tap",
   "reporter": "tap",
   "exitCode": 0,
-  "testsParsed": 279,
+  "testsParsed": 292,
   "results": {
     "AC-254": {
       "status": "pass",

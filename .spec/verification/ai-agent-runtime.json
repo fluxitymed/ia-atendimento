@@ -1,11 +1,11 @@
 {
   "feature": "ai-agent-runtime",
-  "timestamp": "2026-10-02T17:59:24.486Z",
-  "gitRev": "3d3c290",
+  "timestamp": "2026-10-05T18:06:54.007Z",
+  "gitRev": "7461bb7",
   "command": "node --test --test-reporter=tap",
   "reporter": "tap",
   "exitCode": 0,
-  "testsParsed": 279,
+  "testsParsed": 292,
   "results": {
     "AC-033": {
       "status": "pass",

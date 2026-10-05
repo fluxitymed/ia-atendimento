@@ -1,0 +1,125 @@
+{
+  "runId": "IA - ATENDIMENTO-ai-knowledge-admin-muvjqewd",
+  "feature": "ai-knowledge-admin",
+  "agent": "codex",
+  "modo": "sequencial",
+  "paralelizar": null,
+  "modeloForcado": null,
+  "esforcoForcado": null,
+  "geradoEm": "2026-10-05 17:51",
+  "branchTrabalho": "spec/ai-knowledge-admin",
+  "baseDir": ".spec/features/ai-knowledge-admin",
+  "specDir": ".spec",
+  "repoName": "IA - ATENDIMENTO",
+  "logsDir": "../onp-worktrees/IA - ATENDIMENTO-ai-knowledge-admin-logs",
+  "ondas": [],
+  "faixas": [],
+  "sequenciais": [
+    {
+      "id": "T-091",
+      "titulo": "Especificar e desenhar",
+      "modelo": "gpt-5.6-terra",
+      "esforco": "medium",
+      "arquivos": [
+        ".spec/features/ai-knowledge-admin/spec.md",
+        ".spec/features/ai-knowledge-admin/design.md"
+      ],
+      "refs": [
+        "AC-500",
+        "AC-501",
+        "AC-502",
+        "AC-503",
+        "AC-504",
+        "AC-505",
+        "AC-506",
+        "AC-507",
+        "AC-508",
+        "AC-509",
+        "AC-510",
+        "AC-511",
+        "AC-512"
+      ]
+    },
+    {
+      "id": "T-092",
+      "titulo": "Implementar parser e transações",
+      "modelo": "gpt-5.6-terra",
+      "esforco": "medium",
+      "arquivos": [
+        "src/ai_agent_runtime/admin/__init__.py",
+        "src/ai_agent_runtime/admin/markdown.py",
+        "src/ai_agent_runtime/admin/knowledge.py",
+        "src/ai_agent_runtime/admin/ingest_knowledge.py",
+        "requirements-admin.txt"
+      ],
+      "refs": [
+        "AC-500",
+        "AC-501",
+        "AC-502",
+        "AC-503",
+        "AC-504",
+        "AC-505",
+        "AC-506",
+        "AC-507",
+        "AC-508",
+        "AC-509",
+        "AC-510",
+        "AC-511",
+        "AC-512"
+      ]
+    },
+    {
+      "id": "T-093",
+      "titulo": "Provar contratos em PostgreSQL isolado",
+      "modelo": "gpt-5.6-terra",
+      "esforco": "medium",
+      "arquivos": [
+        "test/ai-knowledge-admin/admin.test.js",
+        "test/ai-knowledge-admin/cases.py",
+        "test/ai-knowledge-admin/local_postgres.py"
+      ],
+      "refs": [
+        "AC-500",
+        "AC-501",
+        "AC-502",
+        "AC-503",
+        "AC-504",
+        "AC-505",
+        "AC-506",
+        "AC-507",
+        "AC-508",
+        "AC-509",
+        "AC-510",
+        "AC-511",
+        "AC-512"
+      ]
+    },
+    {
+      "id": "T-094",
+      "titulo": "Documentar operação e verificar",
+      "modelo": "gpt-5.6-terra",
+      "esforco": "medium",
+      "arquivos": [
+        ".spec/features/ai-knowledge-admin/runbook.md",
+        ".spec/features/ai-knowledge-admin/verification.md"
+      ],
+      "refs": [
+        "AC-500",
+        "AC-501",
+        "AC-502",
+        "AC-503",
+        "AC-504",
+        "AC-505",
+        "AC-506",
+        "AC-507",
+        "AC-508",
+        "AC-509",
+        "AC-510",
+        "AC-511",
+        "AC-512"
+      ]
+    }
+  ],
+  "concluidas": [],
+  "avisos": []
+}

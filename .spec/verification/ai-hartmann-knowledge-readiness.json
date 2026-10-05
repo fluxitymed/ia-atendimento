@@ -1,11 +1,11 @@
 {
   "feature": "ai-hartmann-knowledge-readiness",
-  "timestamp": "2026-10-02T17:59:51.508Z",
-  "gitRev": "3d3c290",
+  "timestamp": "2026-10-05T18:07:36.154Z",
+  "gitRev": "7461bb7",
   "command": "node --test --test-reporter=tap",
   "reporter": "tap",
   "exitCode": 0,
-  "testsParsed": 279,
+  "testsParsed": 292,
   "results": {
     "AC-494": {
       "status": "pass",
