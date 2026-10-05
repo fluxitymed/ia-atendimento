@@ -251,9 +251,7 @@ class CrmDispatchProcessor:
 
 def handle_crm_dispatch(raw_body: bytes, authorization: str | None, *, token: str | None,
                         processor: CrmDispatchProcessor | None = None) -> tuple[int, dict[str, Any]]:
-    if not token or len(token) < 32 or not isinstance(authorization, str) or \
-            not authorization.startswith("Bearer ") or \
-            not hmac.compare_digest(authorization[7:], token):
+    if not service_bearer_authorized(authorization, token):
         return 401, {"error": "UNAUTHORIZED"}
     if len(raw_body) > MAX_BODY_BYTES:
         return 413, {"error": "INVALID_REQUEST"}
@@ -267,10 +265,26 @@ def handle_crm_dispatch(raw_body: bytes, authorization: str | None, *, token: st
         return 503, {"error": "RUNTIME_UNAVAILABLE"}
 
 
+def service_bearer_authorized(authorization: str | None, token: str | None) -> bool:
+    """Private CRM→IA Bearer boundary, shared by dispatch and knowledge."""
+    return bool(token and len(token) >= 32 and isinstance(authorization, str)
+                and authorization.startswith("Bearer ")
+                and hmac.compare_digest(authorization[7:], token))
+
+
 class CrmDispatchRequestHandler(BaseHTTPRequestHandler):
     processor: CrmDispatchProcessor | None = None
 
+    def do_GET(self) -> None:
+        if not self.path.startswith("/internal/knowledge/"):
+            self._write(404, {"error": "NOT_FOUND"})
+            return
+        self._knowledge("GET")
+
     def do_POST(self) -> None:
+        if self.path.startswith("/internal/knowledge/"):
+            self._knowledge("POST")
+            return
         if self.path != DISPATCH_PATH:
             self._write(404, {"error": "NOT_FOUND"})
             return
@@ -288,6 +302,27 @@ class CrmDispatchRequestHandler(BaseHTTPRequestHandler):
         )
         self._write(status, body)
 
+    def _knowledge(self, method: str) -> None:
+        from ai_agent_runtime.admin.knowledge_api import handle_knowledge_request, MAX_HTTP_BODY_BYTES
+        authorization = self.headers.get("Authorization")
+        token = environ.get("CRM_KNOWLEDGE_SERVICE_TOKEN")
+        if not service_bearer_authorized(authorization, token):
+            self._write(401, {"error": "UNAUTHORIZED"})
+            return
+        length = 0
+        if method == "POST":
+            try:
+                length = int(self.headers.get("Content-Length", "-1"))
+            except ValueError:
+                length = -1
+            if length < 0 or length > MAX_HTTP_BODY_BYTES:
+                self._write(413, {"error": "INVALID_REQUEST"})
+                return
+        status, body = handle_knowledge_request(
+            method, self.path, self.rfile.read(length) if length else b"", authorization,
+            token=token, content_type=self.headers.get("Content-Type"))
+        self._write(status, body)
+
     def log_message(self, format: str, *args) -> None:
         return
 
@@ -295,6 +330,7 @@ class CrmDispatchRequestHandler(BaseHTTPRequestHandler):
         data = json.dumps(body, separators=(",", ":")).encode("utf-8")
         self.send_response(status)
         self.send_header("Content-Type", "application/json")
+        self.send_header("Cache-Control", "no-store")
         self.send_header("Content-Length", str(len(data)))
         self.end_headers()
         self.wfile.write(data)
