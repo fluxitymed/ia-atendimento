@@ -1,0 +1,2 @@
+# Optional administrative CLI only; runtime dependencies stay unchanged.
+psycopg[binary]==3.2.10

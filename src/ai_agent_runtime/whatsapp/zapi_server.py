@@ -668,6 +668,13 @@ class ZApiRuntimeRetrieval:
         terms = _retrieval_terms(query)
         if not terms:
             return []
+        # PostgreSQL ILIKE does not remove accents. Keep original UTF-8 terms
+        # alongside normalized ones so newly ingested Markdown is searchable.
+        original_terms = re.findall(r"[^\W_]+", query.lower())
+        terms = list(dict.fromkeys(
+            variant for term in terms
+            for variant in [term, *(word for word in original_terms if _normalize_text(word) == term)]
+        ))
         rows_by_id: dict[str, dict[str, Any]] = {}
         remaining = limit
         for term in terms:
