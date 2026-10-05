@@ -1,11 +1,11 @@
 {
   "feature": "ai-whatsapp-zapi-provider",
-  "timestamp": "2026-09-30T00:22:18.450Z",
-  "gitRev": "0e966eb",
+  "timestamp": "2026-10-02T18:00:25.285Z",
+  "gitRev": "3d3c290",
   "command": "node --test --test-reporter=tap",
   "reporter": "tap",
   "exitCode": 0,
-  "testsParsed": 275,
+  "testsParsed": 279,
   "results": {
     "AC-177": {
       "status": "pass",

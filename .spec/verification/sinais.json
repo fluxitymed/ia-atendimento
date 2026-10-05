@@ -581,10 +581,10 @@
       "codigo": "VERIFY_OBSOLETO",
       "feature": "ai-customer-service",
       "ref": "—",
-      "ocorrencias": 47,
+      "ocorrencias": 48,
       "primeiraVez": "2026-08-20T01:55:42.223Z",
-      "ultimaVez": "2026-09-30T00:12:36.789Z",
-      "gitRev": "0e966eb"
+      "ultimaVez": "2026-10-02T17:47:22.917Z",
+      "gitRev": "3d3c290"
     },
     "ID_DUPLICADO::ai-customer-service::US-001": {
       "codigo": "ID_DUPLICADO",
@@ -1625,10 +1625,10 @@
       "codigo": "VERIFY_OBSOLETO",
       "feature": "ai-agent-runtime",
       "ref": "—",
-      "ocorrencias": 39,
+      "ocorrencias": 40,
       "primeiraVez": "2026-08-20T18:53:21.874Z",
-      "ultimaVez": "2026-09-30T00:12:36.789Z",
-      "gitRev": "0e966eb"
+      "ultimaVez": "2026-10-02T17:47:22.917Z",
+      "gitRev": "3d3c290"
     },
     "ARQUIVO_ORFAO::—::src/ai_agent_runtime/integrations/__init__.py": {
       "codigo": "ARQUIVO_ORFAO",
@@ -1994,28 +1994,28 @@
       "codigo": "VERIFY_OBSOLETO",
       "feature": "ai-runtime-integrations",
       "ref": "—",
-      "ocorrencias": 44,
+      "ocorrencias": 45,
       "primeiraVez": "2026-08-20T19:42:35.889Z",
-      "ultimaVez": "2026-09-30T00:12:36.789Z",
-      "gitRev": "0e966eb"
+      "ultimaVez": "2026-10-02T17:47:22.917Z",
+      "gitRev": "3d3c290"
     },
     "VERIFY_OBSOLETO::ai-agent-evaluation::—": {
       "codigo": "VERIFY_OBSOLETO",
       "feature": "ai-agent-evaluation",
       "ref": "—",
-      "ocorrencias": 30,
+      "ocorrencias": 31,
       "primeiraVez": "2026-08-20T20:13:47.439Z",
-      "ultimaVez": "2026-09-30T00:12:36.788Z",
-      "gitRev": "0e966eb"
+      "ultimaVez": "2026-10-02T17:47:22.917Z",
+      "gitRev": "3d3c290"
     },
     "VERIFY_OBSOLETO::ai-agent-live-sandbox::—": {
       "codigo": "VERIFY_OBSOLETO",
       "feature": "ai-agent-live-sandbox",
       "ref": "—",
-      "ocorrencias": 37,
+      "ocorrencias": 38,
       "primeiraVez": "2026-08-21T01:19:42.607Z",
-      "ultimaVez": "2026-09-30T00:12:36.789Z",
-      "gitRev": "0e966eb"
+      "ultimaVez": "2026-10-02T17:47:22.917Z",
+      "gitRev": "3d3c290"
     },
     "Q_ABERTA::ai-whatsapp-channel::Q-006": {
       "codigo": "Q_ABERTA",
@@ -2273,28 +2273,28 @@
       "codigo": "VERIFY_OBSOLETO",
       "feature": "ai-whatsapp-channel",
       "ref": "—",
-      "ocorrencias": 31,
+      "ocorrencias": 32,
       "primeiraVez": "2026-08-29T19:09:51.239Z",
-      "ultimaVez": "2026-09-30T00:12:36.789Z",
-      "gitRev": "0e966eb"
+      "ultimaVez": "2026-10-02T17:47:22.917Z",
+      "gitRev": "3d3c290"
     },
     "VERIFY_OBSOLETO::ai-whatsapp-evolution-provider::—": {
       "codigo": "VERIFY_OBSOLETO",
       "feature": "ai-whatsapp-evolution-provider",
       "ref": "—",
-      "ocorrencias": 34,
+      "ocorrencias": 35,
       "primeiraVez": "2026-08-30T19:36:34.384Z",
-      "ultimaVez": "2026-09-30T00:12:36.789Z",
-      "gitRev": "0e966eb"
+      "ultimaVez": "2026-10-02T17:47:22.917Z",
+      "gitRev": "3d3c290"
     },
     "VERIFY_OBSOLETO::ai-whatsapp-zapi-provider::—": {
       "codigo": "VERIFY_OBSOLETO",
       "feature": "ai-whatsapp-zapi-provider",
       "ref": "—",
-      "ocorrencias": 9,
+      "ocorrencias": 10,
       "primeiraVez": "2026-08-31T21:19:09.166Z",
-      "ultimaVez": "2026-09-30T00:12:36.789Z",
-      "gitRev": "0e966eb"
+      "ultimaVez": "2026-10-02T17:47:22.917Z",
+      "gitRev": "3d3c290"
     },
     "TASK_CONCLUIDA_SEM_PROVA::ai-whatsapp-zapi-provider::T-052": {
       "codigo": "TASK_CONCLUIDA_SEM_PROVA",
@@ -2399,10 +2399,10 @@
       "codigo": "VERIFY_OBSOLETO",
       "feature": "ai-commercial-agent-playbook",
       "ref": "—",
-      "ocorrencias": 14,
+      "ocorrencias": 15,
       "primeiraVez": "2026-09-02T01:51:51.040Z",
-      "ultimaVez": "2026-09-30T00:12:36.789Z",
-      "gitRev": "0e966eb"
+      "ultimaVez": "2026-10-02T17:47:22.917Z",
+      "gitRev": "3d3c290"
     },
     "TASK_CONCLUIDA_SEM_PROVA::ai-whatsapp-zapi-provider::T-061": {
       "codigo": "TASK_CONCLUIDA_SEM_PROVA",
@@ -2759,10 +2759,10 @@
       "codigo": "VERIFY_OBSOLETO",
       "feature": "ai-organization-runtime-config",
       "ref": "—",
-      "ocorrencias": 6,
+      "ocorrencias": 7,
       "primeiraVez": "2026-09-07T20:55:07.194Z",
-      "ultimaVez": "2026-09-28T13:43:24.042Z",
-      "gitRev": "08cf0a3"
+      "ultimaVez": "2026-10-02T17:47:22.917Z",
+      "gitRev": "3d3c290"
     },
     "ARQUIVO_INEXISTENTE::ai-crm-conversation-runtime::T-076": {
       "codigo": "ARQUIVO_INEXISTENTE",
@@ -3155,10 +3155,10 @@
       "codigo": "VERIFY_OBSOLETO",
       "feature": "ai-crm-conversation-runtime",
       "ref": "—",
-      "ocorrencias": 2,
+      "ocorrencias": 3,
       "primeiraVez": "2026-09-28T13:43:24.042Z",
-      "ultimaVez": "2026-09-30T00:12:36.789Z",
-      "gitRev": "0e966eb"
+      "ultimaVez": "2026-10-02T17:47:22.917Z",
+      "gitRev": "3d3c290"
     },
     "AC_SEM_TESTE::ai-whatsapp-zapi-provider::AC-477": {
       "codigo": "AC_SEM_TESTE",
@@ -3249,6 +3249,42 @@
       "primeiraVez": "2026-09-30T00:12:36.789Z",
       "ultimaVez": "2026-09-30T00:12:36.789Z",
       "gitRev": "0e966eb"
+    },
+    "ID_DUPLICADO::ai-hartmann-knowledge-readiness::ASM-001": {
+      "codigo": "ID_DUPLICADO",
+      "feature": "ai-hartmann-knowledge-readiness",
+      "ref": "ASM-001",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-10-02T17:47:22.917Z",
+      "ultimaVez": "2026-10-02T17:47:22.917Z",
+      "gitRev": "3d3c290"
+    },
+    "ID_DUPLICADO::ai-hartmann-knowledge-readiness::Q-001": {
+      "codigo": "ID_DUPLICADO",
+      "feature": "ai-hartmann-knowledge-readiness",
+      "ref": "Q-001",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-10-02T17:47:22.917Z",
+      "ultimaVez": "2026-10-02T17:47:22.917Z",
+      "gitRev": "3d3c290"
+    },
+    "STATUS_INVALIDO::ai-hartmann-knowledge-readiness::.spec/features/ai-hartmann-knowledge-readiness/spec.md": {
+      "codigo": "STATUS_INVALIDO",
+      "feature": "ai-hartmann-knowledge-readiness",
+      "ref": ".spec/features/ai-hartmann-knowledge-readiness/spec.md",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-10-02T17:47:22.917Z",
+      "ultimaVez": "2026-10-02T17:47:22.917Z",
+      "gitRev": "3d3c290"
+    },
+    "Q_ABERTA::ai-hartmann-knowledge-readiness::Q-009": {
+      "codigo": "Q_ABERTA",
+      "feature": "ai-hartmann-knowledge-readiness",
+      "ref": "Q-009",
+      "ocorrencias": 1,
+      "primeiraVez": "2026-10-02T17:50:10.658Z",
+      "ultimaVez": "2026-10-02T17:50:10.659Z",
+      "gitRev": "3d3c290"
     }
   }
 }
