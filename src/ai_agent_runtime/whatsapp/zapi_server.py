@@ -39,6 +39,7 @@ from ai_agent_runtime.organization_config import (
 )
 from ai_agent_runtime.sandbox_ids import AURORA_ORG_ID, BOREAL_ORG_ID, DATASET_VERSION, LEONARDO_ORG_ID, deterministic_sandbox_uuid
 from ai_agent_runtime.state import AgentDecision, AgentStage
+from ai_agent_runtime.retrieval import require_organization_id
 
 from .adapter import OrganizationResolver, WhatsAppChannelAdapter
 from .batching import MessageBatchingConfig, MessageBatchingWhatsAppChannelAdapter
@@ -235,10 +236,13 @@ class OpenAIWhatsAppResponseGenerator:
                 },
             )
         current_evidence_count = len(evidence)
+        # A cached chunk can become superseded between turns. Reuse only a
+        # matching row freshly returned by this turn's tenant-scoped retrieval.
         reused_evidence = _reusable_conversation_evidence(
             state.context.get("conversationEvidence"),
             organization_id=state.organization_id,
             query=retrieval_query,
+            current_evidence=evidence,
         )
         if reused_evidence:
             emit(
@@ -657,10 +661,9 @@ class ZApiRuntimeRetrieval:
         self.service_role_key = service_role_key
 
     def search(self, organization_id: str, query: str, *, limit: int = 6) -> list[dict[str, Any]]:
-        if not organization_id:
-            return []
-        version_ids = self._published_processed_version_ids(organization_id)
-        if not version_ids:
+        require_organization_id(organization_id)
+        versions = self._published_processed_versions(organization_id)
+        if not versions:
             return []
         terms = _retrieval_terms(query)
         if not terms:
@@ -668,11 +671,13 @@ class ZApiRuntimeRetrieval:
         rows_by_id: dict[str, dict[str, Any]] = {}
         remaining = limit
         for term in terms:
-            rows = self._chunk_rows(organization_id=organization_id, version_ids=version_ids, term=term, limit=remaining)
+            rows = self._chunk_rows(organization_id=organization_id, version_ids=set(versions), term=term, limit=remaining)
             for row in rows:
                 if row.get("organization_id") != organization_id:
                     continue
-                if row.get("document_version_id") not in version_ids:
+                if row.get("document_version_id") not in versions:
+                    continue
+                if row.get("document_id") != versions[row["document_version_id"]]:
                     continue
                 rows_by_id.setdefault(str(row.get("id")), row)
             remaining = max(limit - len(rows_by_id), 0)
@@ -680,29 +685,34 @@ class ZApiRuntimeRetrieval:
                 break
         return list(rows_by_id.values())[:limit]
 
-    def _published_processed_version_ids(self, organization_id: str) -> set[str]:
+    def _published_processed_versions(self, organization_id: str) -> dict[str, str]:
         params = {
-            "select": "id,status,processing_valid,organization_id,effective_from,effective_until",
+            "select": "id,document_id,version_number,status,processing_valid,organization_id,effective_from,effective_until",
             "organization_id": f"eq.{organization_id}",
             "status": "eq.PUBLISHED",
             "processing_valid": "is.true",
-            "limit": "100",
+            "limit": "1000",
         }
         rows = self._get_json("document_versions", params, endpoint="rest/v1/document_versions")
+        if len(rows) >= 1000:
+            raise LiveRuntimeHttpError(stage="retrieval", provider="supabase", status=None, endpoint="rest/v1/document_versions", code="VERSION_RESULT_TRUNCATED")
         now = datetime.now(timezone.utc)
-        return {
-            str(row.get("id"))
-            for row in rows
-            if row.get("organization_id") == organization_id
-            and row.get("status") == "PUBLISHED"
-            and row.get("processing_valid") is True
-            and _current_document_version(row, now)
-            and row.get("id")
-        }
+        current_by_document: dict[str, dict[str, Any]] = {}
+        for row in rows:
+            if (row.get("organization_id") != organization_id or row.get("status") != "PUBLISHED"
+                or row.get("processing_valid") is not True or not _current_document_version(row, now)
+                or not row.get("id") or not row.get("document_id")
+                or type(row.get("version_number")) is not int):
+                continue
+            document_id = str(row["document_id"])
+            previous = current_by_document.get(document_id)
+            if previous is None or row["version_number"] > previous["version_number"]:
+                current_by_document[document_id] = row
+        return {str(row["id"]): str(row["document_id"]) for row in current_by_document.values()}
 
     def _chunk_rows(self, *, organization_id: str, version_ids: set[str], term: str, limit: int) -> list[dict[str, Any]]:
         params = {
-            "select": "id,organization_id,document_version_id,content",
+            "select": "id,organization_id,document_id,document_version_id,content",
             "organization_id": f"eq.{organization_id}",
             "document_version_id": f"in.({','.join(sorted(version_ids))})",
             "content": f"ilike.*{_safe_like(term)}*",
@@ -728,16 +738,24 @@ class ZApiRuntimeRetrieval:
         }
 
     def closed_world_procedure_decision(self, organization_id: str, query: str) -> dict[str, Any] | None:
+        require_organization_id(organization_id)
         procedure = _requested_procedure(query)
         if not procedure:
             return None
         versions = self._closed_world_catalog_versions(organization_id)
         if not versions:
             return None
+        catalog_rows = self._chunks_for_versions(organization_id=organization_id, version_ids=set(versions))
+        if not catalog_rows or len(catalog_rows) >= 100 or any(
+            row.get("organization_id") != organization_id
+            or row.get("document_version_id") not in versions
+            or row.get("document_id") != versions[row["document_version_id"]]
+            for row in catalog_rows
+        ):
+            return None
         catalog_text = "\n".join(
             row.get("content", "")
-            for row in self._chunks_for_versions(organization_id=organization_id, version_ids=set(versions))
-            if row.get("organization_id") == organization_id and row.get("document_version_id") in versions
+            for row in catalog_rows
         )
         offered = _catalog_procedure_names(catalog_text)
         normalized_procedure = _normalize_text(procedure)
@@ -745,7 +763,7 @@ class ZApiRuntimeRetrieval:
             return {"decision": "OFFERED", "procedure": procedure}
         return {"decision": "NOT_OFFERED", "procedure": procedure}
 
-    def _closed_world_catalog_versions(self, organization_id: str) -> set[str]:
+    def _closed_world_catalog_versions(self, organization_id: str) -> dict[str, str]:
         documents = self._get_json(
             "documents",
             {
@@ -756,13 +774,15 @@ class ZApiRuntimeRetrieval:
             },
             endpoint="rest/v1/documents",
         )
+        if len(documents) >= 32:
+            return {}
         document_ids = {str(row.get("id")) for row in documents if row.get("organization_id") == organization_id and row.get("id")}
         if not document_ids:
-            return set()
+            return {}
         versions = self._get_json(
             "document_versions",
             {
-                "select": "id,document_id,organization_id,status,processing_valid,knowledge_mode,closed_world_completeness_approved,effective_from,effective_until",
+                "select": "id,document_id,version_number,organization_id,status,processing_valid,knowledge_mode,closed_world_completeness_approved,effective_from,effective_until",
                 "organization_id": f"eq.{organization_id}",
                 "document_id": f"in.({','.join(sorted(document_ids))})",
                 "status": "eq.PUBLISHED",
@@ -773,18 +793,19 @@ class ZApiRuntimeRetrieval:
             },
             endpoint="rest/v1/document_versions",
         )
+        if len(versions) >= 32:
+            return {}
         now = datetime.now(timezone.utc)
+        current_versions = self._published_processed_versions(organization_id)
         return {
-            str(row.get("id"))
+            str(row["id"]): str(row["document_id"])
             for row in versions
             if row.get("organization_id") == organization_id
             and row.get("document_id") in document_ids
-            and row.get("status") == "PUBLISHED"
-            and row.get("processing_valid") is True
-            and _current_document_version(row, now)
+            and str(row.get("id")) in current_versions
             and row.get("knowledge_mode") == "CLOSED_WORLD"
             and row.get("closed_world_completeness_approved") is True
-            and row.get("id")
+            and _current_document_version(row, now)
         }
 
     def _chunks_for_versions(self, *, organization_id: str, version_ids: set[str]) -> list[dict[str, Any]]:
@@ -793,7 +814,7 @@ class ZApiRuntimeRetrieval:
         return self._get_json(
             "chunks",
             {
-                "select": "id,organization_id,document_version_id,content",
+                "select": "id,organization_id,document_id,document_version_id,content",
                 "organization_id": f"eq.{organization_id}",
                 "document_version_id": f"in.({','.join(sorted(version_ids))})",
                 "limit": "100",
@@ -1468,6 +1489,7 @@ def _reusable_conversation_evidence(
     *,
     organization_id: str,
     query: str,
+    current_evidence: list[dict[str, Any]],
 ) -> list[dict[str, Any]]:
     if not isinstance(stored, list):
         return []
@@ -1475,6 +1497,7 @@ def _reusable_conversation_evidence(
     if not query_terms:
         return []
     reusable: list[dict[str, Any]] = []
+    current_by_id = {str(item.get("id")): item for item in current_evidence if item.get("id")}
     for item in stored[:4]:
         if not isinstance(item, dict):
             continue
@@ -1487,15 +1510,10 @@ def _reusable_conversation_evidence(
         content_terms = set(_retrieval_terms(content))
         if not (query_terms & scope_terms or query_terms & content_terms):
             continue
-        reusable.append(
-            {
-                "id": str(item.get("id") or ""),
-                "organization_id": organization_id,
-                "document_version_id": str(item.get("document_version_id") or ""),
-                "content": content,
-                "reused": True,
-            }
-        )
+        fresh = current_by_id.get(str(item.get("id") or ""))
+        if not fresh or str(fresh.get("organization_id") or "") != organization_id or str(fresh.get("document_version_id") or "") != str(item.get("document_version_id") or ""):
+            continue
+        reusable.append({**fresh, "reused": True})
     return reusable
 
 
@@ -2023,13 +2041,14 @@ def validate_live_grounding(
     commercial_policy_violation = _commercial_policy_violation(response_text, commercial_state)
     requires_evidence = _response_requires_authorized_evidence(response_text)
     config_authorized = False
-    if evidence_count == 0 and organization_config:
+    if organization_config:
         config_authorized = _organization_config_authorizes_response(response_text, organization_config)
+    evidence_supported = _factual_claims_supported_by_evidence(response_text, evidence or []) if requires_evidence else True
     passed = (
         not internal_gap_terms
         and not stale_free_evaluation_ambiguity
         and not commercial_policy_violation
-        and (evidence_count > 0 or not requires_evidence or config_authorized)
+        and (not requires_evidence or config_authorized or evidence_supported)
     )
     reason = None
     if internal_gap_terms:
@@ -2052,6 +2071,7 @@ def validate_live_grounding(
         "evidenceCount": evidence_count,
         "requiresEvidence": requires_evidence,
         "configAuthorized": config_authorized,
+        "evidenceSupported": evidence_supported,
         "internalGapTerms": sorted(internal_gap_terms),
         "staleFreeEvaluationAmbiguity": stale_free_evaluation_ambiguity,
         "commercialPolicyViolation": commercial_policy_violation,
@@ -2063,15 +2083,78 @@ def _response_requires_authorized_evidence(response_text: str) -> bool:
     text = _normalize_text(response_text)
     if not text:
         return False
+    if str(response_text).strip().endswith("?") and "." not in str(response_text):
+        return False
+    if re.search(r"\bavaliacao\b", text) and re.search(r"\b(gratuita|gratuito|gratis|preco|valor|custa|dura)\b", text):
+        return True
     factual_subject = re.search(
         r"\b(clinica|medico|medica|doutor|doutora|dr|dra|procedimento|tratamento|transplante|capilar|botox|preenchimento|blefaroplastia|consulta|avaliacao|avaliação|gratuita|gratuito|gratis|preco|valor|agenda|horario|retorno|pagamento|lente|lentes|faceta|facetas|resina|ceramica|cerâmica)\b",
         text,
     )
     factual_assertion = re.search(
-        r"\b(e|sao|consiste|funciona|realiza|oferece|inclui|custa|valor|preco|tem|possui|redistribui|remove|trata|corrige|indicado|recomendado|diferenca|diferente)\b",
+        r"\b(e|sao|consiste|funciona|realiza|oferece|inclui|custa|valor|preco|tem|possui|redistribui|remove|trata|corrige|indicado|recomendado|diferenca|diferente|fica|atende|abre|aceita|faz|trabalha|dura|localiza)\b",
         text,
     )
-    return bool(factual_subject and factual_assertion)
+    if factual_assertion and factual_assertion.group() == "e" and re.search(r"\bclinica\b", text) and not re.search(r"\bclinica\s+e\b", text) and not re.search(r"\bavaliacao\s+e\b", text) and not re.search(r"\b(oferece|realiza|trabalha|atende|fica|aceita|faz|possui|tem|custa)\b", text):
+        return False
+    return bool(factual_subject and factual_assertion and not re.search(r"\b(melhor opcao|faz sentido uma avaliacao)\b", text))
+
+
+def _factual_claims_supported_by_evidence(response_text: str, evidence: list[dict[str, Any]]) -> bool:
+    """Fail closed unless each clinic claim can be traced to one authorized source span.
+
+    This lexical gate deliberately rejects unsupported paraphrases; it never treats
+    the model's own knowledge or the mere existence of an unrelated chunk as proof.
+    """
+    if not evidence:
+        return False
+    stopwords = {
+        "a", "o", "as", "os", "de", "da", "do", "das", "dos", "e", "em", "na", "no",
+        "nas", "nos", "para", "por", "com", "um", "uma", "que", "se", "ao", "aos",
+        "voce", "sua", "seu", "nosso", "nossa", "clinica", "medico", "medica",
+        "doutor", "doutora", "dr", "dra", "e", "sao", "tem", "possui", "oferece",
+        "realiza", "faz", "trabalha", "inclui", "custa", "fica", "atende", "aceita",
+        "quem", "esta", "buscando", "busca", "formas", "registrada", "apos", "pela", "pelo",
+    }
+    claims = [part for part in re.split(r"[.!?;]+", str(response_text or "").replace("Dra.", "Dra ").replace("Dr.", "Dr ")) if _response_requires_authorized_evidence(part)]
+    if not claims:
+        return False
+    for claim in claims:
+        claim_words = [_grounding_token(token) for token in re.findall(r"[a-z0-9]+", _normalize_text(claim)) if len(token) >= 3 and token not in stopwords]
+        tokens = set(claim_words)
+        if not tokens or not any(_evidence_source_supports_claim(str(item.get("content") or ""), tokens, claim_words[0], claim) for item in evidence):
+            return False
+    return True
+
+
+def _evidence_source_supports_claim(content: str, tokens: set[str], key_token: str, claim: str) -> bool:
+    normalized = _normalize_text(content)
+    source_tokens = {_grounding_token(token) for token in re.findall(r"[a-z0-9]+", normalized)}
+    if not tokens.issubset(source_tokens):
+        return False
+    claim_negative = bool(re.search(r"\b(nao|nunca|sem)\b", _normalize_text(claim)))
+    relevant_sentences = [
+        sentence for sentence in re.split(r"[.!?;\n]+", normalized)
+        if key_token in {_grounding_token(token) for token in re.findall(r"[a-z0-9]+", sentence)}
+    ]
+    numeric_tokens = {token for token in tokens if token.isdigit()}
+    return bool(relevant_sentences) and all(
+        bool(re.search(r"\b(nao|nunca|sem)\b", sentence)) == claim_negative
+        for sentence in relevant_sentences
+    ) and (not numeric_tokens or any(numeric_tokens.issubset(set(re.findall(r"\d+", sentence))) for sentence in relevant_sentences))
+
+
+def _grounding_token(token: str) -> str:
+    # Conservative inflection normalization; no semantic inference.
+    if token == "valores":
+        return "valor"
+    if token == "oferecido":
+        return "oferece"
+    if token == "gratuito":
+        return "gratuita"
+    if token.endswith("s") and len(token) > 4:
+        return token[:-1]
+    return token
 
 
 def _stale_free_evaluation_ambiguity(response_text: str, evidence: list[dict[str, Any]]) -> bool:

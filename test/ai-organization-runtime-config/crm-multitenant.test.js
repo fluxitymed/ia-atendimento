@@ -201,8 +201,8 @@ class Retrieval(ZApiRuntimeRetrieval):
         org=params['organization_id'].removeprefix('eq.')
         if org not in published: return []
         if table=='document_versions':
-            return [{'id':'version-'+org,'organization_id':org,'status':'PUBLISHED','processing_valid':True}]
-        return [{'id':'chunk-'+org,'organization_id':org,'document_version_id':'version-'+org,'content':'KB '+org}]
+            return [{'id':'version-'+org,'organization_id':org,'document_id':'doc-'+org,'version_number':1,'status':'PUBLISHED','processing_valid':True}]
+        return [{'id':'chunk-'+org,'organization_id':org,'document_id':'doc-'+org,'document_version_id':'version-'+org,'content':'KB '+org}]
 retrieval=Retrieval()
 class CaptureGraph:
     def run(self,state):
@@ -252,18 +252,18 @@ class Retrieval(ZApiRuntimeRetrieval):
         self.calls.append((table,dict(params)))
         org=params['organization_id'].removeprefix('eq.')
         if table=='document_versions':
-            return [{'id':'published-'+org,'organization_id':org,'status':'PUBLISHED','processing_valid':True},
-                    {'id':'draft-'+org,'organization_id':org,'status':'DRAFT','processing_valid':True},
-                    {'id':'expired-'+org,'organization_id':org,'status':'PUBLISHED','processing_valid':True,'effective_until':'2000-01-01T00:00:00Z'},
-                    {'id':'future-'+org,'organization_id':org,'status':'PUBLISHED','processing_valid':True,'effective_from':'2999-01-01T00:00:00Z'},
-                    {'id':'invalid-'+org,'organization_id':org,'status':'PUBLISHED','processing_valid':False},
-                    {'id':'foreign','organization_id':A if org!=A else B,'status':'PUBLISHED','processing_valid':True}]
-        return [{'id':'chunk-'+org,'organization_id':org,'document_version_id':'published-'+org,'content':'unique '+org},
-                {'id':'draft','organization_id':org,'document_version_id':'draft-'+org,'content':'draft'},
-                {'id':'expired','organization_id':org,'document_version_id':'expired-'+org,'content':'old'},
-                {'id':'future','organization_id':org,'document_version_id':'future-'+org,'content':'not yet'},
-                {'id':'invalid','organization_id':org,'document_version_id':'invalid-'+org,'content':'invalid'},
-                {'id':'foreign','organization_id':A if org!=A else B,'document_version_id':'foreign','content':'foreign'}]
+            return [{'id':'published-'+org,'organization_id':org,'document_id':'doc-'+org,'version_number':1,'status':'PUBLISHED','processing_valid':True},
+                    {'id':'draft-'+org,'organization_id':org,'document_id':'draft-doc-'+org,'version_number':1,'status':'DRAFT','processing_valid':True},
+                    {'id':'expired-'+org,'organization_id':org,'document_id':'expired-doc-'+org,'version_number':1,'status':'PUBLISHED','processing_valid':True,'effective_until':'2000-01-01T00:00:00Z'},
+                    {'id':'future-'+org,'organization_id':org,'document_id':'future-doc-'+org,'version_number':1,'status':'PUBLISHED','processing_valid':True,'effective_from':'2999-01-01T00:00:00Z'},
+                    {'id':'invalid-'+org,'organization_id':org,'document_id':'invalid-doc-'+org,'version_number':1,'status':'PUBLISHED','processing_valid':False},
+                    {'id':'foreign','organization_id':A if org!=A else B,'document_id':'foreign-doc','version_number':1,'status':'PUBLISHED','processing_valid':True}]
+        return [{'id':'chunk-'+org,'organization_id':org,'document_id':'doc-'+org,'document_version_id':'published-'+org,'content':'unique '+org},
+                {'id':'draft','organization_id':org,'document_id':'draft-doc-'+org,'document_version_id':'draft-'+org,'content':'draft'},
+                {'id':'expired','organization_id':org,'document_id':'expired-doc-'+org,'document_version_id':'expired-'+org,'content':'old'},
+                {'id':'future','organization_id':org,'document_id':'future-doc-'+org,'document_version_id':'future-'+org,'content':'not yet'},
+                {'id':'invalid','organization_id':org,'document_id':'invalid-doc-'+org,'document_version_id':'invalid-'+org,'content':'invalid'},
+                {'id':'foreign','organization_id':A if org!=A else B,'document_id':'foreign-doc','document_version_id':'foreign','content':'foreign'}]
 retrieval=Retrieval()
 hits={org:retrieval.search(org,'unique') for org in (A,B,C)}
 print(json.dumps({'hits':hits,'calls':retrieval.calls}))`);

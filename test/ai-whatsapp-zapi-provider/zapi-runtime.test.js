@@ -750,9 +750,9 @@ def fake_urlopen(req, timeout=20):
     calls.append({"path": parsed.path, "query": {key: values[0] for key, values in qs.items()}})
     if parsed.path.endswith("/document_versions"):
         return Response([
-            {"id": "ver-published", "organization_id": ORG_A, "status": "PUBLISHED", "processing_valid": True},
-            {"id": "ver-draft", "organization_id": ORG_A, "status": "DRAFT", "processing_valid": True},
-            {"id": "ver-other", "organization_id": ORG_B, "status": "PUBLISHED", "processing_valid": True},
+            {"id": "ver-published", "organization_id": ORG_A, "document_id": "doc-a", "version_number": 2, "status": "PUBLISHED", "processing_valid": True},
+            {"id": "ver-draft", "organization_id": ORG_A, "document_id": "doc-a", "version_number": 3, "status": "DRAFT", "processing_valid": True},
+            {"id": "ver-other", "organization_id": ORG_B, "document_id": "doc-b", "version_number": 1, "status": "PUBLISHED", "processing_valid": True},
         ])
     content_filter = qs.get("content", [""])[0].lower()
     fixtures = {
@@ -777,9 +777,9 @@ def fake_urlopen(req, timeout=20):
     for term, content in fixtures.items():
         if term in content_filter:
             return Response([
-                {"id": f"chunk-{term}", "organization_id": ORG_A, "document_version_id": "ver-published", "content": content},
-                {"id": "chunk-draft", "organization_id": ORG_A, "document_version_id": "ver-draft", "content": f"{term} rascunho"},
-                {"id": "chunk-other", "organization_id": ORG_B, "document_version_id": "ver-other", "content": f"{term} outra organizacao"},
+                {"id": f"chunk-{term}", "organization_id": ORG_A, "document_id": "doc-a", "document_version_id": "ver-published", "content": content},
+                {"id": "chunk-draft", "organization_id": ORG_A, "document_id": "doc-a", "document_version_id": "ver-draft", "content": f"{term} rascunho"},
+                {"id": "chunk-other", "organization_id": ORG_B, "document_id": "doc-b", "document_version_id": "ver-other", "content": f"{term} outra organizacao"},
             ])
     return Response([])
 
@@ -1026,7 +1026,7 @@ import json
 from ai_agent_runtime.whatsapp.zapi_server import validate_live_grounding
 
 blocked = validate_live_grounding("Botox e oferecido pela clinica e custa R$ 900.", evidence_count=0)
-allowed = validate_live_grounding("Botox e oferecido pela clinica.", evidence_count=1)
+allowed = validate_live_grounding("Botox e oferecido pela clinica.", evidence_count=1, evidence=[{"content": "A clinica oferece Botox."}])
 print(json.dumps({"blocked": blocked, "allowed": allowed}))
 `);
   const parsed = JSON.parse(output);
@@ -1294,8 +1294,8 @@ stored = [
 print(json.dumps({
   "state": state.as_dict(),
   "query": query,
-  "sameOrg": _reusable_conversation_evidence(stored, organization_id="org-a", query=query),
-  "otherOrg": _reusable_conversation_evidence(stored, organization_id="org-c", query=query),
+  "sameOrg": _reusable_conversation_evidence(stored, organization_id="org-a", query=query, current_evidence=[{"id": "same", "organization_id": "org-a", "document_version_id": "v2", "content": "A clinica atua com implantes e odontologia digital."}]),
+  "otherOrg": _reusable_conversation_evidence(stored, organization_id="org-c", query=query, current_evidence=[]),
 }))
 `);
   const parsed = JSON.parse(output);

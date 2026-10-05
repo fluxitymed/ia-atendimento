@@ -1,0 +1,42 @@
+{
+  "feature": "ai-hartmann-knowledge-readiness",
+  "timestamp": "2026-10-02T17:59:51.508Z",
+  "gitRev": "3d3c290",
+  "command": "node --test --test-reporter=tap",
+  "reporter": "tap",
+  "exitCode": 0,
+  "testsParsed": 279,
+  "results": {
+    "AC-494": {
+      "status": "pass",
+      "testName": "@spec:AC-494 @spec:AC-495 @spec:AC-496 @spec:AC-497 tenant and lifecycle filters reject foreign, stale and inconsistent chunks",
+      "method": "tap"
+    },
+    "AC-495": {
+      "status": "pass",
+      "testName": "@spec:AC-494 @spec:AC-495 @spec:AC-496 @spec:AC-497 tenant and lifecycle filters reject foreign, stale and inconsistent chunks",
+      "method": "tap"
+    },
+    "AC-496": {
+      "status": "pass",
+      "testName": "@spec:AC-494 @spec:AC-495 @spec:AC-496 @spec:AC-497 tenant and lifecycle filters reject foreign, stale and inconsistent chunks",
+      "method": "tap"
+    },
+    "AC-497": {
+      "status": "pass",
+      "testName": "@spec:AC-494 @spec:AC-495 @spec:AC-496 @spec:AC-497 tenant and lifecycle filters reject foreign, stale and inconsistent chunks",
+      "method": "tap"
+    },
+    "AC-498": {
+      "status": "pass",
+      "testName": "@spec:AC-498 missing organization fails closed before querying",
+      "method": "tap"
+    },
+    "AC-499": {
+      "status": "pass",
+      "testName": "@spec:AC-499 grounding rejects unrelated evidence, mismatched prices and cached-only chunks",
+      "method": "tap"
+    }
+  },
+  "principles": {}
+}
