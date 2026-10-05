@@ -1,0 +1,102 @@
+{
+  "feature": "ai-knowledge-crm-api",
+  "timestamp": "2026-10-05T18:41:13.037Z",
+  "gitRev": "79ad12e",
+  "command": "node --test --test-reporter=tap",
+  "reporter": "tap",
+  "exitCode": 0,
+  "testsParsed": 310,
+  "results": {
+    "AC-513": {
+      "status": "pass",
+      "testName": "@spec:AC-513 CRM knowledge API authentication",
+      "method": "tap"
+    },
+    "AC-514": {
+      "status": "pass",
+      "testName": "@spec:AC-514 CRM knowledge API organization",
+      "method": "tap"
+    },
+    "AC-515": {
+      "status": "pass",
+      "testName": "@spec:AC-515 CRM knowledge API dry_run",
+      "method": "tap"
+    },
+    "AC-516": {
+      "status": "pass",
+      "testName": "@spec:AC-516 CRM knowledge API ingest",
+      "method": "tap"
+    },
+    "AC-517": {
+      "status": "pass",
+      "testName": "@spec:AC-517 CRM knowledge API idempotency",
+      "method": "tap"
+    },
+    "AC-518": {
+      "status": "pass",
+      "testName": "@spec:AC-518 CRM knowledge API validation",
+      "method": "tap"
+    },
+    "AC-519": {
+      "status": "pass",
+      "testName": "@spec:AC-519 CRM knowledge API publication",
+      "method": "tap"
+    },
+    "AC-520": {
+      "status": "pass",
+      "testName": "@spec:AC-520 CRM knowledge API read_isolation",
+      "method": "tap"
+    },
+    "AC-521": {
+      "status": "pass",
+      "testName": "@spec:AC-521 CRM knowledge API write_isolation",
+      "method": "tap"
+    },
+    "AC-522": {
+      "status": "pass",
+      "testName": "@spec:AC-522 CRM knowledge API concurrency",
+      "method": "tap"
+    },
+    "AC-523": {
+      "status": "pass",
+      "testName": "@spec:AC-523 CRM knowledge API invalid_source",
+      "method": "tap"
+    },
+    "AC-524": {
+      "status": "pass",
+      "testName": "@spec:AC-524 CRM knowledge API safe_output",
+      "method": "tap"
+    },
+    "AC-525": {
+      "status": "pass",
+      "testName": "@spec:AC-525 CRM knowledge API listing",
+      "method": "tap"
+    },
+    "AC-526": {
+      "status": "pass",
+      "testName": "@spec:AC-526 CRM knowledge API review",
+      "method": "tap"
+    },
+    "AC-527": {
+      "status": "pass",
+      "testName": "@spec:AC-527 CRM knowledge API smoke_test",
+      "method": "tap"
+    },
+    "AC-528": {
+      "status": "pass",
+      "testName": "@spec:AC-528 CRM knowledge API audit",
+      "method": "tap"
+    },
+    "AC-529": {
+      "status": "pass",
+      "testName": "@spec:AC-529 CRM knowledge API cli_compatibility",
+      "method": "tap"
+    },
+    "AC-530": {
+      "status": "pass",
+      "testName": "@spec:AC-530 CRM knowledge API http_boundary",
+      "method": "tap"
+    }
+  },
+  "principles": {}
+}

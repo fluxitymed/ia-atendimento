@@ -1,11 +1,11 @@
 # Plano de execução — ai-knowledge-crm-api
 
-> gerado por `onp-spec plano` em 2026-10-05 18:40 — NÃO edite à mão;
+> gerado por `onp-spec plano` em 2026-10-05 18:46 — NÃO edite à mão;
 > mudou tasks.md ou a config? Regenere: `onp-spec plano ai-knowledge-crm-api --sequencial`
 
 ## Resumo — o que vai acontecer
 
-- **modo SEQUENCIAL (escolha do usuário)**: 5 tarefa(s) pendente(s), UMA APÓS A OUTRA, na árvore principal
+- **modo SEQUENCIAL (escolha do usuário)**: 1 tarefa(s) pendente(s), UMA APÓS A OUTRA, na árvore principal (4 já concluída(s): T-095, T-096, T-097, T-099)
 - sem worktrees e sem paralelismo — cada tarefa roda numa janela de contexto limpa, na ordem do tasks.md
 - tudo acontece na branch de trabalho `spec/ai-knowledge-crm-api`; levar para a main é decisão sua
 
@@ -13,11 +13,7 @@
 
 | tarefa | título | modelo | esforço |
 |---|---|---|---|
-| T-095 | Especificar contrato e segurança | `gpt-5.6-terra` | medium |
-| T-096 | Adaptar o núcleo e preservar CLI | `gpt-5.6-terra` | medium |
-| T-097 | Implementar API privada e autenticação | `gpt-5.6-terra` | medium |
 | T-098 | Testar HTTP e transações | `gpt-5.6-terra` | medium |
-| T-099 | Documentar operação e verificar | `gpt-5.6-terra` | medium |
 
 ## Gestão de branches e commits
 

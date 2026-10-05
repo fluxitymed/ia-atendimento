@@ -1,12 +1,12 @@
 {
-  "runId": "IA - ATENDIMENTO-ai-knowledge-crm-api-muvlhude",
+  "runId": "IA - ATENDIMENTO-ai-knowledge-crm-api-muvlph4w",
   "feature": "ai-knowledge-crm-api",
   "agent": "codex",
   "modo": "sequencial",
   "paralelizar": null,
   "modeloForcado": null,
   "esforcoForcado": null,
-  "geradoEm": "2026-10-05 18:40",
+  "geradoEm": "2026-10-05 18:46",
   "branchTrabalho": "spec/ai-knowledge-crm-api",
   "baseDir": ".spec/features/ai-knowledge-crm-api",
   "specDir": ".spec",
@@ -16,141 +16,13 @@
   "faixas": [],
   "sequenciais": [
     {
-      "id": "T-095",
-      "titulo": "Especificar contrato e segurança",
-      "modelo": "gpt-5.6-terra",
-      "esforco": "medium",
-      "arquivos": [
-        ".spec/features/ai-knowledge-crm-api/spec.md",
-        ".spec/features/ai-knowledge-crm-api/design.md",
-        ".spec/features/ai-knowledge-crm-api/api-contract.md",
-        ".spec/features/ai-knowledge-crm-api/security.md"
-      ],
-      "refs": [
-        "US-118",
-        "AC-513",
-        "AC-514",
-        "AC-515",
-        "AC-516",
-        "AC-517",
-        "AC-518",
-        "AC-519",
-        "AC-520",
-        "AC-521",
-        "AC-522",
-        "AC-523",
-        "AC-524",
-        "AC-525",
-        "AC-526",
-        "AC-527",
-        "AC-528",
-        "AC-529",
-        "AC-530"
-      ]
-    },
-    {
-      "id": "T-096",
-      "titulo": "Adaptar o núcleo e preservar CLI",
-      "modelo": "gpt-5.6-terra",
-      "esforco": "medium",
-      "arquivos": [
-        "src/ai_agent_runtime/admin/knowledge.py",
-        "src/ai_agent_runtime/admin/markdown.py",
-        "src/ai_agent_runtime/admin/ingest_knowledge.py",
-        ".env.example"
-      ],
-      "refs": [
-        "US-118",
-        "AC-513",
-        "AC-514",
-        "AC-515",
-        "AC-516",
-        "AC-517",
-        "AC-518",
-        "AC-519",
-        "AC-520",
-        "AC-521",
-        "AC-522",
-        "AC-523",
-        "AC-524",
-        "AC-525",
-        "AC-526",
-        "AC-527",
-        "AC-528",
-        "AC-529",
-        "AC-530"
-      ]
-    },
-    {
-      "id": "T-097",
-      "titulo": "Implementar API privada e autenticação",
-      "modelo": "gpt-5.6-terra",
-      "esforco": "medium",
-      "arquivos": [
-        "src/ai_agent_runtime/admin/knowledge_api.py",
-        "src/ai_agent_runtime/crm_dispatch.py"
-      ],
-      "refs": [
-        "US-118",
-        "AC-513",
-        "AC-514",
-        "AC-515",
-        "AC-516",
-        "AC-517",
-        "AC-518",
-        "AC-519",
-        "AC-520",
-        "AC-521",
-        "AC-522",
-        "AC-523",
-        "AC-524",
-        "AC-525",
-        "AC-526",
-        "AC-527",
-        "AC-528",
-        "AC-529",
-        "AC-530"
-      ]
-    },
-    {
       "id": "T-098",
       "titulo": "Testar HTTP e transações",
       "modelo": "gpt-5.6-terra",
       "esforco": "medium",
       "arquivos": [
         "test/ai-knowledge-crm-api/api.test.js",
-        "test/ai-knowledge-crm-api/cases.py"
-      ],
-      "refs": [
-        "US-118",
-        "AC-513",
-        "AC-514",
-        "AC-515",
-        "AC-516",
-        "AC-517",
-        "AC-518",
-        "AC-519",
-        "AC-520",
-        "AC-521",
-        "AC-522",
-        "AC-523",
-        "AC-524",
-        "AC-525",
-        "AC-526",
-        "AC-527",
-        "AC-528",
-        "AC-529",
-        "AC-530"
-      ]
-    },
-    {
-      "id": "T-099",
-      "titulo": "Documentar operação e verificar",
-      "modelo": "gpt-5.6-terra",
-      "esforco": "medium",
-      "arquivos": [
-        ".spec/features/ai-knowledge-crm-api/runbook.md",
-        ".spec/features/ai-knowledge-crm-api/verification.md"
+        "test/ai-knowledge-crm-api/api_cases.py"
       ],
       "refs": [
         "US-118",
@@ -175,6 +47,11 @@
       ]
     }
   ],
-  "concluidas": [],
+  "concluidas": [
+    "T-095",
+    "T-096",
+    "T-097",
+    "T-099"
+  ],
   "avisos": []
 }

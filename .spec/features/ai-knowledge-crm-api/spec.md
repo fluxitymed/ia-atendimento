@@ -1,7 +1,7 @@
 # API privada de conhecimento para CRM
 
 > feature: ai-knowledge-crm-api
-> status: em-implementacao
+> status: auditada
 
 ## Contexto
 

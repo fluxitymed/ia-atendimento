@@ -1,11 +1,11 @@
 {
   "feature": "ai-organization-runtime-config",
-  "timestamp": "2026-10-05T18:07:46.981Z",
-  "gitRev": "7461bb7",
+  "timestamp": "2026-10-05T18:45:59.886Z",
+  "gitRev": "836d324",
   "command": "node --test --test-reporter=tap",
   "reporter": "tap",
   "exitCode": 0,
-  "testsParsed": 292,
+  "testsParsed": 310,
   "results": {
     "AC-421": {
       "status": "pass",

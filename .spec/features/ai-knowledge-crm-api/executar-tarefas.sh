@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# executar-tarefas.sh — gerado por `onp-spec plano ai-knowledge-crm-api` em 2026-10-05 18:40
+# executar-tarefas.sh — gerado por `onp-spec plano ai-knowledge-crm-api` em 2026-10-05 18:46
 # NÃO edite à mão: mudou tasks.md ou a config, regenere o plano.
 #
 # uso:
@@ -14,7 +14,7 @@
 set -u
 set -o pipefail
 
-RUN_ID='IA - ATENDIMENTO-ai-knowledge-crm-api-muvlhude'
+RUN_ID='IA - ATENDIMENTO-ai-knowledge-crm-api-muvlph4w'
 FEATURE='ai-knowledge-crm-api'
 BASE_BRANCH='spec/ai-knowledge-crm-api'
 ENGINE='.agents/skills/onp-spec-driven/scripts/onp-spec.mjs'
@@ -168,102 +168,6 @@ iniciar_resumos() {
   trap 'parar_resumos; node "$ENGINE" resumo "$FEATURE" --gravar >/dev/null 2>&1 || true' EXIT
 }
 
-# ── sequencial T-095 (ordem do tasks.md) ──
-executar_seq_T_095() {
-  info 'sequencial T-095 — Especificar contrato e segurança'
-  if rodar_tarefa seq 'T-095' 'Você executa UMA tarefa da feature "ai-knowledge-crm-api" (fluxo onp-spec, spec-anchored).
-Leia primeiro: .spec/features/ai-knowledge-crm-api/spec.md, .spec/features/ai-knowledge-crm-api/tasks.md e .spec/constituicao.md.
-
-Sua tarefa (somente ela):
-T-095 — "Especificar contrato e segurança"
-  critérios/refs: AC-513 (Token privado obrigatório), AC-514 (Tenant explícito e ativo), AC-515 (Dry-run estruturado), AC-516 (Ingestão pendente), AC-517 (Repetição idempotente), AC-518 (Validação humana), AC-519 (Publicação atômica), AC-520 (Isolamento de leitura), AC-521 (Isolamento de mutação), AC-522 (Concorrência e versão obsoleta), AC-523 (Fonte inválida e limites), AC-524 (Relatório sem segredos), AC-525 (Listagem operacional), AC-526 (Revisão pontual), AC-527 (Smoke privado), AC-528 (Auditoria correlacionada), AC-529 (Compatibilidade CLI e core único), AC-530 (HTTP e segurança de entrada)
-  arquivos permitidos (e seus testes): .spec/features/ai-knowledge-crm-api/spec.md, .spec/features/ai-knowledge-crm-api/design.md, .spec/features/ai-knowledge-crm-api/api-contract.md, .spec/features/ai-knowledge-crm-api/security.md
-  mensagem de commit: "T-095 ai-knowledge-crm-api: Especificar contrato e segurança"
-
-Regras inegociáveis:
-- Todo critério de aceite referenciado vira teste com @spec:AC-xxx no título.
-- NUNCA enfraqueça, pule (skip/todo) ou apague um teste para passar — teste pulado não é prova e o audit acusa.
-- Rode os testes localmente com `node --test --test-reporter=tap` até passarem.
-- NÃO edite tasks.md, NÃO rode onp-spec verify/audit e NÃO toque em outras tarefas — o orquestrador cuida disso.
-- Ao final de CADA tarefa: `git add` só no que você tocou e um commit próprio.' 'gpt-5.6-terra' medium >> "$LOG_DIR/seq.log" 2>&1; then
-    # commit de segurança se o agente esqueceu (rastreabilidade > perfeição)
-    if [ -n "$(git status --porcelain)" ]; then
-      git add -A && git commit -q -m 'T-095 ai-knowledge-crm-api: Especificar contrato e segurança (auto-commit do plano)'
-    fi
-    marcar_concluidas T-095
-    verde "✔ T-095 concluída"
-    return 0
-  fi
-  vermelho "✘ T-095 falhou (log: $LOG_DIR/seq.log)"
-  amarelo "  reexecute só ela: bash .spec/features/ai-knowledge-crm-api/executar-tarefas.sh --seq T-095"
-  FALHAS="$FALHAS T-095"
-  return 1
-}
-
-# ── sequencial T-096 (ordem do tasks.md) ──
-executar_seq_T_096() {
-  info 'sequencial T-096 — Adaptar o núcleo e preservar CLI'
-  if rodar_tarefa seq 'T-096' 'Você executa UMA tarefa da feature "ai-knowledge-crm-api" (fluxo onp-spec, spec-anchored).
-Leia primeiro: .spec/features/ai-knowledge-crm-api/spec.md, .spec/features/ai-knowledge-crm-api/tasks.md e .spec/constituicao.md.
-
-Sua tarefa (somente ela):
-T-096 — "Adaptar o núcleo e preservar CLI"
-  critérios/refs: AC-513 (Token privado obrigatório), AC-514 (Tenant explícito e ativo), AC-515 (Dry-run estruturado), AC-516 (Ingestão pendente), AC-517 (Repetição idempotente), AC-518 (Validação humana), AC-519 (Publicação atômica), AC-520 (Isolamento de leitura), AC-521 (Isolamento de mutação), AC-522 (Concorrência e versão obsoleta), AC-523 (Fonte inválida e limites), AC-524 (Relatório sem segredos), AC-525 (Listagem operacional), AC-526 (Revisão pontual), AC-527 (Smoke privado), AC-528 (Auditoria correlacionada), AC-529 (Compatibilidade CLI e core único), AC-530 (HTTP e segurança de entrada)
-  arquivos permitidos (e seus testes): src/ai_agent_runtime/admin/knowledge.py, src/ai_agent_runtime/admin/markdown.py, src/ai_agent_runtime/admin/ingest_knowledge.py, .env.example
-  mensagem de commit: "T-096 ai-knowledge-crm-api: Adaptar o núcleo e preservar CLI"
-
-Regras inegociáveis:
-- Todo critério de aceite referenciado vira teste com @spec:AC-xxx no título.
-- NUNCA enfraqueça, pule (skip/todo) ou apague um teste para passar — teste pulado não é prova e o audit acusa.
-- Rode os testes localmente com `node --test --test-reporter=tap` até passarem.
-- NÃO edite tasks.md, NÃO rode onp-spec verify/audit e NÃO toque em outras tarefas — o orquestrador cuida disso.
-- Ao final de CADA tarefa: `git add` só no que você tocou e um commit próprio.' 'gpt-5.6-terra' medium >> "$LOG_DIR/seq.log" 2>&1; then
-    # commit de segurança se o agente esqueceu (rastreabilidade > perfeição)
-    if [ -n "$(git status --porcelain)" ]; then
-      git add -A && git commit -q -m 'T-096 ai-knowledge-crm-api: Adaptar o núcleo e preservar CLI (auto-commit do plano)'
-    fi
-    marcar_concluidas T-096
-    verde "✔ T-096 concluída"
-    return 0
-  fi
-  vermelho "✘ T-096 falhou (log: $LOG_DIR/seq.log)"
-  amarelo "  reexecute só ela: bash .spec/features/ai-knowledge-crm-api/executar-tarefas.sh --seq T-096"
-  FALHAS="$FALHAS T-096"
-  return 1
-}
-
-# ── sequencial T-097 (ordem do tasks.md) ──
-executar_seq_T_097() {
-  info 'sequencial T-097 — Implementar API privada e autenticação'
-  if rodar_tarefa seq 'T-097' 'Você executa UMA tarefa da feature "ai-knowledge-crm-api" (fluxo onp-spec, spec-anchored).
-Leia primeiro: .spec/features/ai-knowledge-crm-api/spec.md, .spec/features/ai-knowledge-crm-api/tasks.md e .spec/constituicao.md.
-
-Sua tarefa (somente ela):
-T-097 — "Implementar API privada e autenticação"
-  critérios/refs: AC-513 (Token privado obrigatório), AC-514 (Tenant explícito e ativo), AC-515 (Dry-run estruturado), AC-516 (Ingestão pendente), AC-517 (Repetição idempotente), AC-518 (Validação humana), AC-519 (Publicação atômica), AC-520 (Isolamento de leitura), AC-521 (Isolamento de mutação), AC-522 (Concorrência e versão obsoleta), AC-523 (Fonte inválida e limites), AC-524 (Relatório sem segredos), AC-525 (Listagem operacional), AC-526 (Revisão pontual), AC-527 (Smoke privado), AC-528 (Auditoria correlacionada), AC-529 (Compatibilidade CLI e core único), AC-530 (HTTP e segurança de entrada)
-  arquivos permitidos (e seus testes): src/ai_agent_runtime/admin/knowledge_api.py, src/ai_agent_runtime/crm_dispatch.py
-  mensagem de commit: "T-097 ai-knowledge-crm-api: Implementar API privada e autenticação"
-
-Regras inegociáveis:
-- Todo critério de aceite referenciado vira teste com @spec:AC-xxx no título.
-- NUNCA enfraqueça, pule (skip/todo) ou apague um teste para passar — teste pulado não é prova e o audit acusa.
-- Rode os testes localmente com `node --test --test-reporter=tap` até passarem.
-- NÃO edite tasks.md, NÃO rode onp-spec verify/audit e NÃO toque em outras tarefas — o orquestrador cuida disso.
-- Ao final de CADA tarefa: `git add` só no que você tocou e um commit próprio.' 'gpt-5.6-terra' medium >> "$LOG_DIR/seq.log" 2>&1; then
-    # commit de segurança se o agente esqueceu (rastreabilidade > perfeição)
-    if [ -n "$(git status --porcelain)" ]; then
-      git add -A && git commit -q -m 'T-097 ai-knowledge-crm-api: Implementar API privada e autenticação (auto-commit do plano)'
-    fi
-    marcar_concluidas T-097
-    verde "✔ T-097 concluída"
-    return 0
-  fi
-  vermelho "✘ T-097 falhou (log: $LOG_DIR/seq.log)"
-  amarelo "  reexecute só ela: bash .spec/features/ai-knowledge-crm-api/executar-tarefas.sh --seq T-097"
-  FALHAS="$FALHAS T-097"
-  return 1
-}
-
 # ── sequencial T-098 (ordem do tasks.md) ──
 executar_seq_T_098() {
   info 'sequencial T-098 — Testar HTTP e transações'
@@ -273,7 +177,7 @@ Leia primeiro: .spec/features/ai-knowledge-crm-api/spec.md, .spec/features/ai-kn
 Sua tarefa (somente ela):
 T-098 — "Testar HTTP e transações"
   critérios/refs: AC-513 (Token privado obrigatório), AC-514 (Tenant explícito e ativo), AC-515 (Dry-run estruturado), AC-516 (Ingestão pendente), AC-517 (Repetição idempotente), AC-518 (Validação humana), AC-519 (Publicação atômica), AC-520 (Isolamento de leitura), AC-521 (Isolamento de mutação), AC-522 (Concorrência e versão obsoleta), AC-523 (Fonte inválida e limites), AC-524 (Relatório sem segredos), AC-525 (Listagem operacional), AC-526 (Revisão pontual), AC-527 (Smoke privado), AC-528 (Auditoria correlacionada), AC-529 (Compatibilidade CLI e core único), AC-530 (HTTP e segurança de entrada)
-  arquivos permitidos (e seus testes): test/ai-knowledge-crm-api/api.test.js, test/ai-knowledge-crm-api/cases.py
+  arquivos permitidos (e seus testes): test/ai-knowledge-crm-api/api.test.js, test/ai-knowledge-crm-api/api_cases.py
   mensagem de commit: "T-098 ai-knowledge-crm-api: Testar HTTP e transações"
 
 Regras inegociáveis:
@@ -293,38 +197,6 @@ Regras inegociáveis:
   vermelho "✘ T-098 falhou (log: $LOG_DIR/seq.log)"
   amarelo "  reexecute só ela: bash .spec/features/ai-knowledge-crm-api/executar-tarefas.sh --seq T-098"
   FALHAS="$FALHAS T-098"
-  return 1
-}
-
-# ── sequencial T-099 (ordem do tasks.md) ──
-executar_seq_T_099() {
-  info 'sequencial T-099 — Documentar operação e verificar'
-  if rodar_tarefa seq 'T-099' 'Você executa UMA tarefa da feature "ai-knowledge-crm-api" (fluxo onp-spec, spec-anchored).
-Leia primeiro: .spec/features/ai-knowledge-crm-api/spec.md, .spec/features/ai-knowledge-crm-api/tasks.md e .spec/constituicao.md.
-
-Sua tarefa (somente ela):
-T-099 — "Documentar operação e verificar"
-  critérios/refs: AC-513 (Token privado obrigatório), AC-514 (Tenant explícito e ativo), AC-515 (Dry-run estruturado), AC-516 (Ingestão pendente), AC-517 (Repetição idempotente), AC-518 (Validação humana), AC-519 (Publicação atômica), AC-520 (Isolamento de leitura), AC-521 (Isolamento de mutação), AC-522 (Concorrência e versão obsoleta), AC-523 (Fonte inválida e limites), AC-524 (Relatório sem segredos), AC-525 (Listagem operacional), AC-526 (Revisão pontual), AC-527 (Smoke privado), AC-528 (Auditoria correlacionada), AC-529 (Compatibilidade CLI e core único), AC-530 (HTTP e segurança de entrada)
-  arquivos permitidos (e seus testes): .spec/features/ai-knowledge-crm-api/runbook.md, .spec/features/ai-knowledge-crm-api/verification.md
-  mensagem de commit: "T-099 ai-knowledge-crm-api: Documentar operação e verificar"
-
-Regras inegociáveis:
-- Todo critério de aceite referenciado vira teste com @spec:AC-xxx no título.
-- NUNCA enfraqueça, pule (skip/todo) ou apague um teste para passar — teste pulado não é prova e o audit acusa.
-- Rode os testes localmente com `node --test --test-reporter=tap` até passarem.
-- NÃO edite tasks.md, NÃO rode onp-spec verify/audit e NÃO toque em outras tarefas — o orquestrador cuida disso.
-- Ao final de CADA tarefa: `git add` só no que você tocou e um commit próprio.' 'gpt-5.6-terra' medium >> "$LOG_DIR/seq.log" 2>&1; then
-    # commit de segurança se o agente esqueceu (rastreabilidade > perfeição)
-    if [ -n "$(git status --porcelain)" ]; then
-      git add -A && git commit -q -m 'T-099 ai-knowledge-crm-api: Documentar operação e verificar (auto-commit do plano)'
-    fi
-    marcar_concluidas T-099
-    verde "✔ T-099 concluída"
-    return 0
-  fi
-  vermelho "✘ T-099 falhou (log: $LOG_DIR/seq.log)"
-  amarelo "  reexecute só ela: bash .spec/features/ai-knowledge-crm-api/executar-tarefas.sh --seq T-099"
-  FALHAS="$FALHAS T-099"
   return 1
 }
 
@@ -381,21 +253,13 @@ executar_tudo() {
   iniciar_resumos
   info "logs em: $LOG_DIR"
   info "resumo geral de andamento: a cada 1 min aqui no terminal (e via: onp-spec resumo)"
-  executar_seq_T_095 || true
-  executar_seq_T_096 || true
-  executar_seq_T_097 || true
   executar_seq_T_098 || true
-  executar_seq_T_099 || true
   encerrar tudo
 }
 
 listar() {
   echo "execução: $RUN_ID (feature $FEATURE, branch $BASE_BRANCH)"
-  echo "  seq       T-095 (sequencial)"
-  echo "  seq       T-096 (sequencial)"
-  echo "  seq       T-097 (sequencial)"
   echo "  seq       T-098 (sequencial)"
-  echo "  seq       T-099 (sequencial)"
   echo
   echo "reexecutar uma faixa:    --faixa <id>"
   echo "reexecutar sequencial:   --seq <T-xxx>"
@@ -430,11 +294,7 @@ case "$MODO" in
     esac ;;
   seq)
     case "$ALVO" in
-      T-095) evento --tipo inicio --escopo "seq:T-095"; iniciar_resumos; executar_seq_T_095 || true; encerrar "seq:T-095" ;;
-      T-096) evento --tipo inicio --escopo "seq:T-096"; iniciar_resumos; executar_seq_T_096 || true; encerrar "seq:T-096" ;;
-      T-097) evento --tipo inicio --escopo "seq:T-097"; iniciar_resumos; executar_seq_T_097 || true; encerrar "seq:T-097" ;;
       T-098) evento --tipo inicio --escopo "seq:T-098"; iniciar_resumos; executar_seq_T_098 || true; encerrar "seq:T-098" ;;
-      T-099) evento --tipo inicio --escopo "seq:T-099"; iniciar_resumos; executar_seq_T_099 || true; encerrar "seq:T-099" ;;
       *) falhar "tarefa sequencial desconhecida: '$ALVO' — veja as disponíveis com --listar" ;;
     esac ;;
 esac
