@@ -9,10 +9,13 @@ diferente de `CRM_DISPATCH_SERVICE_TOKEN`; `KNOWLEDGE_DATABASE_URL` para o banco
 `SUPABASE_SERVICE_ROLE_KEY` (smoke). Não imprimir nem colar valores em logs.
 Não alterar as credenciais do projeto Production durante esta tarefa.
 
-O servidor já usado pelo dispatch em `python -m ai_agent_runtime.crm_dispatch`
-recebe as novas rotas na mesma porta 8083. Bind padrão `127.0.0.1`; o ambiente
-futuro precisa publicar somente através de rota interna com TLS e controle de
-rede. O CRM Backend acessa essa rota; frontend nunca recebe token.
+O serviço Render documentado inicia
+`PYTHONPATH=src python3 -m ai_agent_runtime.whatsapp.zapi_server`. Esse processo
+abre `PORT` e atende `/health`, `/webhooks/zapi/whatsapp` e `/internal/knowledge/*`
+no mesmo listener. O processo separado `python -m ai_agent_runtime.crm_dispatch`
+continua aceitando as rotas knowledge em 8083, com bind padrão `127.0.0.1`, mas
+não é o entrypoint público do Render. Restringir acesso à rota interna no gateway
+e usar HTTPS entre CRM Backend e IA; frontend nunca recebe token.
 
 O operador CRM deve verificar sessão, membership e papel antes de cada chamada.
 Usar `correlationId` UUID novo para rastrear cada operação, preservar o

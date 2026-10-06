@@ -5,7 +5,11 @@ import io
 import json
 import os
 from pathlib import Path
+import socket
+import subprocess
 import sys
+import tempfile
+import time
 from concurrent.futures import ThreadPoolExecutor
 from http.server import ThreadingHTTPServer
 from threading import Thread
@@ -297,6 +301,60 @@ def http_boundary():
                 assert counts(db)==[1,1,1,1]
             finally:
                 server.shutdown();server.server_close();thread.join(timeout=5)
+
+
+def production_entrypoint():
+    # Start the same module used by Render, not an in-process surrogate handler.
+    with tempfile.TemporaryDirectory() as temp_dir, socket.socket() as probe:
+        probe.bind(('127.0.0.1', 0))
+        port = probe.getsockname()[1]
+        probe.close()
+        env = os.environ.copy()
+        env.pop('CRM_KNOWLEDGE_SERVICE_TOKEN', None)
+        env.update(PYTHONPATH='src', PORT=str(port), HOST='127.0.0.1',
+                   ZAPI_STORE_PATH=str(Path(temp_dir) / 'store.json'), AI_INBOUND_ENABLED='false')
+        process = subprocess.Popen([sys.executable, '-m', 'ai_agent_runtime.whatsapp.zapi_server'],
+                                   env=env, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
+        base = f'http://127.0.0.1:{port}'
+        try:
+            for _ in range(100):
+                if process.poll() is not None:
+                    raise AssertionError(f'Production entrypoint exited: {process.stderr.read().decode()}')
+                try:
+                    with request.urlopen(base + '/health', timeout=1) as response:
+                        assert response.status == 200
+                    break
+                except (error.URLError, TimeoutError):
+                    time.sleep(0.05)
+            else:
+                raise AssertionError('Production entrypoint did not start')
+
+            target = base + '/internal/knowledge/documents?organizationId=' + A
+            for suffix in ('', '/'):
+                url = target if not suffix else base + '/internal/knowledge/documents/?organizationId=' + A
+                try:
+                    request.urlopen(url, timeout=5)
+                    raise AssertionError('Knowledge route allowed missing token')
+                except error.HTTPError as response:
+                    assert response.code == 401
+                    assert response.headers['Cache-Control'] == 'no-store'
+                    assert json.loads(response.read()) == {'error': 'UNAUTHORIZED'}
+
+            # An authenticated request reaches API validation before any database access.
+            process_env_token = 'not-configured-in-this-process'
+            req = request.Request(target, headers={'Authorization': 'Bearer ' + process_env_token})
+            try:
+                request.urlopen(req, timeout=5)
+                raise AssertionError('Invalid token was accepted')
+            except error.HTTPError as response:
+                assert response.code == 401
+        finally:
+            process.terminate()
+            try:
+                process.communicate(timeout=5)
+            except subprocess.TimeoutExpired:
+                process.kill()
+                process.communicate(timeout=5)
 
 
 if __name__ == '__main__':

@@ -8,6 +8,7 @@ const cases = [
   ['@spec:AC-522','concurrency'], ['@spec:AC-523','invalid_source'], ['@spec:AC-524','safe_output'],
   ['@spec:AC-525','listing'], ['@spec:AC-526','review'], ['@spec:AC-527','smoke_test'],
   ['@spec:AC-528','audit'], ['@spec:AC-529','cli_compatibility'], ['@spec:AC-530','http_boundary'],
+  ['@spec:AC-531','production_entrypoint'],
 ];
 for (const [criterion, name] of cases) {
   test(`${criterion} CRM knowledge API ${name}`, () => {

@@ -1,7 +1,11 @@
 # Contrato HTTP exato — CRM Backend → IA Knowledge Admin API
 
-Base: **mesmo listener privado** do dispatch de IA (`crm_dispatch.py`, porta 8083
-por padrão). Prefixo `/internal/knowledge`. Requisições são feitas **somente pelo
+Base: listener HTTP canônico de Production (`python3 -m ai_agent_runtime.whatsapp.zapi_server`,
+porta definida por `PORT` no Render), que também atende `/health` e o webhook Z-API.
+O listener separado `crm_dispatch.py` (porta 8083 por padrão) continua aceitando
+as mesmas rotas localmente, mas não é o entrypoint publicado pelo serviço Render.
+Prefixo exato `/internal/knowledge`; não há barra final nos endpoints da tabela.
+Requisições são feitas **somente pelo
 backend CRM**, após autenticar o usuário e exigir membership na organização e papel
 administrativo autorizado a gerir conhecimento. Nunca chamar do browser.
 
@@ -15,8 +19,9 @@ Authorization: Bearer <CRM_KNOWLEDGE_SERVICE_TOKEN>
 
 O segredo tem no mínimo 32 caracteres, é dedicado a knowledge e difere de
 `CRM_DISPATCH_SERVICE_TOKEN`. A IA compara em tempo constante. O token de dispatch
-não autoriza knowledge. Transportar somente por rede privada com TLS entre CRM e IA;
-o listener local permanece em `127.0.0.1` por padrão. O CRM deve guardar o token em
+não autoriza knowledge. O entrypoint Render publicado exige HTTPS e deve ter
+acesso restrito ao backend CRM para as rotas internas. O listener de dispatch
+separado permanece em `127.0.0.1` por padrão. O CRM deve guardar o token em
 segredo de backend; nunca em frontend, log ou query. Não há CORS liberado.
 
 Todo POST inclui `organizationId` e `correlationId` como UUIDs minúsculos canônicos

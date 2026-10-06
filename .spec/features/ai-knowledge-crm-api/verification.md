@@ -46,3 +46,23 @@ As cinco perguntas em aberto são de features anteriores e não foram classifica
 como aviso/bloqueio pelo gate desta entrega. Classificação:
 `READY_FOR_CRM_KNOWLEDGE_INTEGRATION`.
 
+## Correção do entrypoint de Production — 2026-10-06
+
+O start documentado para Render é `PYTHONPATH=src python3 -m
+ai_agent_runtime.whatsapp.zapi_server`. Antes da correção, uma requisição HTTP
+real nesse processo respondeu 200 para `/health` e 404 para
+`GET /internal/knowledge/documents?organizationId=...`, com e sem barra final.
+O handler Z-API reconhecia apenas `/health` em GET e o webhook em POST; knowledge
+estava registrado somente no processo separado `crm_dispatch.py` (8083).
+
+Após registrar knowledge no handler do entrypoint Render, a suíte focada passou
+19/19; o novo teste inicia o módulo real sem `CRM_KNOWLEDGE_SERVICE_TOKEN` e
+confirma 401 em `/internal/knowledge/documents`, inclusive com barra final. A
+regressão completa passou 311/311, sem skip/todo. Houve uma falha intermitente
+no teste preexistente de publicação concorrente durante a primeira regressão com
+ambiente Python correto; a repetição passou 311/311. O verify da feature passou
+19/19. As provas das 13 outras features foram renovadas após a alteração em
+código compartilhado; três runners tiveram exit 1 intermitente na primeira
+execução e exit 0 na repetição. Audit final: 531/531 critérios provados, zero
+erros e zero avisos. A reprodução e os testes usaram loopback local, sem acesso
+ao serviço Production, deploy, token real ou dados Hartmann.

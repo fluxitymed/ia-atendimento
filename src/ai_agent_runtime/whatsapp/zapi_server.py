@@ -935,6 +935,9 @@ class ZApiWebhookRequestHandler(BaseHTTPRequestHandler):
     config: ZApiWhatsAppConfig | None = None
 
     def do_GET(self) -> None:
+        if parse.urlparse(self.path).path.startswith("/internal/knowledge/"):
+            self._knowledge("GET")
+            return
         if parse.urlparse(self.path).path != HEALTH_PATH:
             self._write(ZApiWebhookResponse(status_code=404, body="Not Found"))
             return
@@ -953,6 +956,9 @@ class ZApiWebhookRequestHandler(BaseHTTPRequestHandler):
         )
 
     def do_POST(self) -> None:
+        if parse.urlparse(self.path).path.startswith("/internal/knowledge/"):
+            self._knowledge("POST")
+            return
         if parse.urlparse(self.path).path != WEBHOOK_PATH:
             self._write(ZApiWebhookResponse(status_code=404, body="Not Found"))
             return
@@ -967,6 +973,41 @@ class ZApiWebhookRequestHandler(BaseHTTPRequestHandler):
             stage_logger=JsonStageLogger(),
         )
         self._write(response)
+
+    def _knowledge(self, method: str) -> None:
+        # Import lazily: knowledge_api shares the CRM dispatch Bearer verifier,
+        # and crm_dispatch imports runtime components from this module.
+        from ai_agent_runtime.admin.knowledge_api import MAX_HTTP_BODY_BYTES, handle_knowledge_request
+        from ai_agent_runtime.crm_dispatch import service_bearer_authorized
+
+        authorization = self.headers.get("Authorization")
+        token = environ.get("CRM_KNOWLEDGE_SERVICE_TOKEN")
+        if not service_bearer_authorized(authorization, token):
+            self._write_knowledge(401, {"error": "UNAUTHORIZED"})
+            return
+        length = 0
+        if method == "POST":
+            try:
+                length = int(self.headers.get("Content-Length", "-1"))
+            except ValueError:
+                length = -1
+            if length < 0 or length > MAX_HTTP_BODY_BYTES:
+                self._write_knowledge(413, {"error": "INVALID_REQUEST"})
+                return
+        status, body = handle_knowledge_request(
+            method, self.path, self.rfile.read(length) if length else b"",
+            authorization, token=token, content_type=self.headers.get("Content-Type"),
+        )
+        self._write_knowledge(status, body)
+
+    def _write_knowledge(self, status: int, body: dict[str, Any]) -> None:
+        data = json.dumps(body, separators=(",", ":")).encode("utf-8")
+        self.send_response(status)
+        self.send_header("Content-Type", "application/json")
+        self.send_header("Cache-Control", "no-store")
+        self.send_header("Content-Length", str(len(data)))
+        self.end_headers()
+        self.wfile.write(data)
 
     def log_message(self, format: str, *args) -> None:
         return

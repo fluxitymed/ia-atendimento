@@ -21,3 +21,7 @@
 ## T-099 — Documentar operação e verificar [concluida]
 - Refs: US-118, AC-513, AC-514, AC-515, AC-516, AC-517, AC-518, AC-519, AC-520, AC-521, AC-522, AC-523, AC-524, AC-525, AC-526, AC-527, AC-528, AC-529, AC-530
 - Arquivos: .spec/features/ai-knowledge-crm-api/runbook.md, .spec/features/ai-knowledge-crm-api/verification.md
+
+## T-100 — Registrar knowledge no entrypoint de Production [concluida]
+- Refs: US-118, AC-513, AC-530, AC-531
+- Arquivos: src/ai_agent_runtime/whatsapp/zapi_server.py, test/ai-knowledge-crm-api/api.test.js, test/ai-knowledge-crm-api/api_cases.py, .spec/features/ai-knowledge-crm-api/api-contract.md, .spec/features/ai-knowledge-crm-api/runbook.md

@@ -121,6 +121,12 @@ Como administrador autorizado no CRM, quero revisar e publicar documentos por um
 - **Quando** servidor recebe requisição
 - **Então** retorna 4xx controlado, limita body e não imprime payload.
 
+#### AC-531 — Rota no entrypoint público de Production
+
+- **Dado** o processo iniciado pelo comando de start documentado para Render, sem `CRM_KNOWLEDGE_SERVICE_TOKEN`
+- **Quando** uma requisição HTTP real chama `GET /internal/knowledge/documents`
+- **Então** recebe 401 da autenticação knowledge no mesmo listener que atende `/health` e o webhook Z-API, sem depender do listener separado de CRM dispatch.
+
 ## Fora de escopo
 
 UI/Backend do CRM, deploy, carga Hartmann, publicação real, autenticação de usuário final na IA.
