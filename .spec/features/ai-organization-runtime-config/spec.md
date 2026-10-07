@@ -212,6 +212,16 @@ novo cliente no Supabase/Vault, para atende-lo sem editar o deploy da IA.
 - **Quando** suas suites rodam apos o cutover
 - **Entao** os contratos anteriores continuam validos sem mudar prompts, regras comerciais ou outbound
 
+### US-119 — Dispatch CRM no listener de Production
+
+Como operador do CRM, quero que o listener HTTP publicado pela IA encaminhe o dispatch ao handler existente, para que o contrato privado funcione sem um segundo servidor.
+
+#### AC-532 — Rota de dispatch no entrypoint real
+
+- **Dado** o processo `python3 -m ai_agent_runtime.whatsapp.zapi_server` com `CRM_DISPATCH_SERVICE_TOKEN` configurado
+- **Quando** `POST /internal/crm/whatsapp-dispatch` recebe token ausente ou incorreto, `{}` autenticado ou evento valido
+- **Entao** responde respectivamente 401, 401, 400 `INVALID_REQUEST` ou a acao do handler canonico; `/health`, Knowledge, webhook e rotas desconhecidas preservam seus contratos, sem logs de segredo.
+
 ## Suposições
 
 | ID | Suposição | Status | Resolução |

@@ -933,6 +933,7 @@ def _usage_tracker(integrations: IntegrationConfig):
 class ZApiWebhookRequestHandler(BaseHTTPRequestHandler):
     adapter: WhatsAppChannelAdapter | None = None
     config: ZApiWhatsAppConfig | None = None
+    crm_dispatch_processor = None
 
     def do_GET(self) -> None:
         if parse.urlparse(self.path).path.startswith("/internal/knowledge/"):
@@ -959,6 +960,11 @@ class ZApiWebhookRequestHandler(BaseHTTPRequestHandler):
         if parse.urlparse(self.path).path.startswith("/internal/knowledge/"):
             self._knowledge("POST")
             return
+        # crm_dispatch imports runtime components from this module.
+        from ai_agent_runtime.crm_dispatch import DISPATCH_PATH
+        if self.path == DISPATCH_PATH:
+            self._crm_dispatch()
+            return
         if parse.urlparse(self.path).path != WEBHOOK_PATH:
             self._write(ZApiWebhookResponse(status_code=404, body="Not Found"))
             return
@@ -973,6 +979,27 @@ class ZApiWebhookRequestHandler(BaseHTTPRequestHandler):
             stage_logger=JsonStageLogger(),
         )
         self._write(response)
+
+    def _crm_dispatch(self) -> None:
+        from ai_agent_runtime.crm_dispatch import MAX_BODY_BYTES, handle_crm_dispatch, service_bearer_authorized
+
+        authorization = self.headers.get("Authorization")
+        token = environ.get("CRM_DISPATCH_SERVICE_TOKEN")
+        if not service_bearer_authorized(authorization, token):
+            self._write_knowledge(401, {"error": "UNAUTHORIZED"})
+            return
+        try:
+            length = int(self.headers.get("Content-Length", "0"))
+        except ValueError:
+            length = -1
+        if length < 0 or length > MAX_BODY_BYTES:
+            self._write_knowledge(413, {"error": "INVALID_REQUEST"})
+            return
+        status, body = handle_crm_dispatch(
+            self.rfile.read(length), authorization, token=token,
+            processor=self.crm_dispatch_processor,
+        )
+        self._write_knowledge(status, body)
 
     def _knowledge(self, method: str) -> None:
         # Import lazily: knowledge_api shares the CRM dispatch Bearer verifier,

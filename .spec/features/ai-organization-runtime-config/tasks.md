@@ -38,3 +38,9 @@
 ## T-086 — Validar suite e registrar baseline ONP [concluida]
 - Refs: US-114, AC-485, AC-486, AC-487, AC-488, AC-489, AC-490, AC-491, AC-492, AC-493
 - Arquivos: .spec/features/ai-organization-runtime-config/onp-audit-baseline-20260929.md, .spec/verification/ai-organization-runtime-config.json
+
+## T-101 — Registrar dispatch CRM no listener publicado [concluida]
+
+- Refs: US-119, AC-532
+- Arquivos: .spec/features/ai-organization-runtime-config/spec.md, .spec/features/ai-organization-runtime-config/design.md, .spec/features/ai-organization-runtime-config/tasks.md, src/ai_agent_runtime/whatsapp/zapi_server.py, test/ai-crm-dispatch/listener_cases.py, test/ai-crm-dispatch/listener.test.js, .spec/features/ai-organization-runtime-config/verification.md
+- Notas: Reutilizar `handle_crm_dispatch` com import tardio; provar o entrypoint real e preservar Knowledge e Z-API.

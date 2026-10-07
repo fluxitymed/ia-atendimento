@@ -27,6 +27,16 @@ queries. A memoria de conversa pertence ao `AgentState` criado por request.
 
 O fluxo Z-API legado preserva seus envs e fallback atuais para rollback. O
 cutover nao roda migration, nao cria secret real e nao altera Production.
+
+## Listener HTTP publicado
+
+O entrypoint `ai_agent_runtime.whatsapp.zapi_server` encaminha somente o path exato
+`POST /internal/crm/whatsapp-dispatch` para `handle_crm_dispatch`, importado
+tardiamente para evitar o ciclo com os componentes de runtime Z-API. O token
+continua `CRM_DISPATCH_SERVICE_TOKEN`, verificado pelo mesmo comparador Bearer
+antes de ler o body. A resposta JSON usa `Cache-Control: no-store`. O servidor
+separado de `crm_dispatch.py` nao participa do caminho publicado; nao ha novo
+listener, contrato, provider ou migration.
 Antes de ativar o modo Supabase em um ambiente: aplicar/revisar a migration,
 confirmar Vault disponivel, criar uma linha de config e uma credencial Vault
 por organizacao, testar a RPC com `service_role` e negar `anon`/`authenticated`.
