@@ -41,7 +41,9 @@ _V2_EVENT_FIELDS = _EVENT_FIELDS | {
 
 
 def _safe_crm_log(event: str, fields: dict[str, Any]) -> None:
-    logging.getLogger("ai_agent_runtime.crm_dispatch").info("%s %s", event, json.dumps(fields, sort_keys=True))
+    log = logging.getLogger("ai_agent_runtime.crm_dispatch")
+    level = logging.WARNING if event == "crm_dispatch_decision" else logging.INFO
+    log.log(level, "%s %s", event, json.dumps(fields, sort_keys=True))
 
 
 def _uuid(value: Any) -> bool:
@@ -51,6 +53,122 @@ def _uuid(value: Any) -> bool:
         return str(UUID(value)) == value
     except ValueError:
         return False
+
+
+_SAFE_RETRIEVAL_STATUSES = {"EXECUTED", "SKIPPED_NOT_REQUIRED", "NOT_CONFIGURED", "FAILED_TRANSIENT_EXHAUSTED"}
+_SAFE_TURN_INTENTS = {"ATTRIBUTE_QUERY", "FACTUAL_QUERY", "NEED_DISCOVERY", "PROCEDURE_INTEREST",
+                      "CONVERSATIONAL_RESPONSE", "CLINICAL_URGENCY", "SCHEDULING_CONFIRMATION"}
+_SAFE_DECISION_CODES = {
+    "UNSUPPORTED_FACTUAL_CLAIM", "INTERNAL_KNOWLEDGE_GAP_EXPOSED", "STALE_FREE_EVALUATION_AMBIGUITY",
+    "REDUNDANT_PHONE_REQUEST", "REPEATED_KNOWN_OPERATIONAL_QUESTION", "PREMATURE_BOOKING_CONFIRMATION",
+    "CORRECTION_REPETITION", "POST_PROCEDURE_BLEEDING", "SCHEDULING_TIME_CONFIRMATION_REQUIRED",
+    "UNSUPPORTED_ATTRIBUTE", "ATTRIBUTE_WITHOUT_AUTHORIZED_EVIDENCE",
+    "RETRIEVAL_UNAVAILABLE_FOR_FACTUAL_QUERY", "PATIENT_REQUESTED_HUMAN", "HUMAN_HANDOFF_REQUIRED",
+    "MEDICATION_GUIDANCE_REQUIRED", "RESCHEDULING_REQUEST", "CANCELLATION_REQUEST",
+    "CONFIG_LOOKUP_FAILED", "CONFIG_UNAVAILABLE", "MODEL_FAILURE", "RETRIEVAL_FAILURE", "RUNTIME_ERROR",
+}
+_SAFE_GROUNDING_ORIGINS = {"USER_REQUESTED_UNSUPPORTED_FACT", "MODEL_INTRODUCED_UNSUPPORTED_FACT",
+                           "RESPOND_ONLY_UNSUPPORTED_FACT"}
+
+
+def _safe_dispatch_diagnostic(event: dict[str, Any], state: AgentState | None, action: str,
+                              reason_override: str | None = None) -> dict[str, Any]:
+    """Project internal runtime events onto a strict, content-free terminal record."""
+    raw_events = state.context.get("runtimeEvents") if state is not None else None
+    events = [item for item in raw_events if isinstance(item, dict)] if isinstance(raw_events, list) else []
+
+    def latest(stage: str) -> dict[str, Any]:
+        for item in reversed(events):
+            if item.get("stage") == stage and isinstance(item.get("details"), dict):
+                return item["details"]
+        return {}
+
+    def count(stage: str) -> int:
+        return sum(item.get("stage") == stage for item in events)
+
+    def safe_code(value: Any) -> str | None:
+        return value if isinstance(value, str) and value in _SAFE_DECISION_CODES else None
+
+    def safe_ids(value: Any) -> list[str]:
+        return list(dict.fromkeys(item for item in value[:6] if _uuid(item))) if isinstance(value, list) else []
+
+    retrieval = latest("retrieval_completed")
+    grounding = latest("grounding_result")
+    failure = latest("grounding_failed")
+    classified = latest("turn_classified")
+    handoff = state.handoff_context if state is not None and isinstance(state.handoff_context, dict) else {}
+    retrieval_status = retrieval.get("status")
+    turn_intent = classified.get("interpreted_intent")
+    grounding_passed = grounding.get("passed")
+    grounding_origin = failure.get("grounding_failure_origin")
+    model_started = count("model_call_started")
+    model_completed = count("model_called")
+    regeneration_used = bool(count("response_regeneration_started"))
+    decision_code = (
+        safe_code(handoff.get("reason")) or safe_code(failure.get("reason"))
+        or safe_code(latest("unsupported_factual_question").get("reason"))
+    )
+    if action == "HANDOFF":
+        origin = ("GROUNDING" if failure else "ERROR_POLICY" if count("controlled_retrieval_failure")
+                  else "DETERMINISTIC_RULE" if count("unsupported_factual_question") or decision_code == "PATIENT_REQUESTED_HUMAN"
+                  else "UNKNOWN")
+        reason_code = decision_code or "UNKNOWN"
+    elif action == "NO_ACTION":
+        origin, reason_code = "DETERMINISTIC_RULE", "EXPLICIT_NO_ACTION"
+    elif action == "SEND_MESSAGE":
+        origin = ("FALLBACK" if regeneration_used and grounding_passed is True
+                  else "MODEL" if model_completed and grounding_passed is True
+                  else "DETERMINISTIC_RULE" if not model_started and grounding_passed is True
+                  else "UNKNOWN")
+        reason_code = ("CONVERSATIONAL_REGENERATION_ACCEPTED" if origin == "FALLBACK"
+                       else "GROUNDED_MODEL_RESPONSE" if origin == "MODEL"
+                       else "GROUNDED_DETERMINISTIC_RESPONSE" if origin == "DETERMINISTIC_RULE"
+                       else "UNKNOWN")
+    else:
+        origin = "ERROR_POLICY"
+        reason_code = (safe_code(reason_override) or
+                       ("MODEL_FAILURE" if count("model_call_failed") else
+                        "RETRIEVAL_FAILURE" if count("retrieval_failed") else "RUNTIME_ERROR"))
+    hits = retrieval.get("hitCount")
+    valid_retrieval_status = retrieval_status if isinstance(retrieval_status, str) and retrieval_status in _SAFE_RETRIEVAL_STATUSES else "UNKNOWN"
+    if valid_retrieval_status in {"EXECUTED", "FAILED_TRANSIENT_EXHAUSTED"} or count("retrieval_started"):
+        retrieval_executed: bool | None = True
+    elif valid_retrieval_status in {"SKIPPED_NOT_REQUIRED", "NOT_CONFIGURED"}:
+        retrieval_executed = False
+    else:
+        retrieval_executed = None
+    model_invoked: bool | None = True if model_completed else None if model_started else False
+    policy_handoff = bool(count("unsupported_factual_question") or count("controlled_retrieval_failure"))
+    grounding_validated = not policy_handoff and (type(grounding_passed) is bool or bool(failure))
+    grounding_status = ("PASSED" if grounding_validated and grounding_passed is True
+                        else "FAILED" if grounding_validated else "NOT_RUN" if events else "UNKNOWN")
+    return {
+        "correlationId": event["correlationId"],
+        "organizationId": event["organizationId"],
+        "conversationId": event["conversationId"],
+        "action": action,
+        "decisionOrigin": origin,
+        "reasonCode": reason_code,
+        "turnIntent": turn_intent if isinstance(turn_intent, str) and turn_intent in _SAFE_TURN_INTENTS else "UNKNOWN",
+        "retrievalStatus": valid_retrieval_status,
+        "retrievalExecuted": retrieval_executed,
+        "retrievalHitCount": hits if type(hits) is int and 0 <= hits <= 1000 else 0,
+        "commercialEvidencePresent": ((bool(hits) and grounding_passed is True)
+                                      if valid_retrieval_status == "EXECUTED" and type(hits) is int and grounding_validated
+                                      else None) if turn_intent == "ATTRIBUTE_QUERY" else None,
+        "documentIds": safe_ids(retrieval.get("documentIds")),
+        "documentVersionIds": safe_ids(retrieval.get("documentVersionIds")),
+        "chunkIds": safe_ids(retrieval.get("chunkIds")),
+        "modelInvoked": model_invoked,
+        "modelCallsStarted": model_started,
+        "modelCallsCompleted": model_completed,
+        "modelCallsFailed": count("model_call_failed"),
+        "groundingStatus": grounding_status,
+        "groundingPassed": grounding_passed if grounding_validated and type(grounding_passed) is bool else None,
+        "groundingReason": (safe_code(grounding.get("reason")) or safe_code(failure.get("reason")) or "NONE") if grounding_validated else "NONE",
+        "groundingFailureOrigin": grounding_origin if isinstance(grounding_origin, str) and grounding_origin in _SAFE_GROUNDING_ORIGINS else "NONE",
+        "regenerationUsed": regeneration_used,
+    }
 
 
 def _timestamp(value: Any) -> bool:
@@ -203,15 +321,25 @@ class CrmDispatchProcessor:
         self.graph_factory = graph_factory
         self.logger = logger or _safe_crm_log
 
+    def _log_terminal(self, event: dict[str, Any], state: AgentState | None, action: str,
+                      reason_code: str | None = None) -> None:
+        # Observability must never change the CRM action or reveal an exception body.
+        try:
+            self.logger("crm_dispatch_decision", _safe_dispatch_diagnostic(event, state, action, reason_code))
+        except Exception:
+            pass
+
     def process(self, event: dict[str, Any]) -> dict[str, Any]:
         event = validate_dispatch_event(event)
         try:
             config = self.config_repository.get_by_organization_id(event["organizationId"])
         except Exception:
+            self._log_terminal(event, None, "ERROR", "CONFIG_LOOKUP_FAILED")
             self.logger("organization_runtime_rejected", {"organizationId": event["organizationId"],
                          "reason": "CONFIG_LOOKUP_FAILED"})
             raise
         if not config or config.organization_id != event["organizationId"] or not config.is_active():
+            self._log_terminal(event, None, "ERROR", "CONFIG_UNAVAILABLE")
             self.logger("organization_runtime_rejected", {"organizationId": event["organizationId"],
                          "reason": "CONFIG_UNAVAILABLE"})
             raise RuntimeError("RUNTIME_UNAVAILABLE")
@@ -233,6 +361,7 @@ class CrmDispatchProcessor:
             graph = self.graph_factory(config) if self.graph_factory else _default_graph(config, logger=self.logger)
             outcome = graph.run(state)
         except Exception:
+            self._log_terminal(event, state, "ERROR")
             self.logger("organization_runtime_rejected", {"organizationId": config.organization_id,
                          "reason": "EXECUTION_FAILED"})
             raise
@@ -240,12 +369,16 @@ class CrmDispatchProcessor:
             "version", "correlationId", "organizationId", "conversationId", "inboundMessageId", "modeVersion"
         )}
         if outcome.decision == AgentDecision.HUMAN_HANDOFF_REQUIRED:
+            self._log_terminal(event, outcome, "HANDOFF")
             return {**base, "action": "HANDOFF", "metadata": {}}
         if outcome.context.get("noAction") is True and not outcome.response_text:
+            self._log_terminal(event, outcome, "NO_ACTION")
             return {**base, "action": "NO_ACTION", "metadata": {}}
         if not isinstance(outcome.response_text, str) or not outcome.response_text.strip() or \
                 len(outcome.response_text) > 4096 or "\x00" in outcome.response_text:
+            self._log_terminal(event, outcome, "ERROR")
             raise RuntimeError("RUNTIME_UNAVAILABLE")
+        self._log_terminal(event, outcome, "SEND_MESSAGE")
         return {**base, "action": "SEND_MESSAGE", "message": outcome.response_text, "metadata": {}}
 
 

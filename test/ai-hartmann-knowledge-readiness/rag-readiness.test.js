@@ -107,6 +107,68 @@ print(json.dumps({'unrelated': unrelated['passed'], 'wrongPrice': wrong_price['p
   assert.deepEqual(result, { unrelated: false, wrongPrice: false, opposite: false, mixedPrice: false, grounded: true, reused: 0 });
 });
 
+test('@spec:AC-499 Botox variants with sem reposicao do not negate supported offers and prices', () => {
+  const result = runPython(fixture + String.raw`
+from ai_agent_runtime.whatsapp.zapi_server import validate_live_grounding
+catalog = [{'content': '''- Botox, unidade sem reposição — R$ 75
+- Botox com revisão em 15 dias — R$ 750
+- Botox garantia facial anual — R$ 1.500'''}]
+def passes(answer, evidence=catalog):
+    return validate_live_grounding(answer, evidence_count=len(evidence), evidence=evidence)['passed']
+print(json.dumps({
+    'offer': passes('A clinica oferece Botox.'),
+    'variantPrice': passes('Botox com revisao em 15 dias custa R$ 750.'),
+    'wrongPrice': passes('Botox com revisao em 15 dias custa R$ 900.'),
+    'negativeSource': passes('A clinica oferece Botox.', [{'content': 'A clinica nao oferece Botox.'}]),
+    'withoutBotox': passes('A clinica oferece Botox.', [{'content': 'A clinica atende sem Botox.'}]),
+}))
+`);
+  assert.deepEqual(result, {
+    offer: true,
+    variantPrice: true,
+    wrongPrice: false,
+    negativeSource: false,
+    withoutBotox: false,
+  });
+});
+
+test('@spec:AC-499 Hartmann commercial questions retrieve only published tenant evidence and price policy', () => {
+  const result = runPython(fixture + String.raw`
+from ai_agent_runtime.whatsapp.zapi_server import _classify_turn_context
+CATALOG = chunk('botox', A, 'doc-a', 'a-current', 'Procedimentos e Valores: Botox com revisão em 15 dias — R$ 750')
+POLICY = chunk('budget', A, 'doc-a', 'a-current', 'O orçamento final é definido após a avaliação gratuita.')
+EVALUATION = chunk('evaluation', A, 'doc-a', 'a-current', 'A avaliação padrão é gratuita.')
+PAYMENTS = chunk('payment', A, 'doc-a', 'a-current', 'Parcelamento: até 10x sem juros no cartão de crédito.')
+FOREIGN = chunk('foreign', B, 'doc-b', 'b-current', 'Botox e parcelamento.')
+class CommercialRetrieval(Retrieval):
+    def _get_json(self, table, params, *, endpoint):
+        self.calls.append((table, params))
+        if table == 'document_versions':
+            return VERSIONS
+        if table == 'chunks':
+            term = params['content'].removeprefix('ilike.*').removesuffix('*').lower()
+            return [row for row in (CATALOG, POLICY, EVALUATION, PAYMENTS, FOREIGN)
+                    if term in row['content'].lower()]
+        return []
+r = CommercialRetrieval()
+questions = ['Quanto custa botox?', 'Vocês fazem botox?',
+             'O valor do botox é definitivo?', 'A avaliação é gratuita?', 'Posso parcelar?']
+results = []
+for question in questions:
+    evidence = r.search(A, question)
+    turn = _classify_turn_context(question, evidence)
+    results.append({'ids': [item['id'] for item in evidence], 'handoff': turn['handoff_decision']})
+print(json.dumps(results))
+`);
+  assert.deepEqual(result, [
+    { ids: ['botox', 'budget'], handoff: 'NONE' },
+    { ids: ['botox'], handoff: 'NONE' },
+    { ids: ['botox', 'budget'], handoff: 'NONE' },
+    { ids: ['budget', 'evaluation'], handoff: 'NONE' },
+    { ids: ['payment'], handoff: 'NONE' },
+  ]);
+});
+
 test('@spec:AC-499 truncated closed-world catalog cannot justify a negative answer', () => {
   const result = runPython(fixture + String.raw`
 class LargeCatalog(Retrieval):

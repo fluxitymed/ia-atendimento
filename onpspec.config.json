@@ -1,5 +1,5 @@
 {
-  "testCommand": "node --test --test-reporter=tap",
+  "testCommand": "node --test --test-concurrency=1 --test-reporter=tap",
   "reporter": "tap",
   "testGlobs": [
     "test/**",

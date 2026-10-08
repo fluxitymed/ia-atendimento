@@ -1,11 +1,11 @@
 {
   "feature": "ai-organization-runtime-config",
-  "timestamp": "2026-10-05T18:45:59.886Z",
-  "gitRev": "836d324",
-  "command": "node --test --test-reporter=tap",
+  "timestamp": "2026-10-08T14:31:12.520Z",
+  "gitRev": "262d217",
+  "command": "node --test --test-concurrency=1 --test-reporter=tap",
   "reporter": "tap",
   "exitCode": 0,
-  "testsParsed": 310,
+  "testsParsed": 320,
   "results": {
     "AC-421": {
       "status": "pass",
@@ -125,6 +125,11 @@
     "AC-493": {
       "status": "pass",
       "testName": "@spec:AC-487 @spec:AC-492 @spec:AC-493 migration restricts Vault RPC to service_role and keeps old adapter source untouched",
+      "method": "tap"
+    },
+    "AC-532": {
+      "status": "pass",
+      "testName": "@spec:AC-532 CRM dispatch on Production listener production_entrypoint",
       "method": "tap"
     }
   },

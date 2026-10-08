@@ -262,6 +262,9 @@ class OpenAIWhatsAppResponseGenerator:
                 "hitCount": current_evidence_count,
                 "conversationEvidenceCount": len(reused_evidence),
                 "totalEvidenceCount": len(evidence),
+                "documentIds": sorted({str(item.get("document_id")) for item in evidence if item.get("document_id")}),
+                "documentVersionIds": sorted({str(item.get("document_version_id")) for item in evidence if item.get("document_version_id")}),
+                "chunkIds": [str(item.get("id")) for item in evidence if item.get("id")],
             },
         )
         respond_only = _deterministic_respond_only_response(
@@ -665,9 +668,22 @@ class ZApiRuntimeRetrieval:
         versions = self._published_processed_versions(organization_id)
         if not versions:
             return []
-        terms = _retrieval_terms(query)
-        if not terms:
+        base_terms = _retrieval_terms(query)
+        if not base_terms:
             return []
+        normalized_query = _normalize_text(query)
+        procedure = _requested_procedure(query)
+        terms = [_normalize_text(procedure)] if procedure else []
+        if procedure and re.search(r"\b(preco|valor|custa|definitivo|orcamento|final)\b", normalized_query):
+            # Price policy must not be starved by generic WhatsApp words.
+            terms.extend(("orçamento", "orcamento"))
+        if re.search(r"\b(parcelar|parcelado|parcelamento|parcela|parcelas)\b", normalized_query):
+            terms.append("parcelamento")
+        if re.search(r"\b(remarcar|remarcacao)\b", normalized_query):
+            terms.extend(("remarcação", "remarcacao"))
+        if re.search(r"\b(cancelar|cancelamento)\b", normalized_query):
+            terms.append("cancelamento")
+        terms.extend(base_terms)
         # PostgreSQL ILIKE does not remove accents. Keep original UTF-8 terms
         # alongside normalized ones so newly ingested Markdown is searchable.
         original_terms = re.findall(r"[^\W_]+", query.lower())
@@ -1622,6 +1638,7 @@ def _retrieval_terms(query: str) -> list[str]:
         "mais",
         "quero",
         "queria",
+        "posso",
         "oi",
         "ola",
         "tenho",
@@ -1868,6 +1885,8 @@ def _safe_commercial_gap_bridge_available(query: str, evidence: list[dict[str, A
 
 def _requires_clinical_handoff(query: str) -> bool:
     text = _normalize_text(query)
+    if _requires_medication_guidance(text):
+        return True
     bleeding_terms = (
         "sangramento",
         "sangrando",
@@ -1896,6 +1915,25 @@ def _requires_clinical_handoff(query: str) -> bool:
     if not any(_contains_term(text, term) and not _is_negated_near(text, term) for term in bleeding_terms):
         return False
     return any(_contains_term(text, term) for term in recent_procedure_terms)
+
+
+def _requires_medication_guidance(query: str) -> bool:
+    text = _normalize_text(query)
+    return bool(
+        re.search(r"\b(medicamento|remedio|antibiotico|analgesico)\b", text)
+        and re.search(r"\b(qual|quais|devo|posso|indica|recomenda|tomar|usar|prescrever)\b", text)
+    )
+
+
+def _appointment_change_request(query: str) -> str | None:
+    text = _normalize_text(query)
+    reschedule = re.search(r"\b(quero|preciso|gostaria|pode|podem|desejo)\s+(?:de\s+)?remarcar\b", text)
+    if reschedule and not _is_negated_near(text, reschedule.group()):
+        return "RESCHEDULING_REQUEST"
+    cancel = re.search(r"\b(quero|preciso|gostaria|pode|podem|desejo)\s+(?:de\s+)?cancelar\b", text)
+    if cancel and not _is_negated_near(text, cancel.group()):
+        return "CANCELLATION_REQUEST"
+    return None
 
 
 def _is_specific_appointment_time_request(query: str) -> bool:
@@ -1965,12 +2003,15 @@ def _is_generic_doctor_talk_request(query: str) -> bool:
 
 
 def _requires_scheduling_handoff(query: str) -> bool:
-    return _is_specific_appointment_time_request(query)
+    return bool(_appointment_change_request(query)) or _is_specific_appointment_time_request(query)
 
 
 def _handoff_reason_for_turn(query: str, interpreted_intent: str) -> str:
     if interpreted_intent == "CLINICAL_URGENCY":
-        return "POST_PROCEDURE_BLEEDING"
+        return "MEDICATION_GUIDANCE_REQUIRED" if _requires_medication_guidance(query) else "POST_PROCEDURE_BLEEDING"
+    change_request = _appointment_change_request(query)
+    if change_request:
+        return change_request
     if _requires_scheduling_handoff(query):
         return "SCHEDULING_TIME_CONFIRMATION_REQUIRED"
     return "UNSUPPORTED_ATTRIBUTE"
@@ -2207,16 +2248,24 @@ def _evidence_source_supports_claim(content: str, tokens: set[str], key_token: s
     source_tokens = {_grounding_token(token) for token in re.findall(r"[a-z0-9]+", normalized)}
     if not tokens.issubset(source_tokens):
         return False
-    claim_negative = bool(re.search(r"\b(nao|nunca|sem)\b", _normalize_text(claim)))
+    claim_negative = _negates_grounding_subject(_normalize_text(claim), key_token)
     relevant_sentences = [
         sentence for sentence in re.split(r"[.!?;\n]+", normalized)
         if key_token in {_grounding_token(token) for token in re.findall(r"[a-z0-9]+", sentence)}
     ]
     numeric_tokens = {token for token in tokens if token.isdigit()}
     return bool(relevant_sentences) and all(
-        bool(re.search(r"\b(nao|nunca|sem)\b", sentence)) == claim_negative
+        _negates_grounding_subject(sentence, key_token) == claim_negative
         for sentence in relevant_sentences
     ) and (not numeric_tokens or any(numeric_tokens.issubset(set(re.findall(r"\d+", sentence))) for sentence in relevant_sentences))
+
+
+def _negates_grounding_subject(text: str, key_token: str) -> bool:
+    # "Sem reposicao" qualifies a Botox variant; it does not negate Botox.
+    return bool(
+        re.search(r"\b(nao|nunca)\b", text)
+        or re.search(rf"\bsem\s+(?:o\s+|a\s+)?{re.escape(key_token)}\b", text)
+    )
 
 
 def _grounding_token(token: str) -> str:

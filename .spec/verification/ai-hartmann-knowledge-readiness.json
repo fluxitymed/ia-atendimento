@@ -1,11 +1,11 @@
 {
   "feature": "ai-hartmann-knowledge-readiness",
-  "timestamp": "2026-10-05T18:43:27.011Z",
-  "gitRev": "836d324",
-  "command": "node --test --test-reporter=tap",
+  "timestamp": "2026-10-08T14:24:39.543Z",
+  "gitRev": "262d217",
+  "command": "node --test --test-concurrency=1 --test-reporter=tap",
   "reporter": "tap",
   "exitCode": 0,
-  "testsParsed": 310,
+  "testsParsed": 320,
   "results": {
     "AC-494": {
       "status": "pass",
@@ -34,7 +34,22 @@
     },
     "AC-499": {
       "status": "pass",
-      "testName": "@spec:AC-499 grounding rejects unrelated evidence, mismatched prices and cached-only chunks",
+      "testName": "@spec:AC-499 @spec:AC-535 ten Hartmann questions use published tenant evidence and safe decisions",
+      "method": "tap"
+    },
+    "AC-533": {
+      "status": "pass",
+      "testName": "@spec:AC-533 terminal trace distinguishes grounded answer, grounding handoff and explicit no action",
+      "method": "tap"
+    },
+    "AC-534": {
+      "status": "pass",
+      "testName": "@spec:AC-534 terminal diagnostics are allowlisted, visible and never leak content or secrets",
+      "method": "tap"
+    },
+    "AC-535": {
+      "status": "pass",
+      "testName": "@spec:AC-499 @spec:AC-535 ten Hartmann questions use published tenant evidence and safe decisions",
       "method": "tap"
     }
   },
