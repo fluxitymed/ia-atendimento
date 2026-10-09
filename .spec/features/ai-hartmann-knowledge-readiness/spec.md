@@ -83,6 +83,71 @@ Como operador da IA, quero correlacionar cada decisao do dispatch CRM com as eta
 - **Entao** cada turno usa apenas evidencia elegivel do tenant, responde comercialmente quando ha suporte, encaminha pedidos de remarcacao/cancelamento e orientacao medicamentosa, pede esclarecimento para procedimento nao especificado e nao promete agendamento confirmado.
 - **E** o diagnostico distingue resposta do modelo, regra deterministica, falha de grounding, fallback e erro tecnico sem alegar chamada ao modelo quando ela nao ocorreu.
 
+### US-121 — Responder perguntas comerciais com dois assuntos
+
+Como paciente, quero saber preco e caminho de agendamento no mesmo turno, para receber uma resposta util baseada nos documentos publicados sem uma transferencia desnecessaria.
+
+#### AC-536 — Recuperacao equilibrada por assunto
+
+- **Dado** uma pergunta sobre preco de Botox e agendamento e varios chunks de Botox que esgotariam o limite da busca
+- **Quando** o retrieval consulta versoes publicadas do tenant
+- **Entao** pelo menos um trecho elegivel de preco e um de agendamento entram nos quatro trechos apresentados ao modelo, quando ambos existem; a regra publicada de orcamento final tambem e considerada.
+- **E** a classificacao conserva os dois assuntos `PRICE` e `SCHEDULING` sem perder a exigencia de evidencia factual.
+- **E** nenhuma versao inativa, chunk inconsistente ou dado de outra organizacao pode ocupar essas vagas.
+
+#### AC-537 — Grounding de afirmacoes independentes
+
+- **Dado** uma resposta que une, por `e`, duas afirmacoes factuais independentes sobre preco e agendamento
+- **Quando** cada afirmacao e sustentada por um chunk publicado diferente
+- **Entao** o grounding aceita a resposta sem exigir que os dois fatos estejam no mesmo chunk.
+- **E** preco divergente, regra de agendamento inventada ou qualificadores sem suporte continuam rejeitados.
+
+#### AC-538 — Resposta parcial segura e acao terminal
+
+- **Dado** evidencia publicada para apenas um dos assuntos pedidos
+- **Quando** o modelo responde somente com o fato sustentado e uma pergunta comercial sem fato novo
+- **Entao** o dispatch envia a resposta fundamentada; se o modelo afirmar detalhes do assunto sem evidencia, o dispatch permanece em HANDOFF com `UNSUPPORTED_FACTUAL_CLAIM`.
+- **E** a pergunta real e as variacoes de preco, agendamento, parcelamento e orcamento final sao exercitadas por transporte de modelo controlado, sem respostas comerciais fixas no runtime.
+
+#### AC-539 — Telemetria de evidencia sem confundir busca e validacao
+
+- **Dado** um turno comercial com chunks recuperados cuja resposta foi rejeitada pelo grounding
+- **Quando** o resumo terminal e emitido
+- **Entao** `commercialEvidencePresent` indica a presenca de chunks candidatos no retrieval, `groundingPassed` registra separadamente o resultado da validacao e `promptChunkIds` identifica somente os trechos apresentados ao modelo.
+- **E** o log continua contendo apenas UUIDs e codigos permitidos, sem texto de paciente, resposta, prompt ou segredo.
+
+### US-122 — Diagnosticar a cobertura comercial sem atribuir causa nao comprovada
+
+Como operador da Bruna, quero distinguir falta de candidatos para preco e agendamento de uma resposta sem suporte, para corrigir a fonte certa sem afrouxar o grounding.
+
+#### AC-540 — Cobertura dos assuntos nos trechos apresentados
+
+- **Dado** uma pergunta comercial com preco e agendamento
+- **Quando** o retrieval seleciona os quatro trechos apresentados ao modelo
+- **Entao** o evento terminal registra, por codigo permitido, quais assuntos solicitados possuem candidato lexical nesses trechos e quais estao ausentes.
+- **E** distingue cobertura completa, parcial e ausente sem afirmar que um candidato prova a resposta ou registrar seu texto.
+
+#### AC-541 — Origem da falha sem inferencia indevida
+
+- **Dado** uma resposta rejeitada com candidatos para os assuntos pedidos
+- **Quando** a pergunta do paciente exige evidencia
+- **Entao** o diagnostico nao atribui automaticamente ao paciente a afirmacao sem suporte; registra origem indeterminada e preserva HANDOFF.
+- **E** uma falha com assunto solicitado sem candidato e uma falha introduzida pelo modelo em turno sem demanda factual continuam distinguiveis por codigos estaveis.
+
+#### AC-542 — Matriz comercial, operacional e clinica
+
+- **Dado** a pergunta composta exata e as dez perguntas comerciais, operacionais e clinicas da homologacao
+- **Quando** cada uma passa pelo dispatch CRM com transporte controlado
+- **Entao** testes verificam intencao, IDs de evidencia elegivel, cobertura comercial, chamada ao modelo, grounding, acao, origem e motivo terminal.
+- **E** os guardas de remarcacao, medicamento e pedido humano permanecem deterministas, sem WhatsApp ou OpenAI real.
+
+#### AC-543 — Evidencia parcial, ausente e contraditoria
+
+- **Dado** fontes publicadas de um assunto, fontes ausentes, contraditorias, rascunho ou de outro tenant
+- **Quando** ocorre retrieval e grounding
+- **Entao** somente suporte publicado e coerente pode autorizar uma afirmacao; resposta parcial sem fato novo pode ser enviada, mas valor, gratuidade, horario e regra inventados falham fechados.
+- **E** o diagnostico informa apenas metadados seguros de cobertura e resultado.
+
 ## Fora de escopo
 
 - Inserir documentos reais, criar credenciais, usar OpenAI real, escrever no Supabase de Production ou fazer deploy.
@@ -100,3 +165,4 @@ Como operador da IA, quero correlacionar cada decisao do dispatch CRM com as eta
 |---|---|---|---|
 | Q-009 | A primeira base pode ser publicada sem aprovacao humana registrada? | respondida | Nao. O contrato de ingestao exige aprovador identificado antes de qualquer publicacao; a pessoa sera designada na operacao futura. |
 | Q-010 | Qual etapa determinou o HANDOFF do dispatch `7b561ffc-f038-4219-bee7-c16b94da2a09`? | respondida | Indeterminavel retrospectivamente: o dispatch nao persistiu eventos de modelo ou grounding. Logs de retrieval provam busca por Botox, mas nao a causa terminal. Exige telemetria segura por etapa em uma proxima homologacao controlada; nao executar atendimento real para reconstruir o incidente. |
+| Q-011 | Qual afirmacao especifica falhou no grounding do dispatch `6b307701-623f-43c1-a358-5d07cdb2f6d3`? | respondida | Indeterminavel retrospectivamente: os seis chunkIds foram vinculados por leitura limitada a tres versoes publicadas, mas o evento nao registra a ordem dos quatro chunks apresentados ao modelo nem o texto rejeitado. A falha do grounding e comprovada; atribuir uma afirmacao exata seria inferencia sem prova. A nova telemetria registra `promptChunkIds` para proximos dispatches sem guardar conteudo. |

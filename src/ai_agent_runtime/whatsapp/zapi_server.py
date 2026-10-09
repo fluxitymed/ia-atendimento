@@ -7,6 +7,7 @@ import re
 import socket
 import time
 from dataclasses import replace
+from decimal import Decimal, InvalidOperation
 from datetime import datetime, timezone
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from os import environ
@@ -255,6 +256,9 @@ class OpenAIWhatsAppResponseGenerator:
             organization_id=state.organization_id,
             query=retrieval_query,
         )
+        prompt_coverage = _commercial_prompt_coverage(
+            state.current_message, evidence[:4], evaluated=retrieval_status == "EXECUTED",
+        )
         emit(
             "retrieval_completed",
             {
@@ -265,6 +269,8 @@ class OpenAIWhatsAppResponseGenerator:
                 "documentIds": sorted({str(item.get("document_id")) for item in evidence if item.get("document_id")}),
                 "documentVersionIds": sorted({str(item.get("document_version_id")) for item in evidence if item.get("document_version_id")}),
                 "chunkIds": [str(item.get("id")) for item in evidence if item.get("id")],
+                "promptChunkIds": [str(item.get("id")) for item in evidence[:4] if item.get("id")],
+                **prompt_coverage,
             },
         )
         respond_only = _deterministic_respond_only_response(
@@ -320,6 +326,7 @@ class OpenAIWhatsAppResponseGenerator:
             {
                 "turn_relation": turn_context["turn_relation"],
                 "interpreted_intent": turn_context["interpreted_intent"],
+                "requested_topics": turn_context["requested_topics"],
                 "conversation_stage": turn_context["conversation_stage"],
                 "requires_evidence": turn_context["requires_evidence"],
                 "handoff_decision": turn_context["handoff_decision"],
@@ -487,6 +494,8 @@ class OpenAIWhatsAppResponseGenerator:
             failure_origin = (
                 "MODEL_INTRODUCED_UNSUPPORTED_FACT"
                 if grounding.get("reason") == "INTERNAL_KNOWLEDGE_GAP_EXPOSED"
+                else "UNDETERMINED_UNSUPPORTED_FACT"
+                if turn_context["requires_evidence"] and evidence
                 else "USER_REQUESTED_UNSUPPORTED_FACT"
                 if turn_context["requires_evidence"]
                 else "MODEL_INTRODUCED_UNSUPPORTED_FACT"
@@ -502,7 +511,7 @@ class OpenAIWhatsAppResponseGenerator:
                 },
             )
             emit("grounding_failure_origin", {"origin": failure_origin})
-            if failure_origin == "USER_REQUESTED_UNSUPPORTED_FACT":
+            if failure_origin in {"USER_REQUESTED_UNSUPPORTED_FACT", "UNDETERMINED_UNSUPPORTED_FACT"}:
                 state.decision = AgentDecision.HUMAN_HANDOFF_REQUIRED
                 state.stage = AgentStage.HANDOFF
                 state.handoff_context = {
@@ -671,41 +680,65 @@ class ZApiRuntimeRetrieval:
         base_terms = _retrieval_terms(query)
         if not base_terms:
             return []
-        normalized_query = _normalize_text(query)
         procedure = _requested_procedure(query)
-        terms = [_normalize_text(procedure)] if procedure else []
-        if procedure and re.search(r"\b(preco|valor|custa|definitivo|orcamento|final)\b", normalized_query):
-            # Price policy must not be starved by generic WhatsApp words.
-            terms.extend(("orçamento", "orcamento"))
-        if re.search(r"\b(parcelar|parcelado|parcelamento|parcela|parcelas)\b", normalized_query):
-            terms.append("parcelamento")
+        topics = _commercial_query_topics(query)
+        priority_groups: list[list[str]] = []
+        if procedure:
+            priority_groups.append([_normalize_text(procedure)])
+        if "PRICE" in topics:
+            priority_groups.append(["orçamento", "orcamento"])
+        if "SCHEDULING" in topics:
+            priority_groups.append(["agendamento", "agendar", "marcar", "marcação", "avaliação", "avaliacao"])
+        if "PAYMENT" in topics:
+            priority_groups.append(["parcelamento", "parcelar"])
+        if "EVALUATION" in topics and "SCHEDULING" not in topics:
+            priority_groups.append(["avaliação", "avaliacao"])
+        normalized_query = _normalize_text(query)
         if re.search(r"\b(remarcar|remarcacao)\b", normalized_query):
-            terms.extend(("remarcação", "remarcacao"))
+            priority_groups.append(["remarcação", "remarcacao"])
         if re.search(r"\b(cancelar|cancelamento)\b", normalized_query):
-            terms.append("cancelamento")
-        terms.extend(base_terms)
+            priority_groups.append(["cancelamento"])
         # PostgreSQL ILIKE does not remove accents. Keep original UTF-8 terms
         # alongside normalized ones so newly ingested Markdown is searchable.
         original_terms = re.findall(r"[^\W_]+", query.lower())
-        terms = list(dict.fromkeys(
-            variant for term in terms
+        base_variants = list(dict.fromkeys(
+            variant for term in base_terms
             for variant in [term, *(word for word in original_terms if _normalize_text(word) == term)]
         ))
         rows_by_id: dict[str, dict[str, Any]] = {}
-        remaining = limit
-        for term in terms:
-            rows = self._chunk_rows(organization_id=organization_id, version_ids=set(versions), term=term, limit=remaining)
-            for row in rows:
-                if row.get("organization_id") != organization_id:
-                    continue
-                if row.get("document_version_id") not in versions:
-                    continue
-                if row.get("document_id") != versions[row["document_version_id"]]:
-                    continue
-                rows_by_id.setdefault(str(row.get("id")), row)
-            remaining = max(limit - len(rows_by_id), 0)
-            if remaining <= 0:
+        searched: dict[str, list[dict[str, Any]]] = {}
+        candidate_rows: list[dict[str, Any]] = []
+
+        def valid_rows(term: str, row_limit: int) -> list[dict[str, Any]]:
+            rows = self._chunk_rows(organization_id=organization_id, version_ids=set(versions), term=term, limit=row_limit)
+            return [row for row in rows if row.get("organization_id") == organization_id
+                    and row.get("document_version_id") in versions
+                    and row.get("document_id") == versions[row["document_version_id"]]]
+
+        # Reserve one candidate per requested subject before filling the limit.
+        # Otherwise a common procedure can use every slot before scheduling is searched.
+        for group in priority_groups:
+            for term in group:
+                if term not in searched:
+                    searched[term] = valid_rows(term, limit)
+                rows = searched[term]
+                candidate_rows.extend(rows)
+                first_distinct = next((row for row in rows if str(row.get("id")) not in rows_by_id), None)
+                if first_distinct:
+                    rows_by_id[str(first_distinct["id"])] = first_distinct
+                    break
+        for row in candidate_rows:
+            if len(rows_by_id) >= limit:
                 break
+            rows_by_id.setdefault(str(row.get("id")), row)
+        for term in base_variants:
+            if len(rows_by_id) >= limit:
+                break
+            if term in searched:
+                continue
+            rows = valid_rows(term, limit - len(rows_by_id))
+            for row in rows:
+                rows_by_id.setdefault(str(row.get("id")), row)
         return list(rows_by_id.values())[:limit]
 
     def _published_processed_versions(self, organization_id: str) -> dict[str, str]:
@@ -1671,6 +1704,49 @@ def _retrieval_terms(query: str) -> list[str]:
     return terms[:8]
 
 
+def _commercial_query_topics(query: str) -> list[str]:
+    text = _normalize_text(query)
+    topics: list[str] = []
+    if re.search(r"\b(preco|valor|custa|definitivo|orcamento|final)\b", text):
+        topics.append("PRICE")
+    if re.search(r"\b(agendar|agendamento|agendamentos|marcar|marcacao|horario)\b", text):
+        topics.append("SCHEDULING")
+    if re.search(r"\b(parcelar|parcelado|parcelamento|parcela|parcelas)\b", text):
+        topics.append("PAYMENT")
+    if re.search(r"\b(avaliacao|avaliacoes)\b", text):
+        topics.append("EVALUATION")
+    return topics
+
+
+def _commercial_prompt_coverage(query: str, evidence: list[dict[str, Any]], *, evaluated: bool) -> dict[str, Any]:
+    """Report lexical candidates in model-visible chunks, never factual support."""
+    requested = _commercial_query_topics(query)
+    if not evaluated or not requested:
+        return {"promptTopicCoverage": "NOT_EVALUATED", "promptCandidateTopics": [],
+                "missingPromptTopics": [], "budgetPolicyCandidate": False}
+    procedure = _requested_procedure(query)
+    candidate: set[str] = set()
+    budget_policy = False
+    for item in evidence:
+        content = str(item.get("content") or "")
+        normalized = _normalize_text(content)
+        budget_policy |= bool(re.search(r"\borcamento\s+final\b", normalized))
+        if "PRICE" in requested and (not procedure or _normalize_text(procedure) in normalized):
+            if re.search(r"r\s*\$\s*\d", content.lower()) or re.search(r"\b(?:preco|valor|custa)\b", normalized):
+                candidate.add("PRICE")
+        if "SCHEDULING" in requested and re.search(r"\b(?:agendamento|agendar|marcar|marcacao)\b", normalized):
+            candidate.add("SCHEDULING")
+        if "PAYMENT" in requested and re.search(r"\b(?:parcelamento|parcelar|parcela|parcelado)\b", normalized):
+            candidate.add("PAYMENT")
+        if "EVALUATION" in requested and re.search(r"\bavaliacao\b", normalized) and (re.search(r"\b(?:gratuita|gratuito|gratis|preco|valor|custa)\b", normalized) or re.search(r"r\s*\$\s*\d", content.lower())):
+            candidate.add("EVALUATION")
+    present = [topic for topic in requested if topic in candidate]
+    missing = [topic for topic in requested if topic not in candidate]
+    return {"promptTopicCoverage": "COMPLETE" if not missing else "PARTIAL" if present else "NONE",
+            "promptCandidateTopics": present, "missingPromptTopics": missing,
+            "budgetPolicyCandidate": budget_policy}
+
+
 def _requested_procedure(query: str) -> str | None:
     text = _normalize_text(query)
     known = (
@@ -1748,6 +1824,7 @@ def _classify_turn_context(
     return {
         "turn_relation": relation,
         "interpreted_intent": intent,
+        "requested_topics": _commercial_query_topics(query),
         "conversation_stage": stage,
         "requires_evidence": requires_evidence or clinical_handoff or scheduling_handoff,
         "unsupported_attribute_reason": _handoff_reason_for_turn(query, intent) if clinical_handoff or scheduling_handoff else ("ATTRIBUTE_WITHOUT_AUTHORIZED_EVIDENCE" if unsupported_attribute else None),
@@ -2204,11 +2281,11 @@ def _response_requires_authorized_evidence(response_text: str) -> bool:
     if re.search(r"\bavaliacao\b", text) and re.search(r"\b(gratuita|gratuito|gratis|preco|valor|custa|dura)\b", text):
         return True
     factual_subject = re.search(
-        r"\b(clinica|medico|medica|doutor|doutora|dr|dra|procedimento|tratamento|transplante|capilar|botox|preenchimento|blefaroplastia|consulta|avaliacao|avaliação|gratuita|gratuito|gratis|preco|valor|agenda|horario|retorno|pagamento|lente|lentes|faceta|facetas|resina|ceramica|cerâmica)\b",
+        r"\b(clinica|medico|medica|doutor|doutora|dr|dra|procedimento|tratamento|transplante|capilar|botox|preenchimento|blefaroplastia|consulta|avaliacao|avaliação|agendamento|gratuita|gratuito|gratis|preco|valor|agenda|horario|retorno|pagamento|lente|lentes|faceta|facetas|resina|ceramica|cerâmica)\b",
         text,
     )
     factual_assertion = re.search(
-        r"\b(e|sao|consiste|funciona|realiza|oferece|inclui|custa|valor|preco|tem|possui|redistribui|remove|trata|corrige|indicado|recomendado|diferenca|diferente|fica|atende|abre|aceita|faz|trabalha|dura|localiza)\b",
+        r"\b(e|sao|esta|disponivel|confirmado|agendado|consiste|funciona|realiza|oferece|inclui|custa|valor|preco|tem|possui|redistribui|remove|trata|corrige|indicado|recomendado|diferenca|diferente|fica|atende|abre|aceita|faz|trabalha|dura|localiza)\b",
         text,
     )
     if factual_assertion and factual_assertion.group() == "e" and re.search(r"\bclinica\b", text) and not re.search(r"\bclinica\s+e\b", text) and not re.search(r"\bavaliacao\s+e\b", text) and not re.search(r"\b(oferece|realiza|trabalha|atende|fica|aceita|faz|possui|tem|custa)\b", text):
@@ -2232,15 +2309,70 @@ def _factual_claims_supported_by_evidence(response_text: str, evidence: list[dic
         "realiza", "faz", "trabalha", "inclui", "custa", "fica", "atende", "aceita",
         "quem", "esta", "buscando", "busca", "formas", "registrada", "apos", "pela", "pelo",
     }
-    claims = [part for part in re.split(r"[.!?;]+", str(response_text or "").replace("Dra.", "Dra ").replace("Dr.", "Dr ")) if _response_requires_authorized_evidence(part)]
+    claims = [claim for part in re.split(r"\.(?!\d)|[!?;]+", str(response_text or "").replace("Dra.", "Dra ").replace("Dr.", "Dr "))
+              for claim in _independent_grounding_claims(part) if _response_requires_authorized_evidence(claim)]
     if not claims:
         return False
     for claim in claims:
+        if _contradictory_monetary_evidence(claim, evidence):
+            return False
         claim_words = [_grounding_token(token) for token in re.findall(r"[a-z0-9]+", _normalize_text(claim)) if len(token) >= 3 and token not in stopwords]
         tokens = set(claim_words)
         if not tokens or not any(_evidence_source_supports_claim(str(item.get("content") or ""), tokens, claim_words[0], claim) for item in evidence):
             return False
     return True
+
+
+def _contradictory_monetary_evidence(claim: str, evidence: list[dict[str, Any]]) -> bool:
+    """Reject conflicting amounts for the same named offer and qualifiers."""
+    if not re.search(r"r\s*\$\s*\d", claim, flags=re.IGNORECASE):
+        return False
+    subject = _requested_procedure(claim)
+    if not subject:
+        return False
+    normalized_claim = _normalize_text(claim)
+    claim_amounts = re.findall(r"r\s*\$\s*([\d.,]+)", claim, flags=re.IGNORECASE)
+    qualifiers = set(re.findall(r"[a-z0-9]+", normalized_claim)) - {
+        "botox", "toxina", "botulinica", "com", "sem", "em", "de", "do", "da", "o", "a",
+        "custa", "valor", "preco", "r", "clinica", "hartmann",
+        *(part for amount in claim_amounts for part in re.findall(r"\d+", amount)),
+    }
+    values: set[Decimal] = set()
+
+    def amount_value(raw: str) -> Decimal | None:
+        amount = raw.rstrip(".,")
+        if "," in amount:
+            amount = amount.replace(".", "").replace(",", ".")
+        elif "." in amount and len(amount.rsplit(".", 1)[-1]) == 3:
+            amount = amount.replace(".", "")
+        try:
+            return Decimal(amount)
+        except InvalidOperation:
+            return None
+
+    normalized_subject = _normalize_text(subject)
+    for item in evidence:
+        for sentence in re.split(r"\.(?!\d)|[!?;\n]+", str(item.get("content") or "")):
+            normalized_sentence = _normalize_text(sentence)
+            if normalized_subject not in normalized_sentence or _requested_procedure(sentence) != subject:
+                continue
+            if not qualifiers.issubset(set(re.findall(r"[a-z0-9]+", normalized_sentence))):
+                continue
+            values.update(value for amount in re.findall(r"r\s*\$\s*([\d.,]+)", sentence, flags=re.IGNORECASE)
+                          if (value := amount_value(amount)) is not None)
+            if len(values) > 1:
+                return True
+    return False
+
+
+def _independent_grounding_claims(sentence: str) -> list[str]:
+    # Split only when each side is independently factual. A shared qualifier,
+    # subject, or price remains in one claim and still needs one source span.
+    for join in re.finditer(r"\s*,?\s+e\s+", sentence, flags=re.IGNORECASE):
+        left, right = sentence[:join.start()].strip(" ,"), sentence[join.end():].strip(" ,")
+        if _response_requires_authorized_evidence(left) and _response_requires_authorized_evidence(right):
+            return [*_independent_grounding_claims(left), *_independent_grounding_claims(right)]
+    return [sentence]
 
 
 def _evidence_source_supports_claim(content: str, tokens: set[str], key_token: str, claim: str) -> bool:
@@ -2250,7 +2382,7 @@ def _evidence_source_supports_claim(content: str, tokens: set[str], key_token: s
         return False
     claim_negative = _negates_grounding_subject(_normalize_text(claim), key_token)
     relevant_sentences = [
-        sentence for sentence in re.split(r"[.!?;\n]+", normalized)
+        sentence for sentence in re.split(r"\.(?!\d)|[!?;\n]+", normalized)
         if key_token in {_grounding_token(token) for token in re.findall(r"[a-z0-9]+", sentence)}
     ]
     numeric_tokens = {token for token in tokens if token.isdigit()}

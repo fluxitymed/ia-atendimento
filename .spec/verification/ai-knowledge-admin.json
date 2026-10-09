@@ -1,11 +1,11 @@
 {
   "feature": "ai-knowledge-admin",
-  "timestamp": "2026-10-08T14:29:45.535Z",
-  "gitRev": "262d217",
+  "timestamp": "2026-10-09T16:50:33.286Z",
+  "gitRev": null,
   "command": "node --test --test-concurrency=1 --test-reporter=tap",
   "reporter": "tap",
   "exitCode": 0,
-  "testsParsed": 320,
+  "testsParsed": 327,
   "results": {
     "AC-500": {
       "status": "pass",

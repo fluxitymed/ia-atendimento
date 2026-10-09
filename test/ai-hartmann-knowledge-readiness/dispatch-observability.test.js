@@ -48,7 +48,7 @@ def invoke(graph, question=None):
     return {'status': status, 'body': body, 'terminal': terminal, 'logs': logs}
 `;
 
-test('@spec:AC-533 terminal trace distinguishes grounded answer, grounding handoff and explicit no action', () => {
+test('@spec:AC-533 @spec:AC-539 terminal trace distinguishes grounded answer, grounding handoff and explicit no action', () => {
   const result = runPython(fixture + String.raw`
 class Generator:
     def __init__(self, handoff=False): self.handoff = handoff
@@ -97,7 +97,7 @@ print(json.dumps({'answer': answer, 'handoff': handoff, 'silent': silent, 'reque
   assert.deepEqual(result.handoff.terminal.map((x) => [x.action, x.decisionOrigin, x.reasonCode, x.groundingFailureOrigin]),
     [['HANDOFF', 'GROUNDING', 'UNSUPPORTED_FACTUAL_CLAIM', 'USER_REQUESTED_UNSUPPORTED_FACT']]);
   assert.equal(result.answer.terminal[0].commercialEvidencePresent, true);
-  assert.equal(result.handoff.terminal[0].commercialEvidencePresent, false);
+  assert.equal(result.handoff.terminal[0].commercialEvidencePresent, true);
   assert.deepEqual(result.silent.terminal.map((x) => [x.action, x.decisionOrigin, x.reasonCode, x.modelInvoked]),
     [['NO_ACTION', 'DETERMINISTIC_RULE', 'EXPLICIT_NO_ACTION', false]]);
   assert.deepEqual(result.requested.terminal.map((x) => [x.action, x.decisionOrigin, x.reasonCode, x.modelInvoked]),
@@ -120,13 +120,16 @@ print(json.dumps({'answer': answer, 'handoff': handoff, 'silent': silent, 'reque
   assert.deepEqual(result.answer.terminal[0].chunkIds, ['f69e2b48-e389-586b-b84f-9ebe80ef6756']);
 });
 
-test('@spec:AC-534 terminal diagnostics are allowlisted, visible and never leak content or secrets', () => {
+test('@spec:AC-534 @spec:AC-540 terminal diagnostics are allowlisted, visible and never leak content or secrets', () => {
   const result = runPython(fixture + String.raw`
 class FailureGraph:
     def run(self, state):
         state.context['runtimeEvents'] = [
             {'stage': 'retrieval_completed', 'details': {'status': SECRET, 'hitCount': SECRET,
-              'documentVersionIds': [SECRET], 'chunkIds': [SECRET], 'content': SECRET}},
+              'documentVersionIds': [SECRET], 'chunkIds': [SECRET], 'content': SECRET,
+              'promptTopicCoverage': SECRET, 'promptCandidateTopics': [SECRET, {'secret': SECRET}],
+              'missingPromptTopics': [SECRET], 'budgetPolicyCandidate': SECRET}},
+            {'stage': 'turn_classified', 'details': {'requested_topics': ['PRICE', SECRET, {'secret': SECRET}]}},
             {'stage': 'model_call_started', 'details': {'prompt': SECRET}},
             {'stage': 'model_call_failed', 'details': {'body': SECRET, 'token': SECRET}},
             {'stage': 'grounding_failed', 'details': {'reason': SECRET, 'prompt': SECRET}},
@@ -165,6 +168,10 @@ print(json.dumps({'failed': failed, 'defaultLog': stream.getvalue(),
   assert.equal(result.failed.status, 503);
   assert.deepEqual(result.failed.body, { error: 'RUNTIME_UNAVAILABLE' });
   assert.equal(result.failed.terminal.length, 1);
+  assert.equal(result.failed.terminal[0].promptTopicCoverage, 'NOT_EVALUATED');
+  assert.deepEqual(result.failed.terminal[0].promptCandidateTopics, []);
+  assert.deepEqual(result.failed.terminal[0].missingPromptTopics, []);
+  assert.equal(result.failed.terminal[0].budgetPolicyCandidate, null);
   assert.equal(result.failed.terminal[0].action, 'ERROR');
   assert.equal(result.failed.terminal[0].reasonCode, 'MODEL_FAILURE');
   assert.equal(result.failed.terminal[0].modelInvoked, null);

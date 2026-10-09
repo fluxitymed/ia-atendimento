@@ -58,6 +58,7 @@ def _uuid(value: Any) -> bool:
 _SAFE_RETRIEVAL_STATUSES = {"EXECUTED", "SKIPPED_NOT_REQUIRED", "NOT_CONFIGURED", "FAILED_TRANSIENT_EXHAUSTED"}
 _SAFE_TURN_INTENTS = {"ATTRIBUTE_QUERY", "FACTUAL_QUERY", "NEED_DISCOVERY", "PROCEDURE_INTEREST",
                       "CONVERSATIONAL_RESPONSE", "CLINICAL_URGENCY", "SCHEDULING_CONFIRMATION"}
+_SAFE_TURN_TOPICS = {"PRICE", "SCHEDULING", "PAYMENT", "EVALUATION"}
 _SAFE_DECISION_CODES = {
     "UNSUPPORTED_FACTUAL_CLAIM", "INTERNAL_KNOWLEDGE_GAP_EXPOSED", "STALE_FREE_EVALUATION_AMBIGUITY",
     "REDUNDANT_PHONE_REQUEST", "REPEATED_KNOWN_OPERATIONAL_QUESTION", "PREMATURE_BOOKING_CONFIRMATION",
@@ -68,7 +69,8 @@ _SAFE_DECISION_CODES = {
     "CONFIG_LOOKUP_FAILED", "CONFIG_UNAVAILABLE", "MODEL_FAILURE", "RETRIEVAL_FAILURE", "RUNTIME_ERROR",
 }
 _SAFE_GROUNDING_ORIGINS = {"USER_REQUESTED_UNSUPPORTED_FACT", "MODEL_INTRODUCED_UNSUPPORTED_FACT",
-                           "RESPOND_ONLY_UNSUPPORTED_FACT"}
+                           "RESPOND_ONLY_UNSUPPORTED_FACT", "UNDETERMINED_UNSUPPORTED_FACT"}
+_SAFE_PROMPT_COVERAGE = {"COMPLETE", "PARTIAL", "NONE", "NOT_EVALUATED"}
 
 
 def _safe_dispatch_diagnostic(event: dict[str, Any], state: AgentState | None, action: str,
@@ -96,6 +98,9 @@ def _safe_dispatch_diagnostic(event: dict[str, Any], state: AgentState | None, a
     grounding = latest("grounding_result")
     failure = latest("grounding_failed")
     classified = latest("turn_classified")
+    raw_topics = classified.get("requested_topics")
+    raw_candidate_topics = retrieval.get("promptCandidateTopics")
+    raw_missing_topics = retrieval.get("missingPromptTopics")
     handoff = state.handoff_context if state is not None and isinstance(state.handoff_context, dict) else {}
     retrieval_status = retrieval.get("status")
     turn_intent = classified.get("interpreted_intent")
@@ -150,15 +155,25 @@ def _safe_dispatch_diagnostic(event: dict[str, Any], state: AgentState | None, a
         "decisionOrigin": origin,
         "reasonCode": reason_code,
         "turnIntent": turn_intent if isinstance(turn_intent, str) and turn_intent in _SAFE_TURN_INTENTS else "UNKNOWN",
+        "turnTopics": list(dict.fromkeys(topic for topic in raw_topics[:4]
+                                          if isinstance(topic, str) and topic in _SAFE_TURN_TOPICS)) if isinstance(raw_topics, list) else [],
         "retrievalStatus": valid_retrieval_status,
         "retrievalExecuted": retrieval_executed,
         "retrievalHitCount": hits if type(hits) is int and 0 <= hits <= 1000 else 0,
-        "commercialEvidencePresent": ((bool(hits) and grounding_passed is True)
-                                      if valid_retrieval_status == "EXECUTED" and type(hits) is int and grounding_validated
+        "commercialEvidencePresent": (bool(hits) if valid_retrieval_status == "EXECUTED" and type(hits) is int
                                       else None) if turn_intent == "ATTRIBUTE_QUERY" else None,
         "documentIds": safe_ids(retrieval.get("documentIds")),
         "documentVersionIds": safe_ids(retrieval.get("documentVersionIds")),
         "chunkIds": safe_ids(retrieval.get("chunkIds")),
+        "promptChunkIds": safe_ids(retrieval.get("promptChunkIds")),
+        "promptTopicCoverage": (retrieval.get("promptTopicCoverage")
+                                if isinstance(retrieval.get("promptTopicCoverage"), str)
+                                and retrieval.get("promptTopicCoverage") in _SAFE_PROMPT_COVERAGE else "NOT_EVALUATED"),
+        "promptCandidateTopics": list(dict.fromkeys(topic for topic in raw_candidate_topics[:4]
+                                                if isinstance(topic, str) and topic in _SAFE_TURN_TOPICS)) if isinstance(raw_candidate_topics, list) else [],
+        "missingPromptTopics": list(dict.fromkeys(topic for topic in raw_missing_topics[:4]
+                                              if isinstance(topic, str) and topic in _SAFE_TURN_TOPICS)) if isinstance(raw_missing_topics, list) else [],
+        "budgetPolicyCandidate": retrieval.get("budgetPolicyCandidate") if type(retrieval.get("budgetPolicyCandidate")) is bool else None,
         "modelInvoked": model_invoked,
         "modelCallsStarted": model_started,
         "modelCallsCompleted": model_completed,
