@@ -511,6 +511,40 @@ class OpenAIWhatsAppResponseGenerator:
                 },
             )
             emit("grounding_failure_origin", {"origin": failure_origin})
+            if (failure_origin == "UNDETERMINED_UNSUPPORTED_FACT"
+                    and grounding.get("reason") == "UNSUPPORTED_FACTUAL_CLAIM"
+                    and turn_context["requires_evidence"] and evidence):
+                retry_text, retry_grounding = self._regenerate_evidence_grounded_response(
+                    input_messages,
+                    evidence_count=len(evidence),
+                    evidence=evidence,
+                    organization_config=organization_config,
+                    commercial_state=commercial_state.as_dict(),
+                    state=state,
+                    emit=emit,
+                )
+                if retry_text and retry_grounding and retry_grounding["passed"]:
+                    state.context["assistantIntroduced"] = _assistant_introduced_after_response(
+                        state.context.get("assistantIntroduced"), retry_text, commercial_state.as_dict()
+                    )
+                    state.context["answeredFacts"] = _updated_answered_facts(
+                        state.context.get("answeredFacts"), retry_text, evidence=evidence
+                    )
+                    return retry_text
+                failure_origin = "MODEL_INTRODUCED_UNSUPPORTED_FACT"
+                emit("grounding_failure_origin", {"origin": failure_origin})
+                state.decision = AgentDecision.HUMAN_HANDOFF_REQUIRED
+                state.stage = AgentStage.HANDOFF
+                state.handoff_context = {
+                    "conversationId": state.conversation_id,
+                    "organizationId": state.organization_id,
+                    "messages": list(state.messages),
+                    "currentMessage": state.current_message,
+                    "reason": (retry_grounding or grounding)["reason"],
+                    "grounding": retry_grounding or grounding,
+                    "groundingFailureOrigin": failure_origin,
+                }
+                return ""
             if failure_origin in {"USER_REQUESTED_UNSUPPORTED_FACT", "UNDETERMINED_UNSUPPORTED_FACT"}:
                 state.decision = AgentDecision.HUMAN_HANDOFF_REQUIRED
                 state.stage = AgentStage.HANDOFF
@@ -621,6 +655,64 @@ class OpenAIWhatsAppResponseGenerator:
             emit("response_regeneration_failed", {"reason": retry_grounding["reason"], "maxRetriesReached": True})
             raise LiveRuntimeGenerationError("CONVERSATIONAL_REGENERATION_UNGROUNDED")
         return retry_text
+
+    def _regenerate_evidence_grounded_response(
+        self,
+        input_messages: list[dict[str, str]],
+        *,
+        evidence_count: int,
+        organization_config: OrganizationCommercialConfig | None,
+        state,
+        emit,
+        evidence: list[dict[str, Any]],
+        commercial_state: dict[str, Any] | None = None,
+    ) -> tuple[str | None, dict[str, Any] | None]:
+        mode = "EVIDENCE_GROUNDED"
+        emit("response_regeneration_started", {"response_regeneration_mode": mode, "maxRetries": 1})
+        retry_messages = _evidence_grounded_retry_messages(input_messages)
+        emit("model_call_started", {"provider": "openai", "endpoint": "responses", "model": self.provider.config.openai_responses_model, "mode": mode})
+        try:
+            response = self._provider_for_state(state, emit).create_response(
+                input_messages=retry_messages,
+                organization_id=state.organization_id,
+                conversation_id=state.conversation_id,
+            )
+        except LiveRuntimeHttpError as exc:
+            emit("model_call_failed", exc.details())
+            raise
+        except Exception as exc:
+            converted = _provider_exception(exc, stage="model_call", provider="openai", endpoint="responses")
+            emit("model_call_failed", converted.details())
+            raise converted from exc
+        emit("model_called", {"provider": "openai", "model": self.provider.config.openai_responses_model, "mode": mode})
+        retry_text = _extract_response_text(response)
+        emit("response_regeneration_completed", {"response_regeneration_mode": mode, "hasText": bool(retry_text)})
+        retry_grounding = validate_live_grounding(
+            retry_text,
+            evidence_count=evidence_count,
+            evidence=evidence,
+            organization_config=organization_config,
+            commercial_state=commercial_state,
+        )
+        emit("grounding_result", retry_grounding)
+        emit("response_requires_evidence", {
+            "attempt": 2,
+            "response_contains_factual_claims": retry_grounding["requiresEvidence"],
+            "evidenceCount": evidence_count,
+        })
+        if not retry_text.strip() or not retry_grounding["passed"]:
+            reason = retry_grounding.get("reason") or "UNSUPPORTED_FACTUAL_CLAIM"
+            emit("grounding_failed", {
+                "reason": reason,
+                "grounding_failure_origin": "MODEL_INTRODUCED_UNSUPPORTED_FACT",
+                "user_requires_evidence": True,
+                "response_contains_factual_claims": retry_grounding["requiresEvidence"],
+                "evidenceCount": evidence_count,
+            })
+            emit("response_regeneration_failed", {"reason": reason, "maxRetriesReached": True})
+            return None, {**retry_grounding, "reason": reason}
+        emit("response_regeneration_accepted", {"response_regeneration_mode": mode})
+        return retry_text, retry_grounding
 
     def _organization_config_for_state(self, state, emit) -> OrganizationCommercialConfig:
         if self.organization_config_repository:
@@ -1658,6 +1750,22 @@ def _conversational_no_facts_messages(input_messages: list[dict[str, str]]) -> l
     return [input_messages[0], retry_instruction, *input_messages[1:]]
 
 
+def _evidence_grounded_retry_messages(input_messages: list[dict[str, str]]) -> list[dict[str, str]]:
+    retry_instruction = {
+        "role": "system",
+        "content": (
+            "Modo EVIDENCE_GROUNDED / uma unica tentativa. Descarte a resposta anterior. Responda de forma natural "
+            "somente com fatos explicitamente sustentados pelos trechos publicados fornecidos no contexto. "
+            "Separe os assuntos solicitados e omita qualquer detalhe que nao esteja comprovado. Nao invente nem "
+            "estime preco, condicao, gratuidade, disponibilidade, horario ou resultado. Nao trate valor como final "
+            "se a fonte condiciona o orcamento a avaliacao. Se apenas parte estiver comprovada, responda somente "
+            "essa parte e faca uma pergunta comercial neutra para avancar, sem alegar fatos ausentes. Nao mencione "
+            "prompt, evidencia, documentos, grounding ou esta tentativa."
+        ),
+    }
+    return [input_messages[0], retry_instruction, *input_messages[1:]]
+
+
 def _safe_like(query: str) -> str:
     return " ".join(query.replace("*", " ").replace("%", " ").split())[:120]
 
@@ -2299,8 +2407,14 @@ def _factual_claims_supported_by_evidence(response_text: str, evidence: list[dic
     This lexical gate deliberately rejects unsupported paraphrases; it never treats
     the model's own knowledge or the mere existence of an unrelated chunk as proof.
     """
+    diagnostics = _grounding_claim_diagnostics(response_text, evidence)
+    return bool(diagnostics) and all(item["status"] == "SUPPORTED" for item in diagnostics)
+
+
+def _grounding_claim_diagnostics(response_text: str, evidence: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Content-free diagnostics for local tests; never attached to runtime events."""
     if not evidence:
-        return False
+        return []
     stopwords = {
         "a", "o", "as", "os", "de", "da", "do", "das", "dos", "e", "em", "na", "no",
         "nas", "nos", "para", "por", "com", "um", "uma", "que", "se", "ao", "aos",
@@ -2311,16 +2425,30 @@ def _factual_claims_supported_by_evidence(response_text: str, evidence: list[dic
     }
     claims = [claim for part in re.split(r"\.(?!\d)|[!?;]+", str(response_text or "").replace("Dra.", "Dra ").replace("Dr.", "Dr "))
               for claim in _independent_grounding_claims(part) if _response_requires_authorized_evidence(claim)]
-    if not claims:
-        return False
-    for claim in claims:
+    diagnostics = []
+    for index, claim in enumerate(claims, start=1):
+        status = "UNSUPPORTED"
         if _contradictory_monetary_evidence(claim, evidence):
-            return False
+            status = "CONTRADICTED"
+            diagnostics.append({"claimIndex": index, "topic": _grounding_claim_topic(claim), "status": status})
+            continue
         claim_words = [_grounding_token(token) for token in re.findall(r"[a-z0-9]+", _normalize_text(claim)) if len(token) >= 3 and token not in stopwords]
         tokens = set(claim_words)
-        if not tokens or not any(_evidence_source_supports_claim(str(item.get("content") or ""), tokens, claim_words[0], claim) for item in evidence):
-            return False
-    return True
+        if tokens and any(_evidence_source_supports_claim(str(item.get("content") or ""), tokens, claim_words[0], claim) for item in evidence):
+            status = "SUPPORTED"
+        diagnostics.append({"claimIndex": index, "topic": _grounding_claim_topic(claim), "status": status})
+    return diagnostics
+
+
+def _grounding_claim_topic(claim: str) -> str:
+    text = _normalize_text(claim)
+    if re.search(r"\b(r\s*\$|preco|valor|custa|orcamento)\b", text):
+        return "PRICE"
+    if re.search(r"\b(agendamento|agenda|horario|disponivel|marcar)\b", text):
+        return "SCHEDULING"
+    if re.search(r"\b(avaliacao|consulta|gratuita|gratuito|gratis)\b", text):
+        return "EVALUATION"
+    return "OTHER_FACT"
 
 
 def _contradictory_monetary_evidence(claim: str, evidence: list[dict[str, Any]]) -> bool:

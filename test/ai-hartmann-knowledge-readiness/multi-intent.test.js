@@ -161,7 +161,9 @@ print(json.dumps({'valid': valid, 'partial': partial, 'unsupported': unsupported
   assert.ok(result.valid.promptChunkIds.includes(id(208)));
   assert.equal(result.unsupported.commercialEvidencePresent, true);
   assert.equal(result.unsupported.groundingPassed, false);
-  assert.ok([result.valid, result.partial, result.unsupported].every((item) => item.status === 200 && item.calls === 1));
+  assert.ok([result.valid, result.partial].every((item) => item.status === 200 && item.calls === 1));
+  assert.equal(result.unsupported.status, 200);
+  assert.equal(result.unsupported.calls, 2);
   assert.deepEqual(result.cases.map((item) => item.action), Array(5).fill('SEND_MESSAGE'));
   assert.deepEqual(result.cases.map((item) => item.reason), Array(5).fill('GROUNDED_MODEL_RESPONSE'));
   assert.ok(result.cases.every((item) => item.status === 200 && item.calls === 1 && item.groundingPassed));

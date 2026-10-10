@@ -36,3 +36,8 @@
 - Refs: US-122, AC-540, AC-541, AC-542, AC-543
 - Arquivos: .spec/features/ai-hartmann-knowledge-readiness/spec.md, .spec/features/ai-hartmann-knowledge-readiness/design.md, .spec/features/ai-hartmann-knowledge-readiness/tasks.md, .spec/features/ai-hartmann-knowledge-readiness/verification.md, src/ai_agent_runtime/whatsapp/zapi_server.py, src/ai_agent_runtime/crm_dispatch.py, test/ai-hartmann-knowledge-readiness/commercial-diagnostics.test.js, test/ai-hartmann-knowledge-readiness/dispatch-observability.test.js
 - Notas: Usar o listener e os eventos CRM existentes. Cobertura lexical e apenas candidato, nunca prova factual. Conservar HANDOFF quando a origem da afirmacao nao puder ser demonstrada; preservar alteracoes preexistentes de test/ai-knowledge-crm-api/.
+
+## T-105 — Regenerar uma vez respostas comerciais com evidencias e preservar HANDOFF [concluida]
+- Refs: US-123, AC-544, AC-545, AC-546, AC-547
+- Arquivos: .spec/features/ai-hartmann-knowledge-readiness/spec.md, .spec/features/ai-hartmann-knowledge-readiness/design.md, .spec/features/ai-hartmann-knowledge-readiness/tasks.md, .spec/features/ai-hartmann-knowledge-readiness/verification.md, src/ai_agent_runtime/whatsapp/zapi_server.py, src/ai_agent_runtime/crm_dispatch.py, test/ai-hartmann-knowledge-readiness/commercial-diagnostics.test.js, test/ai-hartmann-knowledge-readiness/multi-intent.test.js
+- Notas: Reusar os mesmos trechos publicados e o validador atual; limitar a uma tentativa, registrar apenas modo/codigos e manter HANDOFF se a segunda geracao falhar. O diagnostico de afirmacao e local e sem texto; nao alterar as duas modificacoes preexistentes em test/ai-knowledge-crm-api/.

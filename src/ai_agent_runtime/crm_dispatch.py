@@ -67,7 +67,9 @@ _SAFE_DECISION_CODES = {
     "RETRIEVAL_UNAVAILABLE_FOR_FACTUAL_QUERY", "PATIENT_REQUESTED_HUMAN", "HUMAN_HANDOFF_REQUIRED",
     "MEDICATION_GUIDANCE_REQUIRED", "RESCHEDULING_REQUEST", "CANCELLATION_REQUEST",
     "CONFIG_LOOKUP_FAILED", "CONFIG_UNAVAILABLE", "MODEL_FAILURE", "RETRIEVAL_FAILURE", "RUNTIME_ERROR",
+    "EVIDENCE_GROUNDED_REGENERATION_ACCEPTED",
 }
+_SAFE_REGENERATION_MODES = {"EVIDENCE_GROUNDED", "CONVERSATIONAL_NO_FACTS"}
 _SAFE_GROUNDING_ORIGINS = {"USER_REQUESTED_UNSUPPORTED_FACT", "MODEL_INTRODUCED_UNSUPPORTED_FACT",
                            "RESPOND_ONLY_UNSUPPORTED_FACT", "UNDETERMINED_UNSUPPORTED_FACT"}
 _SAFE_PROMPT_COVERAGE = {"COMPLETE", "PARTIAL", "NONE", "NOT_EVALUATED"}
@@ -97,6 +99,8 @@ def _safe_dispatch_diagnostic(event: dict[str, Any], state: AgentState | None, a
     retrieval = latest("retrieval_completed")
     grounding = latest("grounding_result")
     failure = latest("grounding_failed")
+    initial_failure = next((item.get("details", {}) for item in events
+                            if item.get("stage") == "grounding_failed" and isinstance(item.get("details"), dict)), {})
     classified = latest("turn_classified")
     raw_topics = classified.get("requested_topics")
     raw_candidate_topics = retrieval.get("promptCandidateTopics")
@@ -109,6 +113,9 @@ def _safe_dispatch_diagnostic(event: dict[str, Any], state: AgentState | None, a
     model_started = count("model_call_started")
     model_completed = count("model_called")
     regeneration_used = bool(count("response_regeneration_started"))
+    raw_regeneration_mode = latest("response_regeneration_started").get("response_regeneration_mode")
+    regeneration_mode = (raw_regeneration_mode if isinstance(raw_regeneration_mode, str)
+                         and raw_regeneration_mode in _SAFE_REGENERATION_MODES else "NONE")
     decision_code = (
         safe_code(handoff.get("reason")) or safe_code(failure.get("reason"))
         or safe_code(latest("unsupported_factual_question").get("reason"))
@@ -125,7 +132,8 @@ def _safe_dispatch_diagnostic(event: dict[str, Any], state: AgentState | None, a
                   else "MODEL" if model_completed and grounding_passed is True
                   else "DETERMINISTIC_RULE" if not model_started and grounding_passed is True
                   else "UNKNOWN")
-        reason_code = ("CONVERSATIONAL_REGENERATION_ACCEPTED" if origin == "FALLBACK"
+        reason_code = (("EVIDENCE_GROUNDED_REGENERATION_ACCEPTED" if regeneration_mode == "EVIDENCE_GROUNDED"
+                        else "CONVERSATIONAL_REGENERATION_ACCEPTED") if origin == "FALLBACK"
                        else "GROUNDED_MODEL_RESPONSE" if origin == "MODEL"
                        else "GROUNDED_DETERMINISTIC_RESPONSE" if origin == "DETERMINISTIC_RULE"
                        else "UNKNOWN")
@@ -182,7 +190,12 @@ def _safe_dispatch_diagnostic(event: dict[str, Any], state: AgentState | None, a
         "groundingPassed": grounding_passed if grounding_validated and type(grounding_passed) is bool else None,
         "groundingReason": (safe_code(grounding.get("reason")) or safe_code(failure.get("reason")) or "NONE") if grounding_validated else "NONE",
         "groundingFailureOrigin": grounding_origin if isinstance(grounding_origin, str) and grounding_origin in _SAFE_GROUNDING_ORIGINS else "NONE",
+        "initialGroundingFailureOrigin": (initial_failure.get("grounding_failure_origin")
+                                           if isinstance(initial_failure.get("grounding_failure_origin"), str)
+                                           and initial_failure.get("grounding_failure_origin") in _SAFE_GROUNDING_ORIGINS
+                                           else "NONE"),
         "regenerationUsed": regeneration_used,
+        "regenerationMode": regeneration_mode,
     }
 
 

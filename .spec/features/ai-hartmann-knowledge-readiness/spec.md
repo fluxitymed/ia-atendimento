@@ -131,7 +131,7 @@ Como operador da Bruna, quero distinguir falta de candidatos para preco e agenda
 
 - **Dado** uma resposta rejeitada com candidatos para os assuntos pedidos
 - **Quando** a pergunta do paciente exige evidencia
-- **Entao** o diagnostico nao atribui automaticamente ao paciente a afirmacao sem suporte; registra origem indeterminada e preserva HANDOFF.
+- **Entao** o diagnostico preserva a origem inicial como indeterminada e, se a unica regeneracao tambem fizer afirmacao sem suporte, diferencia essa origem terminal como introduzida pelo modelo; o dispatch preserva HANDOFF.
 - **E** uma falha com assunto solicitado sem candidato e uma falha introduzida pelo modelo em turno sem demanda factual continuam distinguiveis por codigos estaveis.
 
 #### AC-542 — Matriz comercial, operacional e clinica
@@ -148,6 +148,37 @@ Como operador da Bruna, quero distinguir falta de candidatos para preco e agenda
 - **Entao** somente suporte publicado e coerente pode autorizar uma afirmacao; resposta parcial sem fato novo pode ser enviada, mas valor, gratuidade, horario e regra inventados falham fechados.
 - **E** o diagnostico informa apenas metadados seguros de cobertura e resultado.
 
+### US-123 — Recuperar respostas comerciais com uma tentativa segura
+
+Como paciente da Hartmann, quero receber uma resposta comercial util quando a primeira geracao nao estiver bem fundamentada, para evitar transferencia desnecessaria sem receber fatos inventados.
+
+#### AC-544 — Regeneracao factual limitada a evidencias autorizadas
+
+- **Dado** um turno que exige evidencia, candidatos publicados para os assuntos pedidos e falha `UNSUPPORTED_FACTUAL_CLAIM` com origem indeterminada
+- **Quando** a primeira resposta falha no grounding
+- **Entao** o runtime pode fazer no maximo uma regeneracao com os mesmos trechos e instrucoes explicitas para usar somente fatos publicados e omitir alegacoes nao suportadas
+- **E** a nova resposta so e enviada se passar pelo mesmo validador e nao estiver vazia.
+
+#### AC-545 — Resultado terminal da regeneracao factual
+
+- **Dado** uma regeneracao factual tentada
+- **Quando** ela passa no grounding
+- **Entao** o dispatch termina em `SEND_MESSAGE`, `decisionOrigin=FALLBACK`, `reasonCode=EVIDENCE_GROUNDED_REGENERATION_ACCEPTED`, `regenerationUsed=true` e modo seguro `EVIDENCE_GROUNDED`
+- **E** se a regeneracao falhar, o dispatch termina em `HANDOFF` com `UNSUPPORTED_FACTUAL_CLAIM`, sem outbound; o modelo nao pode autorizar preco, horario ou condicao por conta propria.
+
+#### AC-546 — Diagnostico local sem conteudo de resposta
+
+- **Dado** uma resposta sintetica rejeitada em teste local
+- **Quando** o teste inspeciona as afirmacoes avaliadas
+- **Entao** pode identificar indice, assunto e estado (`SUPPORTED`, `UNSUPPORTED` ou `CONTRADICTED`) sem que o helper ou os logs retornem o texto da afirmacao.
+
+#### AC-547 — Limites da regeneracao e regras deterministicas
+
+- **Dado** ausencia de candidatos, falha de retrieval, violacao de politica comercial/clinica, pedido humano ou guarda deterministica
+- **Quando** o runtime decide a proxima acao
+- **Entao** nao aplica a regeneracao factual; preserva HANDOFF ou erro tecnico conforme o caminho existente.
+- **E** uma regeneracao sem evidencia nao pode transformar uma pergunta factual em SEND_MESSAGE conversacional.
+
 ## Fora de escopo
 
 - Inserir documentos reais, criar credenciais, usar OpenAI real, escrever no Supabase de Production ou fazer deploy.
@@ -158,6 +189,7 @@ Como operador da Bruna, quero distinguir falta de candidatos para preco e agenda
 | ID | Suposicao | Status | Resolucao |
 |---|---|---|---|
 | ASM-047 | Uma versao publicada de maior `version_number` e a versao atual quando duas publicadas coexistem para o mesmo documento. | confirmada | Coerente com o contrato de substituicao; os documentos Hartmann publicados foram consultados em modo somente leitura e o teste cobre a concorrencia. |
+| ASM-048 | Uma unica regeneracao com as mesmas evidencias, seguida pelo validador inalterado, e uma recuperacao segura para falha generica de grounding com candidatos. | confirmada | O escopo pede testar recuperacao fundamentada e HANDOFF quando a nova resposta tambem falha; a regeneracao nao altera a politica nem o conjunto de evidencias. |
 
 ## Perguntas em aberto
 

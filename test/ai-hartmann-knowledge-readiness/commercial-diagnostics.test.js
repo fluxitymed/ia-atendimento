@@ -56,10 +56,11 @@ class Retrieval(ZApiRuntimeRetrieval):
                 and term in row['content'].lower()][:int(params['limit'])]
     def closed_world_procedure_decision(self, organization_id, query): return None
 class Transport:
-    def __init__(self, answer): self.answer, self.calls = answer, 0
+    def __init__(self, answer): self.answers, self.calls = (answer if isinstance(answer, list) else [answer]), 0
     def post_json(self, url, *, headers, payload):
         self.calls += 1
-        return {'id': 'controlled', 'status': 'completed', 'output_text': self.answer}
+        answer = self.answers[min(self.calls - 1, len(self.answers) - 1)]
+        return {'id': 'controlled', 'status': 'completed', 'output_text': answer}
 repo = InMemoryOrganizationConfigRepository([OrganizationRuntimeConfig(organization_id=ORG)])
 def dispatch(question, answer, *, excluded=(), history=()):
     retrieval, transport, logs = Retrieval(excluded), Transport(answer), []
@@ -84,7 +85,9 @@ def dispatch(question, answer, *, excluded=(), history=()):
             'commercialEvidencePresent': terminal['commercialEvidencePresent'],
             'grounding': terminal['groundingStatus'], 'groundingPassed': terminal['groundingPassed'],
             'groundingFailureOrigin': terminal['groundingFailureOrigin'],
+            'initialGroundingFailureOrigin': terminal.get('initialGroundingFailureOrigin'),
             'origin': terminal['decisionOrigin'], 'reason': terminal['reasonCode'],
+            'regenerationMode': terminal.get('regenerationMode'),
             'model': terminal['modelInvoked'], 'modelCalls': transport.calls,
             'chunks': terminal['chunkIds'], 'promptChunks': terminal['promptChunkIds'],
             'documents': terminal['documentIds'], 'versions': terminal['documentVersionIds'],
@@ -118,7 +121,8 @@ print(json.dumps({'candidate': candidate, 'missing': missing}))
 `);
   assert.equal(result.candidate.action, 'HANDOFF');
   assert.equal(result.candidate.reason, 'UNSUPPORTED_FACTUAL_CLAIM');
-  assert.equal(result.candidate.groundingFailureOrigin, 'UNDETERMINED_UNSUPPORTED_FACT');
+  assert.equal(result.candidate.initialGroundingFailureOrigin, 'UNDETERMINED_UNSUPPORTED_FACT');
+  assert.equal(result.candidate.groundingFailureOrigin, 'MODEL_INTRODUCED_UNSUPPORTED_FACT');
   assert.equal(result.candidate.coverage, 'COMPLETE');
   assert.equal(result.candidate.commercialEvidencePresent, true);
   assert.equal(result.missing.action, 'HANDOFF');
@@ -221,4 +225,73 @@ print(json.dumps({'partial': partial, 'inventedSchedule': invented_schedule,
   assert.ok([result.partial, result.inventedSchedule, result.inventedPrice,
     result.inventedHours, result.freeWithoutSource]
     .every((item) => item.scoped && !item.versions.includes('00000000-0000-4000-8000-000000000091')));
+});
+
+test('@spec:AC-544 a factual grounding rejection gets one evidence-bounded retry and accepts only grounded output', () => {
+  const result = runPython(fixture + String.raw`
+good = 'Botox com revisão em 15 dias custa R$ 750 e o orçamento final é definido após a avaliação gratuita e o agendamento de avaliação funciona pelo WhatsApp.'
+recovered = dispatch(QUESTION, ['Botox com revisão em 15 dias custa R$ 900.', good])
+partial = dispatch(QUESTION, ['Botox com revisão em 15 dias custa R$ 750 e o agendamento é confirmado automaticamente.',
+                               'Botox com revisão em 15 dias custa R$ 750. Qual dia prefere para avaliação?'], excluded=[uid(208)])
+print(json.dumps({'recovered': recovered, 'partial': partial}))
+`);
+  assert.equal(result.recovered.action, 'SEND_MESSAGE');
+  assert.equal(result.recovered.reason, 'EVIDENCE_GROUNDED_REGENERATION_ACCEPTED');
+  assert.equal(result.recovered.regenerationMode, 'EVIDENCE_GROUNDED');
+  assert.equal(result.recovered.origin, 'FALLBACK');
+  assert.equal(result.recovered.modelCalls, 2);
+  assert.equal(result.recovered.grounding, 'PASSED');
+  assert.equal(result.recovered.groundingPassed, true);
+  assert.equal(result.partial.action, 'SEND_MESSAGE');
+  assert.equal(result.partial.reason, 'EVIDENCE_GROUNDED_REGENERATION_ACCEPTED');
+  assert.equal(result.partial.regenerationMode, 'EVIDENCE_GROUNDED');
+  assert.equal(result.partial.coverage, 'PARTIAL');
+  assert.equal(result.partial.grounding, 'PASSED');
+  assert.ok([result.recovered, result.partial].every((item) => item.scoped && !/R\$ 900|automaticamente|test-only-key|local-test-service-token/.test(item.logs)));
+});
+
+test('@spec:AC-545 a second unsupported factual generation ends in HANDOFF with stable grounding reason', () => {
+  const result = runPython(fixture + String.raw`
+result = dispatch(QUESTION, ['Botox com revisão em 15 dias custa R$ 900.',
+                             'Botox com revisão em 15 dias custa R$ 750 e o agendamento está disponível amanhã às 10h.'])
+print(json.dumps(result))
+`);
+  assert.equal(result.action, 'HANDOFF');
+  assert.equal(result.origin, 'GROUNDING');
+  assert.equal(result.reason, 'UNSUPPORTED_FACTUAL_CLAIM');
+  assert.equal(result.regenerationMode, 'EVIDENCE_GROUNDED');
+  assert.equal(result.groundingFailureOrigin, 'MODEL_INTRODUCED_UNSUPPORTED_FACT');
+  assert.equal(result.grounding, 'FAILED');
+  assert.equal(result.groundingPassed, false);
+  assert.equal(result.modelCalls, 2);
+  assert.equal(result.model, true);
+  assert.ok(!/R\$ 900|amanhã às 10h|test-only-key|local-test-service-token/.test(result.logs));
+});
+
+test('@spec:AC-546 local grounding diagnostics identify claim index and topic without returning claim text', () => {
+  const result = runPython(fixture + String.raw`
+from ai_agent_runtime.whatsapp.zapi_server import _grounding_claim_diagnostics
+answer = 'Botox com revisão em 15 dias custa R$ 900 e o agendamento de avaliação funciona pelo WhatsApp.'
+diagnostics = _grounding_claim_diagnostics(answer, [CHUNKS[0], chunk(12, 1, 'Botox com revisão em 15 dias custa R$ 850.'), CHUNKS[7]])
+print(json.dumps(diagnostics))
+`);
+  assert.deepEqual(result, [
+    { claimIndex: 1, topic: 'PRICE', status: 'CONTRADICTED' },
+    { claimIndex: 2, topic: 'SCHEDULING', status: 'SUPPORTED' },
+  ]);
+  assert.ok(result.every((claim) => !Object.hasOwn(claim, 'text')));
+});
+
+test('@spec:AC-547 absent candidates and deterministic clinical/human rules never use evidence regeneration', () => {
+  const result = runPython(fixture + String.raw`
+no_evidence = dispatch('Quanto custa Botox?', ['Botox custa R$ 900.', 'Botox custa R$ 900.'], excluded=[uid(201), uid(202), uid(203), uid(204), uid(205), uid(206), uid(207), uid(208), uid(209), uid(210)])
+reschedule = dispatch('Quero remarcar minha consulta.', '')
+print(json.dumps({'noEvidence': no_evidence, 'reschedule': reschedule}))
+`);
+  assert.equal(result.noEvidence.action, 'HANDOFF');
+  assert.equal(result.noEvidence.modelCalls, 0);
+  assert.equal(result.noEvidence.origin, 'DETERMINISTIC_RULE');
+  assert.equal(result.reschedule.action, 'HANDOFF');
+  assert.equal(result.reschedule.modelCalls, 0);
+  assert.equal(result.reschedule.origin, 'DETERMINISTIC_RULE');
 });

@@ -1,11 +1,11 @@
 {
   "feature": "ai-hartmann-knowledge-readiness",
-  "timestamp": "2026-10-09T16:49:48.656Z",
-  "gitRev": null,
+  "timestamp": "2026-10-10T13:58:39.132Z",
+  "gitRev": "22e07e2",
   "command": "node --test --test-concurrency=1 --test-reporter=tap",
   "reporter": "tap",
   "exitCode": 0,
-  "testsParsed": 327,
+  "testsParsed": 331,
   "results": {
     "AC-494": {
       "status": "pass",
@@ -90,6 +90,26 @@
     "AC-543": {
       "status": "pass",
       "testName": "@spec:AC-543 partial, absent, contradictory, draft and foreign facts remain fail closed",
+      "method": "tap"
+    },
+    "AC-544": {
+      "status": "pass",
+      "testName": "@spec:AC-544 a factual grounding rejection gets one evidence-bounded retry and accepts only grounded output",
+      "method": "tap"
+    },
+    "AC-545": {
+      "status": "pass",
+      "testName": "@spec:AC-545 a second unsupported factual generation ends in HANDOFF with stable grounding reason",
+      "method": "tap"
+    },
+    "AC-546": {
+      "status": "pass",
+      "testName": "@spec:AC-546 local grounding diagnostics identify claim index and topic without returning claim text",
+      "method": "tap"
+    },
+    "AC-547": {
+      "status": "pass",
+      "testName": "@spec:AC-547 absent candidates and deterministic clinical/human rules never use evidence regeneration",
       "method": "tap"
     }
   },
