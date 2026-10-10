@@ -511,6 +511,28 @@ class OpenAIWhatsAppResponseGenerator:
                 },
             )
             emit("grounding_failure_origin", {"origin": failure_origin})
+            if (grounding.get("reason") == "UNSUPPORTED_FACTUAL_CLAIM"
+                    and turn_context["requires_evidence"] and evidence):
+                partial_text = _supported_partial_response(
+                    text, evidence=evidence, organization_config=organization_config,
+                    commercial_state=commercial_state.as_dict(),
+                    requested_topics=turn_context["requested_topics"],
+                )
+                if partial_text:
+                    partial_grounding = validate_live_grounding(
+                        partial_text, evidence_count=len(evidence), evidence=evidence,
+                        organization_config=organization_config,
+                        commercial_state=commercial_state.as_dict(),
+                    )
+                    emit("grounding_result", partial_grounding)
+                    emit("response_partial_grounded", {"mode": "SUPPORTED_SENTENCES"})
+                    state.context["assistantIntroduced"] = _assistant_introduced_after_response(
+                        state.context.get("assistantIntroduced"), partial_text, commercial_state.as_dict()
+                    )
+                    state.context["answeredFacts"] = _updated_answered_facts(
+                        state.context.get("answeredFacts"), partial_text, evidence=evidence
+                    )
+                    return partial_text
             if (failure_origin == "UNDETERMINED_UNSUPPORTED_FACT"
                     and grounding.get("reason") == "UNSUPPORTED_FACTUAL_CLAIM"
                     and turn_context["requires_evidence"] and evidence):
@@ -1280,6 +1302,8 @@ def _deterministic_respond_only_response(
     *,
     organization_config: OrganizationCommercialConfig,
 ) -> str | None:
+    if _requires_clinical_handoff(query) or _requires_scheduling_handoff(query):
+        return None
     if commercial_state.get("next_best_action") != "RESPOND_ONLY":
         return None
     intent = str(commercial_state.get("current_turn_intent") or "")
@@ -2106,7 +2130,7 @@ def _requires_medication_guidance(query: str) -> bool:
     text = _normalize_text(query)
     return bool(
         re.search(r"\b(medicamento|remedio|antibiotico|analgesico)\b", text)
-        and re.search(r"\b(qual|quais|devo|posso|indica|recomenda|tomar|usar|prescrever)\b", text)
+        and re.search(r"\b(qual|quais|devo|posso|indica|recomenda|tomar|usar|prescrever|orientacao|orientar)\b", text)
     )
 
 
@@ -2384,8 +2408,32 @@ def _response_requires_authorized_evidence(response_text: str) -> bool:
     text = _normalize_text(response_text)
     if not text:
         return False
+    # A protected fact remains factual even when it is a separate sentence
+    # without the procedure/clinic name repeated from the previous sentence.
+    if re.search(r"r\s*\$\s*\d|\b\d+\s*x\b|\b(parcelar|parcelamento|deposito|sem juros)\b", text):
+        return True
+    if re.search(r"\b(disponivel|confirmado|reservado|livre)\b", text) and re.search(
+        r"\b(amanha|hoje|horario|agenda|agendamento|\d{1,2}h)\b", text
+    ):
+        return True
+    if re.search(r"\b(resultado|cura|efeito)\b", text) and re.search(
+        r"\b(garantido|garantida|definitivo|definitiva|assegurado)\b", text
+    ):
+        return True
+    if re.search(r"\b(medicamento|remedio|dose|dosagem)\b", text) and re.search(
+        r"\b(tomar|usar|recomendo|indicado|deve)\b", text
+    ):
+        return True
+    if re.search(r"\b(fazemos|realizamos|oferecemos|trabalhamos)\b", text) and re.search(
+        r"\b(procedimento|tratamento|preenchimento|botox|gluteo)\b", text
+    ):
+        return True
     if str(response_text).strip().endswith("?") and "." not in str(response_text):
         return False
+    if re.search(r"\b(agendar|agendamento|marcar|marcacao)\b", text) and re.search(
+        r"\b(pode|podemos|funciona|feito|feita|via|pelo|pela)\b", text
+    ):
+        return True
     if re.search(r"\bavaliacao\b", text) and re.search(r"\b(gratuita|gratuito|gratis|preco|valor|custa|dura)\b", text):
         return True
     factual_subject = re.search(
@@ -2402,11 +2450,7 @@ def _response_requires_authorized_evidence(response_text: str) -> bool:
 
 
 def _factual_claims_supported_by_evidence(response_text: str, evidence: list[dict[str, Any]]) -> bool:
-    """Fail closed unless each clinic claim can be traced to one authorized source span.
-
-    This lexical gate deliberately rejects unsupported paraphrases; it never treats
-    the model's own knowledge or the mere existence of an unrelated chunk as proof.
-    """
+    """Require each factual claim to trace to a source span, with bounded process aliases."""
     diagnostics = _grounding_claim_diagnostics(response_text, evidence)
     return bool(diagnostics) and all(item["status"] == "SUPPORTED" for item in diagnostics)
 
@@ -2422,6 +2466,7 @@ def _grounding_claim_diagnostics(response_text: str, evidence: list[dict[str, An
         "doutor", "doutora", "dr", "dra", "e", "sao", "tem", "possui", "oferece",
         "realiza", "faz", "trabalha", "inclui", "custa", "fica", "atende", "aceita",
         "quem", "esta", "buscando", "busca", "formas", "registrada", "apos", "pela", "pelo",
+        "pode", "podemos", "feito", "feita",
     }
     claims = [claim for part in re.split(r"\.(?!\d)|[!?;]+", str(response_text or "").replace("Dra.", "Dra ").replace("Dr.", "Dr "))
               for claim in _independent_grounding_claims(part) if _response_requires_authorized_evidence(claim)]
@@ -2444,7 +2489,7 @@ def _grounding_claim_topic(claim: str) -> str:
     text = _normalize_text(claim)
     if re.search(r"\b(r\s*\$|preco|valor|custa|orcamento)\b", text):
         return "PRICE"
-    if re.search(r"\b(agendamento|agenda|horario|disponivel|marcar)\b", text):
+    if re.search(r"\b(agendamento|agendar|marcacao|agenda|horario|disponivel|marcar)\b", text):
         return "SCHEDULING"
     if re.search(r"\b(avaliacao|consulta|gratuita|gratuito|gratis)\b", text):
         return "EVALUATION"
@@ -2504,7 +2549,7 @@ def _independent_grounding_claims(sentence: str) -> list[str]:
 
 
 def _evidence_source_supports_claim(content: str, tokens: set[str], key_token: str, claim: str) -> bool:
-    normalized = _normalize_text(content)
+    normalized = _normalize_text(content.replace("Dra.", "Dra ").replace("Dr.", "Dr "))
     source_tokens = {_grounding_token(token) for token in re.findall(r"[a-z0-9]+", normalized)}
     if not tokens.issubset(source_tokens):
         return False
@@ -2529,7 +2574,10 @@ def _negates_grounding_subject(text: str, key_token: str) -> bool:
 
 
 def _grounding_token(token: str) -> str:
-    # Conservative inflection normalization; no semantic inference.
+    # Only equivalent names of the commercial scheduling process. No monetary,
+    # availability, payment, clinical or outcome concept is broadened here.
+    if token in {"agendamento", "agendar", "marcar", "marcacao"}:
+        return "agendar"
     if token == "valores":
         return "valor"
     if token == "oferecido":
@@ -2539,6 +2587,49 @@ def _grounding_token(token: str) -> str:
     if token.endswith("s") and len(token) > 4:
         return token[:-1]
     return token
+
+
+def _supported_partial_response(
+    response_text: str, *, evidence: list[dict[str, Any]],
+    organization_config: OrganizationCommercialConfig | None,
+    commercial_state: dict[str, Any] | None,
+    requested_topics: list[str] | tuple[str, ...],
+) -> str | None:
+    """Keep only complete, independently grounded sentences from a rejected answer."""
+    sentences = [part.strip() for part in re.split(r"(?<=[.!?])\s+", response_text.strip()) if part.strip()]
+    if len(sentences) < 2:
+        return None
+    supported: list[str] = []
+    neutral_question: str | None = None
+    for sentence in sentences:
+        if sentence.endswith("?"):
+            if not re.search(
+                r"\d|r\s*\$|\b(amanha|hoje|horario|disponivel|confirmad\w*|"
+                r"parcel\w*|gratis|gratuit\w*|resultado|medicamento|dose|unidade|endereco)\b",
+                _normalize_text(sentence),
+            ) and not _response_requires_authorized_evidence(sentence):
+                neutral_question = sentence
+            continue
+        if not _response_requires_authorized_evidence(sentence):
+            continue
+        if requested_topics and _grounding_claim_topic(sentence) not in requested_topics:
+            continue
+        result = validate_live_grounding(
+            sentence, evidence_count=len(evidence), evidence=evidence,
+            organization_config=organization_config, commercial_state=commercial_state,
+        )
+        if result["passed"]:
+            supported.append(sentence)
+    if not supported:
+        return None
+    candidate = " ".join([*supported, *([neutral_question] if neutral_question else [])])
+    if candidate == response_text.strip():
+        return None
+    final = validate_live_grounding(
+        candidate, evidence_count=len(evidence), evidence=evidence,
+        organization_config=organization_config, commercial_state=commercial_state,
+    )
+    return candidate if final["passed"] else None
 
 
 def _stale_free_evaluation_ambiguity(response_text: str, evidence: list[dict[str, Any]]) -> bool:

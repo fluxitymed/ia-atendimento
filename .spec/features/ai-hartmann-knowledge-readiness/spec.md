@@ -179,6 +179,56 @@ Como paciente da Hartmann, quero receber uma resposta comercial util quando a pr
 - **Entao** nao aplica a regeneracao factual; preserva HANDOFF ou erro tecnico conforme o caminho existente.
 - **E** uma regeneracao sem evidencia nao pode transformar uma pergunta factual em SEND_MESSAGE conversacional.
 
+### US-124 — Conversar comercialmente sem perder o vinculo com a fonte
+
+Como paciente, quero receber informacoes comerciais publicadas em linguagem natural, mesmo quando a resposta usa uma parafrase segura, para nao ser transferido por diferencas de redacao.
+
+#### AC-548 — Parafrase operacional com suporte por trecho
+
+- **Dado** um trecho publicado e elegivel que descreve o canal de agendamento
+- **Quando** o modelo expressa o mesmo caminho com sinonimos controlados e sem acrescentar fato
+- **Entao** a afirmacao passa pelo grounding, mesmo sem os mesmos verbos literais.
+- **E** um trecho apenas semelhante, uma versao nao publicada ou outro tenant nao autoriza a afirmacao.
+
+#### AC-549 — Guardas estritos para fatos sensiveis
+
+- **Dado** afirmacoes separadas sobre preco, pagamento, horario disponivel, resultado ou orientacao clinica
+- **Quando** a resposta e validada
+- **Entao** cada afirmacao exige prova especifica e coerente, mesmo que nao repita o nome do procedimento na mesma frase.
+- **E** valores divergentes, horarios inventados, gratuidade e condicoes nao publicadas continuam bloqueados.
+
+#### AC-550 — Resposta parcial sem afirmar a parte rejeitada
+
+- **Dado** uma resposta com frases independentes, ao menos uma sustentada e outra nao sustentada
+- **Quando** o grounding rejeita a resposta integral
+- **Entao** o runtime pode enviar somente frases integralmente aprovadas que atendam a um assunto pedido, com uma pergunta neutra ja produzida pelo modelo quando segura.
+- **E** nunca recorta uma afirmacao composta, nunca cria preco ou horario, e conserva HANDOFF quando nenhuma parte util e segura.
+
+### US-125 — Comparar modelos comerciais sem afetar outros tenants
+
+Como operador, quero experimentar GPT-6 Luna de modo reversivel e medir seu desempenho, para escolher o modelo de atendimento com dados em vez de substituir o atual globalmente.
+
+#### AC-551 — Selecao de modelo por organizacao e rollback
+
+- **Dado** um override opcional por UUID de organizacao
+- **Quando** o dispatch constroi o provider OpenAI
+- **Entao** apenas essa organizacao recebe o modelo/esforco configurados; outra permanece no padrao atual.
+- **E** remover o override restaura o modelo anterior sem alterar credenciais ou configuracao comercial.
+
+#### AC-552 — Contrato Responses de GPT-6 Luna
+
+- **Dado** `gpt-6-luna` com effort permitido e limite de saida opcional
+- **Quando** o provider monta e interpreta a chamada Responses
+- **Entao** usa `/v1/responses`, `reasoning.effort`, `store=false`, extrai texto/uso no formato existente e rejeita resposta incompleta ou com erro sem expor corpo sensivel.
+- **E** parametros invalidos falham antes da chamada.
+
+#### AC-553 — Comparacao controlada e sem custo externo
+
+- **Dado** os dez cenarios comerciais e de seguranca com transportes de modelo deterministas
+- **Quando** GPT-5.1 e GPT-6 Luna sao avaliados localmente
+- **Entao** o relatorio distingue qualidade, acuracia comercial, HANDOFF, invencao, progresso de agendamento, latencia, tokens e custo estimado com tarifas declaradas.
+- **E** o teste nao usa API real e nao declara superioridade empirica de nenhum modelo.
+
 ## Fora de escopo
 
 - Inserir documentos reais, criar credenciais, usar OpenAI real, escrever no Supabase de Production ou fazer deploy.
@@ -190,6 +240,7 @@ Como paciente da Hartmann, quero receber uma resposta comercial util quando a pr
 |---|---|---|---|
 | ASM-047 | Uma versao publicada de maior `version_number` e a versao atual quando duas publicadas coexistem para o mesmo documento. | confirmada | Coerente com o contrato de substituicao; os documentos Hartmann publicados foram consultados em modo somente leitura e o teste cobre a concorrencia. |
 | ASM-048 | Uma unica regeneracao com as mesmas evidencias, seguida pelo validador inalterado, e uma recuperacao segura para falha generica de grounding com candidatos. | confirmada | O escopo pede testar recuperacao fundamentada e HANDOFF quando a nova resposta tambem falha; a regeneracao nao altera a politica nem o conjunto de evidencias. |
+| ASM-049 | Sinonimos controlados de processo comercial podem ser tratados como equivalentes quando a fonte e a afirmacao preservam assunto, canal e polaridade; fatos sensiveis continuam estritos. | confirmada | Requisito explicito desta extensao; testes negativos verificam preco, horario, pagamento, clinica e isolamento. |
 
 ## Perguntas em aberto
 
@@ -198,3 +249,4 @@ Como paciente da Hartmann, quero receber uma resposta comercial util quando a pr
 | Q-009 | A primeira base pode ser publicada sem aprovacao humana registrada? | respondida | Nao. O contrato de ingestao exige aprovador identificado antes de qualquer publicacao; a pessoa sera designada na operacao futura. |
 | Q-010 | Qual etapa determinou o HANDOFF do dispatch `7b561ffc-f038-4219-bee7-c16b94da2a09`? | respondida | Indeterminavel retrospectivamente: o dispatch nao persistiu eventos de modelo ou grounding. Logs de retrieval provam busca por Botox, mas nao a causa terminal. Exige telemetria segura por etapa em uma proxima homologacao controlada; nao executar atendimento real para reconstruir o incidente. |
 | Q-011 | Qual afirmacao especifica falhou no grounding do dispatch `6b307701-623f-43c1-a358-5d07cdb2f6d3`? | respondida | Indeterminavel retrospectivamente: os seis chunkIds foram vinculados por leitura limitada a tres versoes publicadas, mas o evento nao registra a ordem dos quatro chunks apresentados ao modelo nem o texto rejeitado. A falha do grounding e comprovada; atribuir uma afirmacao exata seria inferencia sem prova. A nova telemetria registra `promptChunkIds` para proximos dispatches sem guardar conteudo. |
+| Q-012 | GPT-6 Luna deve substituir o modelo comercial atual? | respondida | Nao nesta entrega. A escolha exige comparacao real controlada e autorizada em staging; o padrao atual permanece e o override por organizacao permite rollback. |

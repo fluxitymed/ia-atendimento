@@ -41,3 +41,19 @@
 - Refs: US-123, AC-544, AC-545, AC-546, AC-547
 - Arquivos: .spec/features/ai-hartmann-knowledge-readiness/spec.md, .spec/features/ai-hartmann-knowledge-readiness/design.md, .spec/features/ai-hartmann-knowledge-readiness/tasks.md, .spec/features/ai-hartmann-knowledge-readiness/verification.md, src/ai_agent_runtime/whatsapp/zapi_server.py, src/ai_agent_runtime/crm_dispatch.py, test/ai-hartmann-knowledge-readiness/commercial-diagnostics.test.js, test/ai-hartmann-knowledge-readiness/multi-intent.test.js
 - Notas: Reusar os mesmos trechos publicados e o validador atual; limitar a uma tentativa, registrar apenas modo/codigos e manter HANDOFF se a segunda geracao falhar. O diagnostico de afirmacao e local e sem texto; nao alterar as duas modificacoes preexistentes em test/ai-knowledge-crm-api/.
+
+## T-106 — Aceitar parafrase comercial segura e proteger fatos sensiveis [concluida]
+- Refs: US-124, AC-548, AC-549
+- Arquivos: src/ai_agent_runtime/whatsapp/zapi_server.py, src/ai_agent_runtime/graph.py, test/ai-hartmann-knowledge-readiness/semantic-grounding.test.js, test/ai-whatsapp-zapi-provider/zapi-runtime.test.js
+
+## T-107 — Entregar parte comprovada de resposta comercial [concluida]
+- Refs: US-124, AC-550
+- Arquivos: src/ai_agent_runtime/whatsapp/zapi_server.py, src/ai_agent_runtime/crm_dispatch.py, test/ai-hartmann-knowledge-readiness/semantic-grounding.test.js
+
+## T-108 — Configurar GPT-6 Luna por tenant e tratar contrato Responses [concluida]
+- Refs: US-125, AC-551, AC-552
+- Arquivos: src/ai_agent_runtime/crm_dispatch.py, src/ai_agent_runtime/integrations/config.py, src/ai_agent_runtime/integrations/openai_provider.py, .env.example, test/ai-hartmann-knowledge-readiness/model-comparison.test.js
+
+## T-109 — Comparar modelos com mocks e fechar gates [concluida]
+- Refs: US-125, AC-553
+- Arquivos: src/ai_agent_runtime/evaluation/model_comparison.py, test/ai-hartmann-knowledge-readiness/model-comparison.test.js, .spec/features/ai-hartmann-knowledge-readiness/verification.md

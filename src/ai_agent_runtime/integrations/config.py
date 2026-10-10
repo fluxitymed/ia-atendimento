@@ -26,6 +26,7 @@ class IntegrationConfig:
     openai_api_key: str | None = None
     openai_responses_model: str = "gpt-5.6-luna"
     openai_reasoning_effort: str = "low"
+    openai_max_output_tokens: int | None = None
     openai_embedding_model: str = "text-embedding-3-small"
     openai_stt_model: str = "gpt-4o-mini-transcribe"
     supabase_url: str | None = None
@@ -55,6 +56,8 @@ class IntegrationConfig:
             openai_api_key=environ.get("OPENAI_API_KEY"),
             openai_responses_model=environ.get("OPENAI_RESPONSES_MODEL", cls.openai_responses_model),
             openai_reasoning_effort=environ.get("OPENAI_REASONING_EFFORT", cls.openai_reasoning_effort),
+            openai_max_output_tokens=(int(environ["OPENAI_MAX_OUTPUT_TOKENS"])
+                                      if environ.get("OPENAI_MAX_OUTPUT_TOKENS") else None),
             openai_embedding_model=environ.get("OPENAI_EMBEDDING_MODEL", cls.openai_embedding_model),
             openai_stt_model=environ.get("OPENAI_STT_MODEL", cls.openai_stt_model),
             supabase_url=environ.get("SUPABASE_URL"),

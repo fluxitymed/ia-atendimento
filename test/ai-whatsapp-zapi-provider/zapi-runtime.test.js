@@ -606,7 +606,8 @@ from ai_agent_runtime.whatsapp.zapi_server import validate_live_grounding
 
 factual = validate_live_grounding("O transplante capilar e um procedimento que redistribui fios para regioes com falhas.", evidence_count=0)
 conversational = validate_live_grounding("Entendi. Para te orientar melhor, me conta qual regiao te incomoda mais?", evidence_count=0)
-grounded = validate_live_grounding("Consulta com Dra. Marina: R$ 500.", evidence_count=1)
+grounded = validate_live_grounding("Consulta com Dra. Marina: R$ 500.", evidence_count=1,
+                                   evidence=[{"content": "Consulta com Dra. Marina: R$ 500."}])
 print(json.dumps({"factual": factual, "conversational": conversational, "grounded": grounded}))
 `);
   const parsed = JSON.parse(output);

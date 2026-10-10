@@ -68,6 +68,7 @@ _SAFE_DECISION_CODES = {
     "MEDICATION_GUIDANCE_REQUIRED", "RESCHEDULING_REQUEST", "CANCELLATION_REQUEST",
     "CONFIG_LOOKUP_FAILED", "CONFIG_UNAVAILABLE", "MODEL_FAILURE", "RETRIEVAL_FAILURE", "RUNTIME_ERROR",
     "EVIDENCE_GROUNDED_REGENERATION_ACCEPTED",
+    "SUPPORTED_PARTIAL_RESPONSE",
 }
 _SAFE_REGENERATION_MODES = {"EVIDENCE_GROUNDED", "CONVERSATIONAL_NO_FACTS"}
 _SAFE_GROUNDING_ORIGINS = {"USER_REQUESTED_UNSUPPORTED_FACT", "MODEL_INTRODUCED_UNSUPPORTED_FACT",
@@ -113,6 +114,7 @@ def _safe_dispatch_diagnostic(event: dict[str, Any], state: AgentState | None, a
     model_started = count("model_call_started")
     model_completed = count("model_called")
     regeneration_used = bool(count("response_regeneration_started"))
+    partial_used = bool(count("response_partial_grounded"))
     raw_regeneration_mode = latest("response_regeneration_started").get("response_regeneration_mode")
     regeneration_mode = (raw_regeneration_mode if isinstance(raw_regeneration_mode, str)
                          and raw_regeneration_mode in _SAFE_REGENERATION_MODES else "NONE")
@@ -128,11 +130,12 @@ def _safe_dispatch_diagnostic(event: dict[str, Any], state: AgentState | None, a
     elif action == "NO_ACTION":
         origin, reason_code = "DETERMINISTIC_RULE", "EXPLICIT_NO_ACTION"
     elif action == "SEND_MESSAGE":
-        origin = ("FALLBACK" if regeneration_used and grounding_passed is True
+        origin = ("FALLBACK" if (regeneration_used or partial_used) and grounding_passed is True
                   else "MODEL" if model_completed and grounding_passed is True
                   else "DETERMINISTIC_RULE" if not model_started and grounding_passed is True
                   else "UNKNOWN")
-        reason_code = (("EVIDENCE_GROUNDED_REGENERATION_ACCEPTED" if regeneration_mode == "EVIDENCE_GROUNDED"
+        reason_code = ("SUPPORTED_PARTIAL_RESPONSE" if partial_used else
+                       ("EVIDENCE_GROUNDED_REGENERATION_ACCEPTED" if regeneration_mode == "EVIDENCE_GROUNDED"
                         else "CONVERSATIONAL_REGENERATION_ACCEPTED") if origin == "FALLBACK"
                        else "GROUNDED_MODEL_RESPONSE" if origin == "MODEL"
                        else "GROUNDED_DETERMINISTIC_RESPONSE" if origin == "DETERMINISTIC_RULE"
@@ -293,10 +296,12 @@ class StrictCrmOrganizationConfigRepository:
 
 def _default_graph(config: OrganizationRuntimeConfig, *, logger) -> AgentRuntimeGraph:
     # Reuse the existing commercial generator, without constructing a WhatsApp provider.
+    model, effort, max_output_tokens = _model_settings_for_organization(config.organization_id)
     integrations = IntegrationConfig(
         openai_api_key="organization-scoped-openai-key",
-        openai_responses_model=environ.get("OPENAI_RESPONSES_MODEL", "gpt-5.6-luna"),
-        openai_reasoning_effort=environ.get("OPENAI_REASONING_EFFORT", "low"),
+        openai_responses_model=model,
+        openai_reasoning_effort=effort,
+        openai_max_output_tokens=max_output_tokens,
     )
     retrieval = None
     if environ.get("SUPABASE_URL") and environ.get("SUPABASE_SERVICE_ROLE_KEY"):
@@ -341,6 +346,45 @@ def _default_graph(config: OrganizationRuntimeConfig, *, logger) -> AgentRuntime
         credential_provider=LoggingCredentialProvider(),
     )
     return AgentRuntimeGraph(response_generator=generator)
+
+
+def _model_settings_for_organization(organization_id: str) -> tuple[str, str, int | None]:
+    """Resolve a non-secret, per-tenant model override without changing other tenants."""
+    model = environ.get("OPENAI_RESPONSES_MODEL", "gpt-5.6-luna")
+    effort = environ.get("OPENAI_REASONING_EFFORT", "low")
+    global_limit = environ.get("OPENAI_MAX_OUTPUT_TOKENS")
+    if global_limit:
+        try:
+            limit: int | None = int(global_limit)
+        except ValueError as exc:
+            raise RuntimeError("OPENAI_MAX_OUTPUT_TOKENS_INVALID") from exc
+    else:
+        limit = None
+    raw = environ.get("OPENAI_MODEL_OVERRIDES_JSON")
+    if not raw:
+        return model, effort, limit
+    try:
+        overrides = json.loads(raw)
+    except (TypeError, ValueError) as exc:
+        raise RuntimeError("OPENAI_MODEL_OVERRIDES_INVALID") from exc
+    if not isinstance(overrides, dict):
+        raise RuntimeError("OPENAI_MODEL_OVERRIDES_INVALID")
+    selected = overrides.get(organization_id)
+    if selected is None:
+        return model, effort, limit
+    if not isinstance(selected, dict) or set(selected) - {"model", "reasoningEffort", "maxOutputTokens"}:
+        raise RuntimeError("OPENAI_MODEL_OVERRIDES_INVALID")
+    selected_model = selected.get("model")
+    if selected_model not in {"gpt-5.6-luna", "gpt-5.1", "gpt-6-luna"}:
+        raise RuntimeError("OPENAI_MODEL_OVERRIDES_INVALID")
+    selected_effort = selected.get("reasoningEffort", effort)
+    allowed_efforts = OpenAIResponsesProvider._model_efforts.get(selected_model)
+    if not isinstance(selected_effort, str) or (allowed_efforts and selected_effort not in allowed_efforts):
+        raise RuntimeError("OPENAI_MODEL_OVERRIDES_INVALID")
+    selected_limit = selected.get("maxOutputTokens", limit)
+    if selected_limit is not None and (type(selected_limit) is not int or not 1 <= selected_limit <= 128000):
+        raise RuntimeError("OPENAI_MODEL_OVERRIDES_INVALID")
+    return selected_model, selected_effort, selected_limit
 
 
 class CrmDispatchProcessor:

@@ -1,11 +1,11 @@
 {
   "feature": "ai-hartmann-knowledge-readiness",
-  "timestamp": "2026-10-10T13:58:39.132Z",
-  "gitRev": "22e07e2",
+  "timestamp": "2026-10-10T16:41:50.444Z",
+  "gitRev": "ec7833a",
   "command": "node --test --test-concurrency=1 --test-reporter=tap",
   "reporter": "tap",
   "exitCode": 0,
-  "testsParsed": 331,
+  "testsParsed": 338,
   "results": {
     "AC-494": {
       "status": "pass",
@@ -110,6 +110,36 @@
     "AC-547": {
       "status": "pass",
       "testName": "@spec:AC-547 absent candidates and deterministic clinical/human rules never use evidence regeneration",
+      "method": "tap"
+    },
+    "AC-548": {
+      "status": "pass",
+      "testName": "@spec:AC-548 operational scheduling paraphrase requires an eligible source",
+      "method": "tap"
+    },
+    "AC-549": {
+      "status": "pass",
+      "testName": "@spec:AC-549 independent sensitive claims remain strictly grounded",
+      "method": "tap"
+    },
+    "AC-550": {
+      "status": "pass",
+      "testName": "@spec:AC-550 a complete supported sentence survives an unsupported independent sentence",
+      "method": "tap"
+    },
+    "AC-551": {
+      "status": "pass",
+      "testName": "@spec:AC-551 model override is tenant-scoped and removing it rolls back",
+      "method": "tap"
+    },
+    "AC-552": {
+      "status": "pass",
+      "testName": "@spec:AC-552 GPT-6 Luna Responses payload and errors fail closed",
+      "method": "tap"
+    },
+    "AC-553": {
+      "status": "pass",
+      "testName": "@spec:AC-553 ten paired mock scenarios report quality, handoff, invention, booking, latency, tokens and cost",
       "method": "tap"
     }
   },

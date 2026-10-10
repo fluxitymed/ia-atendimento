@@ -43,6 +43,10 @@ class EmbeddingResult:
 class OpenAIResponsesProvider:
     responses_url = "https://api.openai.com/v1/responses"
     embeddings_url = "https://api.openai.com/v1/embeddings"
+    _model_efforts = {
+        "gpt-6-luna": {"none", "low", "medium", "high", "xhigh", "max"},
+        "gpt-5.1": {"none", "low", "medium", "high"},
+    }
 
     def __init__(
         self,
@@ -71,12 +75,20 @@ class OpenAIResponsesProvider:
         input_messages: list[dict[str, Any]],
         json_schema: dict[str, Any] | None = None,
     ) -> dict[str, Any]:
+        allowed_efforts = self._model_efforts.get(self.config.openai_responses_model)
+        if allowed_efforts is not None and self.config.openai_reasoning_effort not in allowed_efforts:
+            raise OpenAIProviderError("OPENAI_REASONING_EFFORT_INVALID")
         payload: dict[str, Any] = {
             "model": self.config.openai_responses_model,
             "input": input_messages,
             "reasoning": {"effort": self.config.openai_reasoning_effort},
             "store": False,
         }
+        limit = self.config.openai_max_output_tokens
+        if limit is not None:
+            if type(limit) is not int or not 1 <= limit <= 128000:
+                raise OpenAIProviderError("OPENAI_MAX_OUTPUT_TOKENS_INVALID")
+            payload["max_output_tokens"] = limit
         if json_schema is not None:
             payload["text"] = {
                 "format": {
@@ -98,8 +110,10 @@ class OpenAIResponsesProvider:
     ) -> dict[str, Any]:
         payload = self.build_response_payload(input_messages=input_messages, json_schema=json_schema)
         response = self.transport.post_json(self.responses_url, headers=self._headers(), payload=payload)
+        if response.get("status") == "incomplete":
+            raise OpenAIProviderError("OPENAI_RESPONSE_INCOMPLETE")
         if response.get("status") == "failed" or response.get("error"):
-            raise OpenAIProviderError(response.get("error", {}).get("message") or "OpenAI response failed")
+            raise OpenAIProviderError("OPENAI_RESPONSE_FAILED")
         self._record_usage(response, organization_id=organization_id, conversation_id=conversation_id)
         return response
 

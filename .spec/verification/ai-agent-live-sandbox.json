@@ -1,11 +1,11 @@
 {
   "feature": "ai-agent-live-sandbox",
-  "timestamp": "2026-10-10T14:47:06.135Z",
-  "gitRev": "22e07e2",
+  "timestamp": "2026-10-10T16:43:21.827Z",
+  "gitRev": "ec7833a",
   "command": "node --test --test-concurrency=1 --test-reporter=tap",
   "reporter": "tap",
   "exitCode": 0,
-  "testsParsed": 331,
+  "testsParsed": 338,
   "results": {
     "AC-100": {
       "status": "pass",

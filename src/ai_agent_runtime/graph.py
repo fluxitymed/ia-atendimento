@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass
 from typing import Any, Callable, Protocol
 
@@ -83,7 +84,8 @@ class AgentRuntimeGraph:
 
     def interpret_message(self, state: AgentState) -> AgentState:
         message = (state.current_message or "").lower()
-        if "humano" in message or "atendente" in message:
+        if ("humano" in message or "atendente" in message
+                or re.search(r"\b(?:falar|conversar)\s+com\s+(?:uma?\s+)?pessoa\b", message)):
             state.intent = AgentIntent.HUMAN_HANDOFF_REQUIRED
         return state
 

@@ -1,5 +1,15 @@
 # Inspecao e procedimento operacional — base Hartmann
 
+## Grounding comercial e experimento de modelo (2026-10-10)
+
+O caminho CRM → grafo comercial → Responses → grounding → CRM continua unico. O detector factual deve examinar cada frase, inclusive horario/valor isolado apos uma frase segura. Sinonimos fechados de agendamento sao normalizados somente para o processo comercial; preco, pagamento, disponibilidade, promessa de resultado e afirmacao clinica mantem comparacao especifica de fonte, numero, qualificador e polaridade. Um chunk parecido nao constitui prova.
+
+Depois de uma rejeicao factual, o gerador pode reaproveitar apenas frases completas que passem individualmente pelo mesmo validador e cubram assunto pedido. Uma pergunta neutra da propria resposta pode ser preservada; nunca se fabrica resposta comercial. Se nao houver parte segura, a unica regeneracao factual existente continua disponivel, seguida de HANDOFF quando ainda falhar. O log terminal registra apenas codigo de resposta parcial, sem texto.
+
+`OPENAI_MODEL_OVERRIDES_JSON` e um mapa opcional de UUID para `model`, `reasoningEffort` e `maxOutputTokens`. Ele so e lido na construcao do provider daquele tenant; ausencia da entrada conserva `OPENAI_RESPONSES_MODEL` e `OPENAI_REASONING_EFFORT`. Configuracao invalida falha fechada antes de chamada. Remover a entrada restaura o comportamento anterior sem migration ou troca de credencial. Nenhum override e definido para Hartmann nesta entrega.
+
+O provider continua em `/v1/responses`, com `store=false`, e aceita um limite opcional de saida. Respostas `failed` ou `incomplete` geram erro seguro. A avaliacao local usa transportes controlados e um relatorio de metricas sem conteudo de paciente. Uma comparacao real futura deve usar o mesmo corpus aprovado, snapshots fixados, rateio por tenant em staging, teto de gasto e avaliacao cega; esta entrega nao a executa. Fontes oficiais consultadas em 2026-10-10: https://developers.openai.com/api/docs/models/gpt-6-luna e https://developers.openai.com/api/docs/guides/reasoning.
+
 ## Estado observado em 2026-10-02
 
 Consulta somente de leitura ao projeto Supabase da IA confirmou `organizations`, `organization_ai_configs`, `organization_credentials`, `organization_integrations`, `ai_usage_events`, `documents`, `document_versions`, `chunks` e `retrieval_index_entries`. Nao existe `document_chunks`. Para `organization_id = 38002ccb-9edb-4dcb-aacf-76c0b6ca1692`, ha 0 linhas em `documents`, `document_versions`, `chunks` e `retrieval_index_entries`. Nenhuma escrita de Production foi executada.
