@@ -1,11 +1,11 @@
 {
   "feature": "ai-hartmann-knowledge-readiness",
-  "timestamp": "2026-10-10T16:41:50.444Z",
-  "gitRev": "ec7833a",
+  "timestamp": "2026-10-10T17:39:51.651Z",
+  "gitRev": null,
   "command": "node --test --test-concurrency=1 --test-reporter=tap",
   "reporter": "tap",
   "exitCode": 0,
-  "testsParsed": 338,
+  "testsParsed": 342,
   "results": {
     "AC-494": {
       "status": "pass",
@@ -140,6 +140,26 @@
     "AC-553": {
       "status": "pass",
       "testName": "@spec:AC-553 ten paired mock scenarios report quality, handoff, invention, booking, latency, tokens and cost",
+      "method": "tap"
+    },
+    "AC-554": {
+      "status": "pass",
+      "testName": "@spec:AC-554 local probe exposes only synthetic claim text, source and rejection rule",
+      "method": "tap"
+    },
+    "AC-555": {
+      "status": "pass",
+      "testName": "@spec:AC-555 bounded price and budget paraphrases need exact authorized conditions",
+      "method": "tap"
+    },
+    "AC-556": {
+      "status": "pass",
+      "testName": "@spec:AC-556 neutral invitation is not a fact and invented appointment time is factual",
+      "method": "tap"
+    },
+    "AC-557": {
+      "status": "pass",
+      "testName": "@spec:AC-557 CRM dispatch accepts supported response, salvages safe part and handoffs twice-unsupported fact",
       "method": "tap"
     }
   },

@@ -1,5 +1,11 @@
 # Inspecao e procedimento operacional — base Hartmann
 
+## Diagnostico pontual do grounding no commit 7deb67d (2026-10-10)
+
+O CRM dispatch continua a usar o grafo comercial e `validate_live_grounding`. O evento `1c87ee32-8f74-42bf-a360-dc026fa678dc` prova candidatos PRICE/SCHEDULING no prompt, duas chamadas concluidas e rejeicao final, mas nao conserva o texto das respostas. Um harness de testes isolado pode exibir somente fixtures sinteticas e explicar o caminho `extracao -> requisito factual -> tokens/condicao -> fonte -> veredito`; a telemetria de Production permanece limitada a codigos e IDs.
+
+A reproducao local do caminho CRM mostrou um falso positivo: `valor` para uma fonte que diz `custa`, seguido de convite neutro na mesma frase, produziu duas rejeicoes e HANDOFF apesar de preco identico. O mesmo validador ignorou uma frase separada que inventava avaliacao `amanha as 10h`, pois nao a classificou como factual. A correcao pontual limita a equivalencia monetaria a termos de preco com valor exato, reconhece a regra especifica de orcamento condicionado a avaliacao, separa apenas CTA neutro de uma afirmacao anterior e exige fonte para horario especifico. Nao altera a arquitetura, o conjunto de chunks, o prompt, o numero de retries nem a lista de eventos permitidos.
+
 ## Grounding comercial e experimento de modelo (2026-10-10)
 
 O caminho CRM → grafo comercial → Responses → grounding → CRM continua unico. O detector factual deve examinar cada frase, inclusive horario/valor isolado apos uma frase segura. Sinonimos fechados de agendamento sao normalizados somente para o processo comercial; preco, pagamento, disponibilidade, promessa de resultado e afirmacao clinica mantem comparacao especifica de fonte, numero, qualificador e polaridade. Um chunk parecido nao constitui prova.

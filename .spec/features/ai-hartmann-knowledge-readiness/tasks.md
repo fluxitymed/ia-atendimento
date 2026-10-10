@@ -57,3 +57,8 @@
 ## T-109 — Comparar modelos com mocks e fechar gates [concluida]
 - Refs: US-125, AC-553
 - Arquivos: src/ai_agent_runtime/evaluation/model_comparison.py, test/ai-hartmann-knowledge-readiness/model-comparison.test.js, .spec/features/ai-hartmann-knowledge-readiness/verification.md
+
+## T-110 — Diagnosticar e corrigir extracao comercial pontual [concluida]
+- Refs: US-126, AC-554, AC-555, AC-556, AC-557
+- Arquivos: .spec/features/ai-hartmann-knowledge-readiness/spec.md, .spec/features/ai-hartmann-knowledge-readiness/design.md, .spec/features/ai-hartmann-knowledge-readiness/tasks.md, .spec/features/ai-hartmann-knowledge-readiness/verification.md, src/ai_agent_runtime/whatsapp/zapi_server.py, test/ai-hartmann-knowledge-readiness/grounding-diagnostic.test.js, test/ai-hartmann-knowledge-readiness/grounding_probe.py
+- Notas: Usar somente fontes e respostas sinteticas; preservar guardas de preco, disponibilidade, pagamento, resultado e orientacao clinica. Nenhum texto entra nos eventos de Production. Nao tocar nas alteracoes preexistentes de test/ai-knowledge-crm-api/.

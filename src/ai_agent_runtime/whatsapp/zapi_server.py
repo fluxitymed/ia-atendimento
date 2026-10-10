@@ -2412,6 +2412,12 @@ def _response_requires_authorized_evidence(response_text: str) -> bool:
     # without the procedure/clinic name repeated from the previous sentence.
     if re.search(r"r\s*\$\s*\d|\b\d+\s*x\b|\b(parcelar|parcelamento|deposito|sem juros)\b", text):
         return True
+    if re.search(r"\borcamento\s+(?:final|definitivo)\b", text):
+        return True
+    if (re.search(r"\b(?:amanha|hoje|\d{1,2}h)\b", text)
+            and re.search(r"\b(?:avaliacao|consulta|agendamento|horario|agenda)\b", text)
+            and re.search(r"\b(?:marcad[ao]s?|agendad[ao]s?|confirmad[ao]s?|reservad[ao]s?|disponivel)\b", text)):
+        return True
     if re.search(r"\b(disponivel|confirmado|reservado|livre)\b", text) and re.search(
         r"\b(amanha|hoje|horario|agenda|agendamento|\d{1,2}h)\b", text
     ):
@@ -2475,6 +2481,11 @@ def _grounding_claim_diagnostics(response_text: str, evidence: list[dict[str, An
         status = "UNSUPPORTED"
         if _contradictory_monetary_evidence(claim, evidence):
             status = "CONTRADICTED"
+            diagnostics.append({"claimIndex": index, "topic": _grounding_claim_topic(claim), "status": status})
+            continue
+        if _budget_after_evaluation_claim(claim):
+            status = "SUPPORTED" if any(_budget_after_evaluation_source(str(item.get("content") or ""))
+                                        for item in evidence) else "UNSUPPORTED"
             diagnostics.append({"claimIndex": index, "topic": _grounding_claim_topic(claim), "status": status})
             continue
         claim_words = [_grounding_token(token) for token in re.findall(r"[a-z0-9]+", _normalize_text(claim)) if len(token) >= 3 and token not in stopwords]
@@ -2545,7 +2556,37 @@ def _independent_grounding_claims(sentence: str) -> list[str]:
         left, right = sentence[:join.start()].strip(" ,"), sentence[join.end():].strip(" ,")
         if _response_requires_authorized_evidence(left) and _response_requires_authorized_evidence(right):
             return [*_independent_grounding_claims(left), *_independent_grounding_claims(right)]
+        if _response_requires_authorized_evidence(left) and _neutral_commercial_cta(right):
+            return [*_independent_grounding_claims(left), right]
     return [sentence]
+
+
+def _neutral_commercial_cta(text: str) -> bool:
+    """Recognize a small set of questions that assert no booking or clinic fact."""
+    normalized = _normalize_text(text)
+    return bool(re.fullmatch(
+        r"(?:posso|podemos) (?:te )?(?:encaminhar (?:seu|o) agendamento|"
+        r"ajudar (?:a )?(?:agendar|marcar)|ajudar com (?:seu|o) agendamento)",
+        normalized,
+    ))
+
+
+def _budget_after_evaluation_claim(text: str) -> bool:
+    return bool(re.fullmatch(r"(?:o )?orcamento (?:final|definitivo) depende d[ae] avaliacao",
+                             _normalize_text(text).strip()))
+
+
+def _budget_after_evaluation_source(content: str) -> bool:
+    normalized = _normalize_text(content)
+    for sentence in re.split(r"\.(?!\d)|[!?;\n]+", normalized):
+        if re.search(r"\b(?:nao|nunca|sem)\b", sentence):
+            continue
+        if re.search(r"\borcamento\s+(?:final|definitivo)\b", sentence) and re.search(
+            r"\b(?:depende d[ae] |(?:e )?(?:definido|estabelecido|elaborado) apos (?:a )?)avaliacao\b",
+            sentence,
+        ):
+            return True
+    return False
 
 
 def _evidence_source_supports_claim(content: str, tokens: set[str], key_token: str, claim: str) -> bool:
@@ -2578,7 +2619,7 @@ def _grounding_token(token: str) -> str:
     # availability, payment, clinical or outcome concept is broadened here.
     if token in {"agendamento", "agendar", "marcar", "marcacao"}:
         return "agendar"
-    if token == "valores":
+    if token in {"preco", "valor", "valores", "custa"}:
         return "valor"
     if token == "oferecido":
         return "oferece"

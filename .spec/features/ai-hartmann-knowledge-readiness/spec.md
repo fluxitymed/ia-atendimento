@@ -229,6 +229,34 @@ Como operador, quero experimentar GPT-6 Luna de modo reversivel e medir seu dese
 - **Entao** o relatorio distingue qualidade, acuracia comercial, HANDOFF, invencao, progresso de agendamento, latencia, tokens e custo estimado com tarifas declaradas.
 - **E** o teste nao usa API real e nao declara superioridade empirica de nenhum modelo.
 
+### US-126 — Diagnosticar e corrigir rejeicoes comerciais pontuais
+
+Como operador, quero identificar localmente qual afirmacao sintetica foi rejeitada e corrigir apenas falsos positivos demonstrados, sem permitir que horarios ou politicas nao documentados sejam enviados.
+
+#### AC-554 — Diagnostico textual somente local
+
+- **Dado** documentos e respostas inteiramente sinteticos
+- **Quando** o harness local avalia uma resposta
+- **Entao** mostra resposta, afirmacoes extraidas, tipo, fonte sintetica, regra de rejeicao e resultado terminal, sem inserir esses textos em eventos de Production.
+
+#### AC-555 — Parafrases comerciais limitadas por fonte
+
+- **Dado** um preco literal e uma politica de orcamento apos avaliacao em fontes sinteticas autorizadas
+- **Quando** a resposta usa `valor` por `custa` ou `depende da avaliacao` por `definido apos avaliacao`
+- **Entao** as afirmacoes passam somente com mesmo procedimento, modalidade, valor e condicao; valores divergentes, ausencia de fonte e negacoes falham.
+
+#### AC-556 — Convite neutro e horario inventado em frases compostas
+
+- **Dado** uma afirmacao de preco sustentada seguida por um convite neutro, ou uma afirmacao isolada de horario especifico
+- **Quando** a extracao e o grounding avaliam cada parte
+- **Entao** o convite nao adiciona exigencia factual, mas `amanha as 10h` ou confirmacao de agenda exige fonte especifica e nao passa por uma frase anterior sustentada.
+
+#### AC-557 — Decisao real do CRM com duas geracoes controladas
+
+- **Dado** o fluxo CRM dispatch com retrieval de versoes publicadas do tenant e modelo mockado
+- **Quando** a resposta comercial e sustentada, parcialmente sustentada ou rejeitada nas duas geracoes
+- **Entao** as acoes terminais e os codigos seguros correspondem ao grounding, sem dados de resposta nos logs; fatos inventados conservam HANDOFF.
+
 ## Fora de escopo
 
 - Inserir documentos reais, criar credenciais, usar OpenAI real, escrever no Supabase de Production ou fazer deploy.
@@ -241,6 +269,7 @@ Como operador, quero experimentar GPT-6 Luna de modo reversivel e medir seu dese
 | ASM-047 | Uma versao publicada de maior `version_number` e a versao atual quando duas publicadas coexistem para o mesmo documento. | confirmada | Coerente com o contrato de substituicao; os documentos Hartmann publicados foram consultados em modo somente leitura e o teste cobre a concorrencia. |
 | ASM-048 | Uma unica regeneracao com as mesmas evidencias, seguida pelo validador inalterado, e uma recuperacao segura para falha generica de grounding com candidatos. | confirmada | O escopo pede testar recuperacao fundamentada e HANDOFF quando a nova resposta tambem falha; a regeneracao nao altera a politica nem o conjunto de evidencias. |
 | ASM-049 | Sinonimos controlados de processo comercial podem ser tratados como equivalentes quando a fonte e a afirmacao preservam assunto, canal e polaridade; fatos sensiveis continuam estritos. | confirmada | Requisito explicito desta extensao; testes negativos verificam preco, horario, pagamento, clinica e isolamento. |
+| ASM-050 | Os textos das duas respostas do incidente `1c87ee32-8f74-42bf-a360-dc026fa678dc` nao foram persistidos. | confirmada | A telemetria comprova o veredito e a regeneracao, nao a frase historica; o diagnostico textual usa somente fixtures sinteticas. |
 
 ## Perguntas em aberto
 
@@ -250,3 +279,4 @@ Como operador, quero experimentar GPT-6 Luna de modo reversivel e medir seu dese
 | Q-010 | Qual etapa determinou o HANDOFF do dispatch `7b561ffc-f038-4219-bee7-c16b94da2a09`? | respondida | Indeterminavel retrospectivamente: o dispatch nao persistiu eventos de modelo ou grounding. Logs de retrieval provam busca por Botox, mas nao a causa terminal. Exige telemetria segura por etapa em uma proxima homologacao controlada; nao executar atendimento real para reconstruir o incidente. |
 | Q-011 | Qual afirmacao especifica falhou no grounding do dispatch `6b307701-623f-43c1-a358-5d07cdb2f6d3`? | respondida | Indeterminavel retrospectivamente: os seis chunkIds foram vinculados por leitura limitada a tres versoes publicadas, mas o evento nao registra a ordem dos quatro chunks apresentados ao modelo nem o texto rejeitado. A falha do grounding e comprovada; atribuir uma afirmacao exata seria inferencia sem prova. A nova telemetria registra `promptChunkIds` para proximos dispatches sem guardar conteudo. |
 | Q-012 | GPT-6 Luna deve substituir o modelo comercial atual? | respondida | Nao nesta entrega. A escolha exige comparacao real controlada e autorizada em staging; o padrao atual permanece e o override por organizacao permite rollback. |
+| Q-013 | Qual afirmacao especifica foi rejeitada nas duas geracoes do incidente `1c87ee32-8f74-42bf-a360-dc026fa678dc`? | respondida | Indeterminavel com os metadados disponiveis; os contraexemplos sinteticos demonstram caminhos possiveis, nao reconstituem texto de Production. |
